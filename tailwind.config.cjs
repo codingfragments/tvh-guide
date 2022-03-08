@@ -112,7 +112,7 @@ const config = {
 	plugins: [
 		// require('tailwindcss-scroll-snap'),
 		require('@tailwindcss/forms'),
-		require('tailwindcss-elevation')(['responsive']),
+		//require('tailwindcss-elevation')(['responsive']),
 
 	],
 };
