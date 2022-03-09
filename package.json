@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "svelte-kit dev",
-    "clean":"rm -rf ./build",
+    "clean": "rm -rf ./build",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview",
@@ -13,7 +13,6 @@
     "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
     "tsc": "npx tsc --outdir build"
-
   },
   "devDependencies": {
     "@playwright/test": "^1.19.1",
@@ -40,6 +39,7 @@
   "type": "module",
   "dependencies": {
     "axios": "^0.26.0",
-    "dateformat": "^5.0.3"
+    "dateformat": "^5.0.3",
+    "uuid": "^8.3.2"
   }
 }

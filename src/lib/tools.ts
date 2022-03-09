@@ -21,3 +21,13 @@ export function mergeDate(day: Date, time: Date) {
     return new Date(day.setMilliseconds(delta))
 
 }
+
+export function exists(prop: any) {
+    return prop === undefined
+}
+
+export function toBool(prop: any) {
+    if (prop === undefined) return false;
+    if (prop) return true;
+    else return false;
+}

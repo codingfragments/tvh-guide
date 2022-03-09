@@ -54,6 +54,10 @@ export interface ITVHChannel {
 
 
 export interface ITVHEpgEvent {
+    stopDate?: Date;
+    startDate?: Date;
+    nextEventUuid?: string;
+    uuid?: string;
     ageRating: string;
     channelIcon: string;
     channelName: string;
@@ -75,6 +79,7 @@ export interface ITVHEpgEvent {
     start: number;
     stop: number;
     subtitle: string;
+    channel: ITVHChannel;
     subtitled: boolean;
     summary: string;
     title: string;
