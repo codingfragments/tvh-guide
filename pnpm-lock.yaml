@@ -3,11 +3,14 @@ lockfileVersion: 5.3
 specifiers:
   '@playwright/test': ^1.19.1
   '@sveltejs/adapter-auto': next
+  '@sveltejs/adapter-node': ^1.0.0-next.71
   '@sveltejs/kit': next
   '@tailwindcss/forms': ^0.5.0
   '@typescript-eslint/eslint-plugin': ^5.10.1
   '@typescript-eslint/parser': ^5.10.1
   autoprefixer: ^10.4.2
+  axios: ^0.26.0
+  dateformat: ^5.0.3
   eslint: ^7.32.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-svelte3: ^3.2.1
@@ -21,9 +24,14 @@ specifiers:
   tslib: ^2.3.1
   typescript: ~4.5.4
 
+dependencies:
+  axios: 0.26.0
+  dateformat: 5.0.3
+
 devDependencies:
   '@playwright/test': 1.19.2
   '@sveltejs/adapter-auto': 1.0.0-next.31
+  '@sveltejs/adapter-node': 1.0.0-next.71
   '@sveltejs/kit': 1.0.0-next.294_svelte@3.46.4
   '@tailwindcss/forms': 0.5.0_tailwindcss@3.0.23
   '@typescript-eslint/eslint-plugin': 5.12.1_78ba2542c270c83b2a80bb1c125195b6
@@ -741,6 +749,12 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
+  /@sveltejs/adapter-node/1.0.0-next.71:
+    resolution: {integrity: sha512-ELSQBSyk0IHMRi5Zct95jP+lTUJ0VQ/d7DxPMQTaDYVexpehDBOV6bXDzSNBl9boIIfEv77VD3lA7kgtuJnGdg==}
+    dependencies:
+      tiny-glob: 0.2.9
+    dev: true
+
   /@sveltejs/adapter-vercel/1.0.0-next.46:
     resolution: {integrity: sha512-6Rwf3kZF6uX2JxDMoYgZWZe5TjVTTWZa57VukdNGjnlAT3CrfsEOBWyskX/8hx7AiYX5fucZaAtYPNZpUmueIA==}
     dependencies:
@@ -1110,6 +1124,14 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
+  /axios/0.26.0:
+    resolution: {integrity: sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==}
+    dependencies:
+      follow-redirects: 1.14.9
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /babel-plugin-dynamic-import-node/2.3.3:
     resolution: {integrity: sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ==}
     dependencies:
@@ -1285,6 +1307,11 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /dateformat/5.0.3:
+    resolution: {integrity: sha512-Kvr6HmPXUMerlLcLF+Pwq3K7apHpYmGDVqrxcDasBg86UcKeTSNWbEzU8bwdXnxnR44FtMhJAxI4Bov6Y/KUfA==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /debug/4.3.3:
     resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
@@ -1877,6 +1904,16 @@ packages:
   /flatted/3.2.5:
     resolution: {integrity: sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==}
     dev: true
+
+  /follow-redirects/1.14.9:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
 
   /fraction.js/4.1.3:
     resolution: {integrity: sha512-pUHWWt6vHzZZiQJcM6S/0PXfS+g6FM4BF5rj9wZyreivhQPdsh5PpE25VtSNxq80wHS5RfY51Ii+8Z0Zl/pmzg==}

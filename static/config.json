@@ -1,0 +1,15 @@
+{
+    "tvheadend":{
+        "host":"172.17.0.2",
+        "port":9981,
+        "username":"vdr",
+        "password":"vdr"
+    },
+    "picons":{
+        "base_url":"https://codingfragments.github.io/tv-epg-picon.github.io/picons/"
+    },
+    "ui":{
+        "showChannelNumbers":false
+    }
+
+}
