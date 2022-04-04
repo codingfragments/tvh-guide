@@ -3,7 +3,9 @@ import { TVHeadendClient } from "./tvheadend-client";
 import { serverCfg } from "$lib/server/globals";
 import { v4 as uuidv4 } from "uuid";
 import type { ServerStatus } from "$lib/types/api";
+import type { FSCache } from "$lib/types/cache";
 import {toBool} from "$lib/tools";
+import * as fs from 'fs';
 
 const tvhClient = new TVHeadendClient(serverCfg.tvheadend.host,
     serverCfg.tvheadend.port,
@@ -56,7 +58,8 @@ class TVHCache {
             lastDate:this._lastDate,
             lastUpdate:this._lastUpdate,
             numEvents:this._epg.size,
-            numChannels:this._channels.size
+            numChannels:this._channels.size,
+            cacheUUID:this.uuid
         }
         return status;
     }
@@ -77,19 +80,19 @@ class TVHCache {
         // TODO: Make sure that during partial updates, and delete to check wether or not the first date need updates
         // Check for Dates
         if (this._firstDate) {
-            if (dto.startDate.getTime() < this._firstDate.getTime()) {
-                this._firstDate = dto.startDate
+            if (new Date(dto.startDate).getTime() < this._firstDate.getTime()) {
+                this._firstDate = new Date(dto.startDate)
             }
         } else {
-            this._firstDate = dto.startDate
+            this._firstDate = new Date(dto.startDate)
         }
 
         if (this._lastDate) {
-            if (dto.stopDate.getTime() > this._lastDate.getTime()) {
-                this._lastDate = dto.stopDate
+            if (new Date(dto.stopDate).getTime() > this._lastDate.getTime()) {
+                this._lastDate = new Date(dto.stopDate)
             }
         } else {
-            this._lastDate = dto.stopDate
+            this._lastDate = new Date(dto.stopDate)
         }
     }
 
@@ -102,16 +105,16 @@ class TVHCache {
         for (const ch of this._epgByChannel.keys()) {
             const epg = this.epgByChannel.get(ch)
 
-            startDates.push(epg[0].startDate)
-            endDates.push(epg[epg.length - 1].stopDate)
+            startDates.push(new Date(epg[0].startDate))
+            endDates.push(new Date(epg[epg.length - 1].stopDate))
         }
         this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(startDates.length * .5)]
         this._lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(endDates.length * .5)]
     }
 
     private  convertEPG(epg: ITVHEpgEvent) {
-        epg.startDate = new Date(epg.start * 1000);
-        epg.stopDate = new Date(epg.stop * 1000);
+        epg.startDate = new Date(epg.start * 1000).toDateString();
+        epg.stopDate = new Date(epg.stop * 1000).toDateString();
         epg.widescreen = toBool(epg.widescreen)
         epg.subtitled = toBool(epg.subtitled)
         epg.channel = this._channels.get(epg.channelUuid)
@@ -133,11 +136,58 @@ class TVHCache {
         }
     }
 
+    public loadFromCache(path="./static/cache"){
+        if (fs.existsSync(path+"/cache.json")){
+            fs.readFile(path+"/cache.json", (err, data) => {
+                if (!err){
+                    const dat:FSCache = JSON.parse(data.toString());
+                    this._channels= new Map(Object.entries(dat.channels));
+                    this._channelTags=new Map(Object.entries(dat.channelTags));
+                    this._contentTypes=new Map(Object.entries(dat.contentTypes));
+                    this._epg=new Map(Object.entries(dat.epg));
+                    this._epgByChannel=new Map(Object.entries(dat.epgByChannel));
+                    this._firstDate=new Date(dat.firstDate);
+                    this._lastDate=new Date(dat.lastDate);
+                    this._lastUpdate=new Date(dat.lastUpdate);
 
-    public async loadAll() {
+                    debugger;
+                }
+            });
+        }
+
+    }
+    public storeAll(path="./static/cache"){
+        if (fs.existsSync(path)){
+            const data:FSCache={
+                channelTags:Object.fromEntries(this._channelTags),
+                channels:Object.fromEntries(this._channels),
+                contentTypes:Object.fromEntries(this._contentTypes),
+                epg:Object.fromEntries(this._epg),
+                epgByChannel:Object.fromEntries(this._epgByChannel),
+                firstDate:new Date(this._firstDate),
+                lastDate:new Date(this._lastDate),
+                lastUpdate:new Date(this._lastUpdate)
+
+            }
+            fs.writeFileSync(path+"/cache.json",JSON.stringify(data,null,2));
+
+        }
+    }
+
+
+    public async loadAll(clear=false) {
         const channels = await tvhClient.getChannelGrid();
         const channelTags = await tvhClient.getChannelTags();
         const contentTypes = await tvhClient.getContentTypes();
+
+        // TODO: Create better handling of big data
+        const events = await tvhClient.getEpgGrid(1000000000);
+        const epgs = events.entries.sort((a, b) => a.start - b.start);
+
+
+        if (clear) {
+            this.clear();
+        }
 
         for (const tag of channelTags.entries) {
             this._channelTags.set(tag.key, tag.val);
@@ -161,9 +211,7 @@ class TVHCache {
 
         // EPG
         // ------------------------
-        // TODO: Create better handling of big data
-        const events = await tvhClient.getEpgGrid(1000000000);
-        const epgs = events.entries.sort((a, b) => a.start - b.start);
+
 
         for (const epg of epgs) {
 
@@ -173,12 +221,13 @@ class TVHCache {
 
         this._lastUpdate = new Date();
         this.calcDateRanges()
+        this.storeAll()
+
     }
 
     public async reloadAll(retryTime=1) {
-        this.clear();
         try {
-            await this.loadAll();
+            await this.loadAll(true);
         } catch (error) {
             console.error(error) // from creation or business logic
             console.log("Retry !!")
@@ -197,8 +246,8 @@ class TVHCache {
         else {
             const res: ITVHEpgEvent[] = []
             for (const epg of ch) {
-                if (epg.startDate >= start || epg.stopDate >= start) {
-                    if (stop === undefined || epg.startDate < stop) {
+                if (new Date(epg.startDate) >= start || new Date(epg.stopDate) >= start) {
+                    if (stop === undefined || new Date(epg.startDate) < stop) {
                         res.push(epg)
                     }
                 }
@@ -209,11 +258,12 @@ class TVHCache {
 }
 
 export const tvhCache = new TVHCache();
+tvhCache.loadFromCache();
 
 export function initCache(cache:TVHCache, reloadTime=30, retryTime=1,retries=5) {
     console.log("preload Started")
     // preload cache
-    const loading = cache.loadAll()
+    const loading = cache.loadAll(true)
     loading.then(() => {
 	    console.log(`Preload Finished `)
 	    setInterval(() => cache.reloadAll(retryTime), (1000 * 60 * reloadTime))
