@@ -7,4 +7,5 @@ export interface ServerStatus {
 
     numEvents: number;
     numChannels: number;
+    cacheUUID:string;
 }
