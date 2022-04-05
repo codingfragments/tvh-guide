@@ -113,8 +113,8 @@ class TVHCache {
     }
 
     private  convertEPG(epg: ITVHEpgEvent) {
-        epg.startDate = new Date(epg.start * 1000).toDateString();
-        epg.stopDate = new Date(epg.stop * 1000).toDateString();
+        epg.startDate = new Date(epg.start * 1000).toISOString();
+        epg.stopDate = new Date(epg.stop * 1000).toISOString();
         epg.widescreen = toBool(epg.widescreen)
         epg.subtitled = toBool(epg.subtitled)
         epg.channel = this._channels.get(epg.channelUuid)
