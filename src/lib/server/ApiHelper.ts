@@ -3,6 +3,9 @@ import type { ITVHChannel, ITVHEpgEvent } from "$lib/types/epg-interfaces"
 import type {TVHCache} from "$lib/server/tvh/tvh-cache"
 
 export class EPGFilter{
+    addChannel(channel: ITVHChannel) {
+        this.channels.push(channel)
+    }
     public constructor(private tvh:TVHCache,
          private channels:ITVHChannel[]=[], private fromDate:Date=null,private toDate:Date=null,
          private nowDate:Date=null){
@@ -11,6 +14,12 @@ export class EPGFilter{
     public filter (epg:ITVHEpgEvent[]=null){
         if (epg == null){
             epg = this.tvh.epgSorted;
+        }
+        if (this.channels.length >0){
+            epg= epg.filter( (event)=>{
+                const cid = event.channel.uuid;
+                return this.channels.find((ch)=>{return ch.uuid==cid}) != null
+            })
         }
         epg = epg.filter( (event)=>{
             let erg=true;
@@ -54,8 +63,15 @@ export class EPGFilter{
 
 
 }
-export  class SearchRange {
-    filter(epgs: ITVHEpgEvent[]) {
+export  class SearchRange<T> {
+    filterMap(elements: Map<string, T>) {
+        return this.filter(Array.from(elements.values()))
+    }
+    filterIterator (elements:IterableIterator<T>){
+        return this.filter(Array.from(elements))
+    }
+
+    filter(epgs: T[]) {
       return epgs.slice(this.first,this.last)
     }
     fillResponseInfo(body = {}, totalLength: number) {
