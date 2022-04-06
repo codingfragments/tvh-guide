@@ -14,7 +14,7 @@ const tvhClient = new TVHeadendClient(serverCfg.tvheadend.host,
 
 
 
-class TVHCache {
+export class TVHCache {
     private _channelTags = new Map<string, string>()
     private _contentTypes = new Map<string, string>()
     private _channels = new Map<string, ITVHChannel>();
@@ -40,7 +40,7 @@ class TVHCache {
     get epg() { return this._epg }
     get epgByChannel() { return this._epgByChannel }
     get dateRange() { return { start: this._firstDate, stop: this._lastDate } }
-
+    get epgSorted(){return this._epgSorted }
 
     public  getEpgEntriesByTime(start=0,end=9999999) {
         return Array.from(this._epg.values()).slice(start,end)
