@@ -20,6 +20,8 @@ class TVHCache {
     private _channels = new Map<string, ITVHChannel>();
     private _epg = new Map<string, ITVHEpgEvent>();
     private _epgByChannel = new Map<string, ITVHEpgEvent[]>();
+    private _epgSorted = new Array< ITVHEpgEvent>();
+
     private _firstDate?: Date;
     private _lastDate?: Date;
     private _lastUpdate?: Date;
@@ -39,12 +41,18 @@ class TVHCache {
     get epgByChannel() { return this._epgByChannel }
     get dateRange() { return { start: this._firstDate, stop: this._lastDate } }
 
+
+    public  getEpgEntriesByTime(start=0,end=9999999) {
+        return Array.from(this._epg.values()).slice(start,end)
+    }
+
     public clear() {
         this._channels.clear();
         this._channelTags.clear();
         this._epgByChannel.clear();
         this._contentTypes.clear();
         this._epg.clear();
+        this._epgSorted = [];
         this._firstDate = undefined;
         this._lastDate = undefined;
         this.uuid = uuidv4();
@@ -149,8 +157,9 @@ class TVHCache {
                     this._firstDate=new Date(dat.firstDate);
                     this._lastDate=new Date(dat.lastDate);
                     this._lastUpdate=new Date(dat.lastUpdate);
+                    this._epgSorted= Array.from(this._epg.values()).sort((a,b)=>{return a.start-b.start})
 
-                    debugger;
+
                 }
             });
         }
@@ -221,6 +230,8 @@ class TVHCache {
 
         this._lastUpdate = new Date();
         this.calcDateRanges()
+        this._epgSorted= Array.from(this._epg.values()).sort((a,b)=>{return a.start-b.start})
+
         this.storeAll()
 
     }
