@@ -123,3 +123,16 @@ export function httpErr404(msg="Not found",request={}){
         }
     }
 }
+
+
+export function epgEventsQuery(filter: EPGFilter, url: URL, body:Record<string,unknown>,epgs:ITVHEpgEvent[]) {
+    const range = new SearchRange<ITVHEpgEvent>();
+
+    filter.fromUrl(url);
+    range.fromUrl(url);
+
+    const filteredEvents = filter.filter(epgs);
+    const events = range.filter(filteredEvents);
+    range.fillResponseInfo(body, filteredEvents.length);
+    body["events"] = events;
+}

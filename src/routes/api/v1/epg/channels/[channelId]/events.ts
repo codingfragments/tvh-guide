@@ -1,6 +1,6 @@
 import type { RequestHandlerOutput } from "@sveltejs/kit";
 
-import {EPGFilter, httpErr404, SearchRange} from "$lib/server/ApiHelper"
+import {epgEventsQuery, EPGFilter, httpErr404, SearchRange} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 import type { ITVHEpgEvent } from "$lib/types/epg-interfaces";
@@ -15,18 +15,9 @@ export async function get({url,params}) :Promise<RequestHandlerOutput>{
     body['channel'] = tvhCache.channels.get(channelId)
 
 
-    // TODO Refactor these different shortcuts
     const filter= new EPGFilter(tvhCache);
     filter.addChannel(body['channel']);
-    const range=new SearchRange<ITVHEpgEvent>()
-
-    filter.fromUrl(url);
-    range.fromUrl(url);
-
-    const  filteredEvents = filter.filter(tvhCache.epgSorted)
-    const events = range.filter(filteredEvents)
-    range.fillResponseInfo(body,filteredEvents.length);
-    body["events"]=events
+    epgEventsQuery(filter, url, body,tvhCache.epgSorted);
 
     return {
       body: body

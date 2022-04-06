@@ -1,24 +1,15 @@
 import type { RequestHandlerOutput } from "@sveltejs/kit";
 
-import {EPGFilter, SearchRange} from "$lib/server/ApiHelper"
+import {epgEventsQuery, EPGFilter} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
-import type { ITVHEpgEvent } from "$lib/types/epg-interfaces";
 
 /** @type {import('./').RequestHandler} */
 export async function get({url}) :Promise<RequestHandlerOutput>{
-    const filter= new EPGFilter(tvhCache);
-    const range=new SearchRange<ITVHEpgEvent>()
+  const body = {}
+  const filter= new EPGFilter(tvhCache);
+  epgEventsQuery(filter, url, body,tvhCache.epgSorted);
 
-    filter.fromUrl(url);
-    range.fromUrl(url);
-
-    console.log(filter)
-    const  filteredEvents = filter.filter(tvhCache.epgSorted)
-    const events = range.filter(filteredEvents)
-    const body = {}
-    range.fillResponseInfo(body,filteredEvents.length);
-    body["events"]=events
 
     return {
       body: body
