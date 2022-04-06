@@ -15,7 +15,7 @@ export class EPGFilter{
         epg = epg.filter( (event)=>{
             let erg=true;
             erg = this.fromDate ? new Date(event.startDate)>= this.fromDate : erg;
-            erg = this.toDate ? new Date(event.stopDate)<= this.toDate:erg;
+            erg = this.toDate ? new Date(event.startDate)<= this.toDate:erg;
             erg = this.nowDate ? (new Date(event.stopDate)>this.nowDate && new Date(event.startDate)<=this.nowDate):erg;
 
             return erg;
