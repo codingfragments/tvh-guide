@@ -33,6 +33,15 @@ export interface ITVHResponse<T> extends ITVHResponseBase {
 
 type TVHUuid = string;
 
+export interface ITVHChannelTag{
+    uuid:string;
+    name:string;
+}
+
+export interface ITVHGenre{
+    name:string,
+    tvhIds:number[]
+}
 export interface ITVHChannel {
     autoname: boolean;
     bouquet: string;

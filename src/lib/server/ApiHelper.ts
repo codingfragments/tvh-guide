@@ -3,11 +3,14 @@ import type { ITVHChannel, ITVHEpgEvent } from "$lib/types/epg-interfaces"
 import type {TVHCache} from "$lib/server/tvh/tvh-cache"
 
 export class EPGFilter{
+    addGenreTag(tag: string) {
+        this.genres.push(tag)
+    }
     addChannel(channel: ITVHChannel) {
         this.channels.push(channel)
     }
     public constructor(private tvh:TVHCache,
-         private channels:ITVHChannel[]=[], private fromDate:Date=null,private toDate:Date=null,
+         private channels:ITVHChannel[]=[], private genres:string[]=[], private fromDate:Date=null,private toDate:Date=null,
          private nowDate:Date=null){
     }
 
@@ -19,6 +22,17 @@ export class EPGFilter{
             epg= epg.filter( (event)=>{
                 const cid = event.channel.uuid;
                 return this.channels.find((ch)=>{return ch.uuid==cid}) != null
+            })
+        }
+
+        if (this.genres.length >0) {
+            epg = epg.filter( (event)=>{
+                if (!event.genre) return false;
+                return event.genre.find((t)=>{
+                    if (this.genres.includes(t.toLowerCase())){
+                        return true;
+                    }
+                }) != null
             })
         }
         epg = epg.filter( (event)=>{
@@ -58,6 +72,10 @@ export class EPGFilter{
             }
         }
 
+        // TODO allow Genre filter from URL
+        // TODO allow Channel filter from URL
+        // TODO allow ChannelTag Filter from URL
+
 
     }
 
@@ -77,7 +95,7 @@ export  class SearchRange<T> {
     fillResponseInfo(body = {}, totalLength: number) {
         body["first"]=this.first
         body["page"]=this.page
-        body["maxPage"]=Math.ceil(totalLength/this.range)
+        body["maxPage"]=Math.ceil(totalLength/this.range)-1
         body["results"]=totalLength
         }
     constructor(public page = 0, public range=10){
