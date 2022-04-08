@@ -4,20 +4,12 @@ import type {
 	ITVHEpgEvent,
 	ITVHGenre
 } from '$lib/types/epg-interfaces';
-import { TVHeadendClient } from './tvheadend-client';
-import { serverCfg } from '$lib/server/globals';
+import { createTVHClient } from './tvheadend-client';
 import { v4 as uuidv4 } from 'uuid';
 import type { ServerStatus } from '$lib/types/api';
 import type { FSCache } from '$lib/types/cache';
 import { toBool } from '$lib/tools';
 import * as fs from 'fs';
-
-const tvhClient = new TVHeadendClient(
-	serverCfg.tvheadend.host,
-	serverCfg.tvheadend.port,
-	serverCfg.tvheadend.username,
-	serverCfg.tvheadend.password
-);
 
 export class TVHCache {
 	private _channelTags = new Map<string, string>();
@@ -232,6 +224,7 @@ export class TVHCache {
 	}
 
 	public async loadAll(clear = false) {
+		const tvhClient = createTVHClient()
 		const channels = await tvhClient.getChannelGrid();
 		const channelTags = await tvhClient.getChannelTags();
 		const contentTypes = await tvhClient.getContentTypes();

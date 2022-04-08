@@ -1,6 +1,6 @@
 import type { RequestHandlerOutput } from "@sveltejs/kit";
 
-import {httpErr404, SearchRange} from "$lib/server/ApiHelper"
+import {httpErr404} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 
