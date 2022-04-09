@@ -22,7 +22,7 @@ export class NavRoute {
 
 {#if vertical}
   <nav class="flex flex-col h-full w-full justify-start items-end">
-    <div class="h-32 flex flex-col pr-4 pt-2 ">
+    <div class="h-24 flex flex-col pr-4 pt-2 ">
       <Icon icon="dvr" size="{collapsed ? 'l' : 'xl'}" class="self-end text-white " />
       <!-- <div class="transform origin-top-left -rotate-90 translate-x-3 translate-y-4 italic font-bold">EPG@Home</div> -->
     </div>
