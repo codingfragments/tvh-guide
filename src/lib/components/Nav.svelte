@@ -1,0 +1,55 @@
+<script lang="ts" context="module">
+export class NavRoute {
+    constructor(
+        public path: string,
+        public segment: string,
+        public label: string,
+        public icon: string = undefined) { }
+}
+</script>
+
+<script lang="ts">
+  import Icon from "./Icon.svelte";
+
+  export let segment: string;
+  export let routes: NavRoute[] = [];
+  export let vertical = false;
+  export let collapsed = false;
+  const cssItem = "overflow-hidden overflow-ellipsis w-14 justify-end text-theme-onPrimaryInactive";
+  const cssItemSelected = "overflow-hidden overflow-ellipsis w-14 text-theme-secondary    justify-end";
+  $: console.log("NAV", vertical);
+</script>
+
+{#if vertical}
+  <nav class="flex flex-col h-full w-full justify-start items-end">
+    <div class="h-32 flex flex-col pr-4 pt-2 ">
+      <Icon icon="dvr" size="{collapsed ? 'l' : 'xl'}" class="self-end text-white " />
+      <!-- <div class="transform origin-top-left -rotate-90 translate-x-3 translate-y-4 italic font-bold">EPG@Home</div> -->
+    </div>
+    {#each routes as route}
+      <a href={route.path}>
+        <div class="w-full flex flex-row {segment == route.segment ? cssItemSelected : cssItem} mt-2 h-8">
+          <div class="text-base   pl-2 self-center" class:hidden={collapsed}>{route.label}</div>
+          <Icon icon={route.icon} size="l" class="px-4 self-center" />
+        </div>
+      </a>
+    {/each}
+    <div class="h-full flex-grow" />
+    <div class="mr-2 mb-2" on:click={() => (collapsed = !collapsed)}>
+      <Icon icon="navigate_{collapsed ? 'next' : 'before'}" class="{ collapsed? "text-theme-secondary" : "text-theme-onPrimaryInactive" } " size="l" />
+    </div>
+  </nav>
+{:else}
+  <nav class="flex h-full">
+    <div class="flex-1 flex flex-row justify-evenly self-center  ">
+      {#each routes as route}
+        <a href={route.path}>
+          <div class="flex flex-col {segment == route.segment ? cssItemSelected : cssItem} h-12">
+            <div class="material-icons md-24 self-center">{route.icon}</div>
+            <div class="text-sm  self-center">{route.label}</div>
+          </div>
+        </a>
+      {/each}
+    </div>
+  </nav>
+{/if}
