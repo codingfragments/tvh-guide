@@ -7,7 +7,7 @@ export async function sleep(time: number) {
 }
 
 export function floorDate(d: Date): Date {
-    let d2 = new Date(d.getTime());
+    const d2 = new Date(d.getTime());
     d2.setHours(0)
     d2.setMinutes(0)
     d2.setSeconds(0)
