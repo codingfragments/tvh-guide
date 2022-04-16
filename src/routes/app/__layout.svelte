@@ -43,7 +43,7 @@
     .grid-container {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: minmax(0, 1fr) 75px;
+      grid-template-rows: minmax(0, 1fr) 65px;
       gap: 0px 0px;
       grid-template-areas:
         "grdMain"
