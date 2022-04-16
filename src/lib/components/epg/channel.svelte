@@ -70,7 +70,7 @@
 			{channel.number}
 		</div>
 	{/if}
-	<div class="col-start-2 pl-2">
+	<div class="col-start-2">
 		<img
 			src={convertImagePath(channel.icon_public_url)}
 			alt={channel.name}
