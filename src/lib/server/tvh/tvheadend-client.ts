@@ -1,4 +1,4 @@
-import type { AxiosBasicCredentials, AxiosRequestConfig } from 'axios';
+import type { AxiosBasicCredentials, AxiosRequestConfig, AxiosResponse } from 'axios';
 import type { ITVHChannel, ITVHEpgEvent, ITVHResponse, ITVHTag } from '$lib/types/epg-interfaces';
 import { HttpClient } from './http-client';
 import { serverCfg } from '../globals';
@@ -12,7 +12,7 @@ export class TVHeadendClient extends HttpClient {
 		private _username: string,
 		private _password: string
 	) {
-		super(`http://${_host}:${_port}/api/`, { auth: { username: _username, password: _password } });
+		super(`http://${_host}:${_port}/`, { auth: { username: _username, password: _password } });
 		this.auth = { username: _username, password: _password };
 		this._initializeRequestInterceptor();
 	}
@@ -28,29 +28,34 @@ export class TVHeadendClient extends HttpClient {
 	//    public getEpgGrid = () => this.instance.get<any>('/users');
 
 	public async getChannelGrid(count = 99999): Promise<ITVHResponse<ITVHChannel>> {
-		return await this.instance.get<ITVHResponse<ITVHChannel>>('channel/grid', {
+		return await this.instance.get<ITVHResponse<ITVHChannel>>('/api/channel/grid', {
 			params: { limit: count }
 		});
 	}
 	public async getEpgGrid(count = 99999): Promise<ITVHResponse<ITVHEpgEvent>> {
-		const events = await this.instance.get<ITVHResponse<ITVHEpgEvent>>('epg/events/grid', {
+		const events = await this.instance.get<ITVHResponse<ITVHEpgEvent>>('/api/epg/events/grid', {
 			params: { limit: count }
 		});
 		events.total = events.totalCount;
 		return events;
 	}
 	public async getChannelTags(count = 99999): Promise<ITVHResponse<ITVHTag>> {
-		return await this.instance.get<ITVHResponse<ITVHTag>>('channeltag/list', {
+		return await this.instance.get<ITVHResponse<ITVHTag>>('/api/channeltag/list', {
 			params: { limit: count }
 		});
 	}
 
 	public async getContentTypes(): Promise<ITVHResponse<ITVHTag>> {
 		//api/epg/content_type/list
-		return await this.instance.get<ITVHResponse<ITVHTag>>('epg/content_type/list', {
+		return await this.instance.get<ITVHResponse<ITVHTag>>('/api/epg/content_type/list', {
 			params: { full: 1 }
 		});
 	}
+
+	public async getImage(path: string): Promise<AxiosResponse<ArrayBuffer>> {
+		return await this.instance.get('/imagecache/'+path,{responseType: 'arraybuffer'})
+    }
+
 }
 
 export function createTVHClient() {
