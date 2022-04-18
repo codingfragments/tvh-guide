@@ -22,6 +22,8 @@
       vertical:{controll:"boolean"},
       collapsed:{controll:"boolean"},
       routes:{controll:"object"},
+      onNavigate: { action: "onNavigate" },
+
   }}
 />
 
@@ -32,6 +34,7 @@
         <div class=" bg-theme-primary text-theme-onPrimary elevation-5 z-tools flex-grow-0">
             <Nav
             {...args}
+            on:navigate={args.onNavigate}
           />
         </div>
         <div class="flex-grow bg-theme-background"></div>
@@ -44,6 +47,8 @@
         <div class=" bg-theme-primary text-theme-onPrimary elevation-5 z-tools flex-grow-0">
             <Nav
             {...args}
+            on:navigate={args.onNavigate}
+
           />
         </div>
 

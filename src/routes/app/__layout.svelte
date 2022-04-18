@@ -1,6 +1,7 @@
 <script lang="ts">
 
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
 
     let segment:string;
 
@@ -32,7 +33,7 @@
   <div class=" h-full" class:grid-container={!$media.lg} class:grid-containerXL={$media.lg}>
 
     <div class="grdNav   bg-theme-primary text-theme-onPrimary elevation-5 z-tools">
-      <Nav {segment} {routes} vertical={$media.lg == true} />
+      <Nav {segment} {routes} vertical={$media.lg == true} on:navigate={(ev)=>{goto(ev.detail.path)}}/>
     </div>
     <main class="grdMain bg-theme-background overflow-y-scroll">
       <slot />
