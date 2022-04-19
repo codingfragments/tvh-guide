@@ -28,7 +28,7 @@
 />
 
 
-<Template let:args>
+<Template let:args >
     {#if args.vertical}
     <div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
         <div class=" bg-theme-primary text-theme-onPrimary elevation-5 z-tools flex-grow-0">
