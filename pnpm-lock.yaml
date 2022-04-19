@@ -7,6 +7,7 @@ specifiers:
   '@storybook/addon-essentials': ^6.4.22
   '@storybook/addon-links': ^6.4.22
   '@storybook/addon-postcss': ^2.0.0
+  '@storybook/addon-storysource': ^6.4.22
   '@storybook/addon-svelte-csf': ^2.0.2
   '@storybook/addons': ^6.4.22
   '@storybook/api': ^6.4.22
@@ -61,6 +62,7 @@ devDependencies:
   '@storybook/addon-essentials': 6.4.22_c675ba20e81132afb035d3fea1d0b84d
   '@storybook/addon-links': 6.4.22_react-dom@17.0.2+react@17.0.2
   '@storybook/addon-postcss': 2.0.0_webpack@5.72.0
+  '@storybook/addon-storysource': 6.4.22_react-dom@17.0.2+react@17.0.2
   '@storybook/addon-svelte-csf': 2.0.2_9aa251791736b20ae145f36c7e70323d
   '@storybook/addons': 6.4.22_react-dom@17.0.2+react@17.0.2
   '@storybook/api': 6.4.22_react-dom@17.0.2+react@17.0.2
@@ -72,7 +74,7 @@ devDependencies:
   '@storybook/theming': 6.4.22_react-dom@17.0.2+react@17.0.2
   '@sveltejs/adapter-auto': 1.0.0-next.34
   '@sveltejs/adapter-node': 1.0.0-next.73
-  '@sveltejs/kit': 1.0.0-next.314_svelte@3.47.0
+  '@sveltejs/kit': 1.0.0-next.315_svelte@3.47.0
   '@tailwindcss/forms': 0.5.0_tailwindcss@3.0.24
   '@typescript-eslint/eslint-plugin': 5.19.0_a8023c488b04c563b8304dd7b58080f4
   '@typescript-eslint/parser': 5.19.0_eslint@7.32.0+typescript@4.5.5
@@ -2635,6 +2637,37 @@ packages:
       - webpack
     dev: true
 
+  /@storybook/addon-storysource/6.4.22_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-BFZ+/+CytET1CQzRe5qbg6Ca7pUKHa7C+pMQkq8M+tFG1f0Ov2Np5OvqXmZQcJeOpK1HDF0EaJv2ESg0CH8ytw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      '@storybook/addons': 6.4.22_react-dom@17.0.2+react@17.0.2
+      '@storybook/api': 6.4.22_react-dom@17.0.2+react@17.0.2
+      '@storybook/client-logger': 6.4.22
+      '@storybook/components': 6.4.22_react-dom@17.0.2+react@17.0.2
+      '@storybook/router': 6.4.22_react-dom@17.0.2+react@17.0.2
+      '@storybook/source-loader': 6.4.22_react-dom@17.0.2+react@17.0.2
+      '@storybook/theming': 6.4.22_react-dom@17.0.2+react@17.0.2
+      core-js: 3.22.0
+      estraverse: 5.3.0
+      loader-utils: 2.0.2
+      prettier: 2.3.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-syntax-highlighter: 13.5.3_react@17.0.2
+      regenerator-runtime: 0.13.9
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: true
+
   /@storybook/addon-svelte-csf/2.0.2_9aa251791736b20ae145f36c7e70323d:
     resolution: {integrity: sha512-fywa26SGWenu8s6dYmKAotEzE/VTQ9oG/haZ7l6BjqaT3MKIvtWyMegBe8QUp/AS0qKJ8riADNSHQXnrpDS6xw==}
     peerDependencies:
@@ -4228,8 +4261,8 @@ packages:
       esbuild: 0.14.36
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.314_svelte@3.47.0:
-    resolution: {integrity: sha512-EkXjEd30XO8+AydBLARxAtI6Ak8V0KFSEJ07sNsrkGq9J70sWPL7yGenhGaeq6S852XZAqeyWd6uGQZmQLR4Wg==}
+  /@sveltejs/kit/1.0.0-next.315_svelte@3.47.0:
+    resolution: {integrity: sha512-f6ufqd9z6uicOOr1eSIclm4TonwoRtw0kuIYrDatYSZtu/081kZ5r0Vj6sXDI6tFI1kctoRzPtFECXf5zkZvlw==}
     engines: {node: '>=14.13'}
     hasBin: true
     peerDependencies:
@@ -4959,7 +4992,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7485,7 +7518,7 @@ packages:
     engines: {node: '>= 10.17.0'}
     hasBin: true
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -8347,7 +8380,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -11646,7 +11679,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.4
       socks: 2.6.2
     transitivePeerDependencies:
       - supports-color
