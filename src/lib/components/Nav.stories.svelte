@@ -1,7 +1,8 @@
 <script lang="ts">
     import { Meta, Template, Story } from "@storybook/addon-svelte-csf";
-    import Nav, { NavRoute } from "./Nav.svelte";
+    import Nav from "./Nav.svelte";
     import { media } from "$lib/client/state/global";
+    import { NavRoute } from "./NavRoute";
 
     const routes = [
       new NavRoute("/app/epg", "epg", "EPG", "dvr"),

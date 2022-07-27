@@ -1,15 +1,10 @@
-<script lang="ts" context="module">
-	export class NavRoute {
-		constructor(
-			public path: string,
-			public segment: string,
-			public label: string,
-			public icon: string = undefined
-		) {}
-	}
+<script context="module" lang="ts">
+
 </script>
 
 <script lang="ts">
+	import type { NavRoute } from './NavRoute';
+
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
