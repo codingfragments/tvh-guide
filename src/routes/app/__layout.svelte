@@ -6,11 +6,11 @@
     let segment:string;
 
     import Nav from "$lib/components/Nav.svelte";
-    import {NavRoute} from "$lib/components/Nav.svelte";
 
     import { onMount } from "svelte";
     import anylogger from "anylogger";
     import { media } from "$lib/client/state/global";
+    import { NavRoute } from '$lib/components/NavRoute';
     const LOG = anylogger("App-Layout");
     onMount(() => LOG("Inner Mount"));
 
