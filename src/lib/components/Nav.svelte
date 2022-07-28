@@ -27,7 +27,7 @@
 			<!-- <div class="transform origin-top-left -rotate-90 translate-x-3 translate-y-4 italic font-bold">EPG@Home</div> -->
 		</div>
 		{#each routes as route}
-			<div on:click={()=>dispatch("navigate",{path:route.path})} class="cursor-pointer">
+			<div on:click={()=>dispatch("navigate",{path:route.path})} class="cursor-pointer pt-4">
 				<div
 					class="w-full flex flex-row {segment == route.segment
 						? cssItemSelected
