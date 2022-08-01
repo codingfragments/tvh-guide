@@ -3,7 +3,7 @@ export class NavRoute{
 			public path: string,
 			public segment: string,
 			public label: string,
-			public icon: string|undefined = undefined
+			public icon: string
 		) {
 		}
     }
