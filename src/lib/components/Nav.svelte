@@ -19,6 +19,7 @@
 	const cssItemSelected =
 		'overflow-hidden overflow-ellipsis w-14 text-theme-secondary    justify-end';
 </script>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 
 {#if vertical}
 	<nav class="flex flex-col h-full w-full justify-start items-end">
