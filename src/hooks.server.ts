@@ -1,5 +1,5 @@
 
-import { browser } from '$app/env';
+import { browser } from '$app/environment';
 import { tvhCache ,initCache} from "$lib/server/tvh/tvh-cache"
 
 initCache(tvhCache);
