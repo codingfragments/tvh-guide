@@ -34,7 +34,7 @@
 						? cssItemSelected
 						: cssItem} mt-2 h-8"
 				>
-					<div class="text-base   pl-2 self-center" class:hidden={collapsed}>{route.label}</div>
+					<div class="text-base    pl-2 self-center" class:hidden={collapsed}>{route.label}</div>
 					<Icon icon={route.icon} size="lg" class="px-4 self-center" />
 				</div>
 			</div>
