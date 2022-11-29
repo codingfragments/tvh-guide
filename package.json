@@ -39,6 +39,7 @@
     "anylogger": "^1.0.11",
     "anylogger-console": "^1.0.0",
     "axios": "^0.27.2",
+    "daisyui": "^2.42.1",
     "dateformat": "^5.0.3",
     "pnpm": "^7.17.1",
     "uuid": "^8.3.2"
