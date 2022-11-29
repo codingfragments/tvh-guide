@@ -82,7 +82,7 @@ const config = {
 			relaxed: 1.75,
 			loose: 2,
 		},
-		colors: colorMap2,
+		colors: colorMap,
 		fontFamily: {
 			sans: ['Roboto', 'sans-serif', 'ui-sans-serif'],
 			serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
@@ -113,8 +113,21 @@ const config = {
 		// require('tailwindcss-scroll-snap'),
 		require('@tailwindcss/forms'),
 		//require('tailwindcss-elevation')(['responsive']),
+		require("daisyui"),
+
 
 	],
+	daisyui: {
+		styled: true,
+		// themes: ["light" , "autumn", "cupcake", "dark","retro", "cmyk"],
+		themes: true,
+		base: true,
+		utils: true,
+		logs: true,
+		rtl: false,
+		prefix: "",
+		darkTheme: "dark",
+	  },
 };
 
 module.exports = config;

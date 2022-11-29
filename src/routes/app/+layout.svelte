@@ -30,12 +30,12 @@
         }
     }
   </script>
-  <div class=" h-full" class:grid-container={!$media.lg} class:grid-containerXL={$media.lg}>
+  <div class=" h-full" class:grid-container={!$media.lg} class:grid-containerXL={$media.lg} data-theme='bumblebee'>
 
-    <div class="grdNav   bg-theme-primary text-theme-onPrimary elevation-5 z-tools">
+    <div class="grdNav   bg-base-300 text-base-content elevation-5 z-tools">
       <Nav {segment} {routes} vertical={$media.lg == true} on:navigate={(ev)=>{goto(ev.detail.path)}}/>
     </div>
-    <main class="grdMain bg-theme-background overflow-y-scroll">
+    <main class="grdMain bg-base-100 overflow-y-scroll">
       <slot />
     </main>
   </div>
