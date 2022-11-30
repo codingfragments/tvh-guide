@@ -1,4 +1,5 @@
 import type { ITVHChannel, ITVHEpgEvent } from "$lib/types/epg-interfaces"
+import { error } from '@sveltejs/kit';
 
 import type {TVHCache} from "$lib/server/tvh/tvh-cache"
 
@@ -133,13 +134,12 @@ export  class SearchRange<T> {
 }
 
 export function httpErr404(msg="Not found",request={}){
-    return {
-        status:404,
-        body:{
-            msg:msg,
-            req:request
-        }
+    const eBody={
+        msg:msg,
+        req:request
     }
+    return error(404,eBody as unknown as Error);
+
 }
 
 
