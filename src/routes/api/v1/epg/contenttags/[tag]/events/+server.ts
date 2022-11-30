@@ -1,15 +1,16 @@
-import type { RequestHandlerOutput } from "@sveltejs/kit";
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 import { epgEventsQuery, EPGFilter, httpErr404 } from "$lib/server/ApiHelper";
+import { json } from '@sveltejs/kit';
 
 import { SearchRange} from "$lib/server/ApiHelper"
 import type { ITVHChannel } from "$lib/types/epg-interfaces";
 
-/** @type {import('./').RequestHandler} */
-export async function get({params,url}) :Promise<RequestHandlerOutput>{
-
-    const body = {}
+/** @type {import('@sveltejs/kit').RequestHandler<{
+ *   tag: string;
+ * }>} */
+export function GET({ params,url }:{params:any,url:URL}) {
+    const body : Record<string,unknown> = {}
 
     // check for tags Either a clear type or UUID.
     // If a clear text tag is given it will return the first positive match.
@@ -35,7 +36,5 @@ export async function get({params,url}) :Promise<RequestHandlerOutput>{
         filter.addGenreTag(tag.name)
     }
     epgEventsQuery(filter, url, body,tvhCache.epgSorted);
-    return {
-      body: body
-    };
+    return json(body);
 }

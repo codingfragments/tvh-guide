@@ -1,12 +1,14 @@
-import type { RequestHandlerOutput } from "@sveltejs/kit";
+import { json } from '@sveltejs/kit';
 
 import { SearchRange} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 import type { ITVHChannel } from "$lib/types/epg-interfaces";
 
-/** @type {import('./').RequestHandler} */
-export async function get({url}) :Promise<RequestHandlerOutput>{
+
+/** @type {import('./$types').RequestHandler} */
+export function GET({ url }:{url:URL}) {
+
     const range=new SearchRange<ITVHChannel>()
 
     range.fromUrl(url);
@@ -15,11 +17,9 @@ export async function get({url}) :Promise<RequestHandlerOutput>{
     channels = channels.sort((c1,c2)=>{return c1.number-c2.number})
 
     channels = range.filter(channels)
-    const body = {}
+    const body:Record<string,unknown>  = {}
     range.fillResponseInfo(body,tvhCache.channels.size);
 
     body["channels"]=channels
-    return {
-      body: body
-    };
+    return json(body);
 }
