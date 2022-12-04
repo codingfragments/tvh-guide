@@ -3,8 +3,8 @@ import { json } from '@sveltejs/kit';
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 
 
-/** @type {import('./$types').RequestHandler} */
-export function GET({ url }:{url:URL}) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ()=> {
 
     const tags = tvhCache.channelTags
     const body :Record<string,unknown> = {}

@@ -5,9 +5,10 @@ import {epgEventsQuery, EPGFilter} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 
-/** @type {import('./$types').RequestHandler} */
-export function GET({ url }:{url:URL}) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ({url})=> {
   const body = {}
+  console.log(url)
   const filter= new EPGFilter(tvhCache);
   epgEventsQuery(filter, url, body,tvhCache.epgSorted);
 

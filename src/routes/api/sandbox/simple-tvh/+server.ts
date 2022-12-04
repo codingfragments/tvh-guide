@@ -5,9 +5,8 @@ import {httpErr404, SearchRange} from "$lib/server/ApiHelper"
 
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 
-/** @type {import('@sveltejs/kit').RequestHandler<{
- * }>} */
-export function GET({ params,url }:{params:Record<string,string>,url:URL}) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ()=> {
 
     const body:Record<string,unknown> = {}
     body["health"]="OK"

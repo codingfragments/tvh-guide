@@ -6,8 +6,8 @@ import {tvhCache} from "$lib/server/tvh/tvh-cache"
 import type { ITVHChannel } from "$lib/types/epg-interfaces";
 
 
-/** @type {import('./$types').RequestHandler} */
-export function GET({ url }:{url:URL}) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ({url})=> {
 
     const range=new SearchRange<ITVHChannel>()
 

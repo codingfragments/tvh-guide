@@ -6,13 +6,11 @@ import type { ITVHChannel, ITVHEpgEvent } from "$lib/types/epg-interfaces";
 
 import { json } from '@sveltejs/kit';
 
-/** @type {import('@sveltejs/kit').RequestHandler<{
- *   channelId: string;
- * }>} */
-export function GET({ params,url }:{params:Record<string,string>,url:URL}) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ({params,url})=> {
     const channelId = params.channelId;
     if (!tvhCache.channels.has(channelId)) {
-        return httpErr404("Channel not found",params)
+        throw httpErr404("Channel not found",params)
     }
     const body:Record<string,unknown>  ={}
     body['channel'] = tvhCache.channels.get(channelId)

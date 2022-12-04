@@ -1,16 +1,14 @@
 import { json } from '@sveltejs/kit';
 
-import {tvhCache} from "$lib/server/tvh/tvh-cache"
 import { epgEventsQuery, EPGFilter, httpErr404 } from "$lib/server/ApiHelper";
+import { tvhCache } from "$lib/server/tvh/tvh-cache";
 
-import { SearchRange} from "$lib/server/ApiHelper"
+import { SearchRange } from "$lib/server/ApiHelper";
 import type { ITVHChannel } from "$lib/types/epg-interfaces";
 
 
-/** @type {import('@sveltejs/kit').RequestHandler<{
- *   tag: string;
- * }>} */
-export function GET({ params,url }:{params:Record<string,string>,url:URL}) {
+import type { RequestHandler } from './$types';
+export const GET:RequestHandler = ({params,url})=> {
 
     const tags = tvhCache.channelTags
     const body :Record<string,unknown> = {}
@@ -25,7 +23,7 @@ export function GET({ params,url }:{params:Record<string,string>,url:URL}) {
     })
 
     if (!tagFilter) {
-        return httpErr404("Tag not found !",params)
+        throw httpErr404("Tag not found !",params)
     }
 
     const range=new SearchRange<ITVHChannel>()

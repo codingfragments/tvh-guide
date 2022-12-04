@@ -4,8 +4,8 @@ import { json } from '@sveltejs/kit';
 import {tvhCache} from "$lib/server/tvh/tvh-cache"
 
 
-/** @type {import('./$types').RequestHandler} */
-export function GET({ }) {
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ()=> {
     const tags = tvhCache.genres
     return json ({tags: tags})
 }

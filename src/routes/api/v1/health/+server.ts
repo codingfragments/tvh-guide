@@ -2,8 +2,9 @@ import { error } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
 
 
-/** @type {import('./$types').RequestHandler} */
-export function GET({ }) {
+
+import type {RequestHandler} from './$types'
+export const GET:RequestHandler = ()=> {
       const resp = new Response()
       resp.json
       return json({
