@@ -1,13 +1,13 @@
 @tailwind base;
 
 h1 {
-    @apply text-2xl;
+    @apply text-xl font-bold;
   }
   h2 {
-    @apply text-xl;
+    @apply text-lg;
   }
   h3 {
-    @apply text-lg;
+    @apply font-bold;
   }
 
 

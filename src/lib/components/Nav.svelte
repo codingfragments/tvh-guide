@@ -35,8 +35,8 @@
 						class:active={segment == route.segment}
 						on:click={() => dispatch('navigate', { path: route.path })}
 					>
-						<span class="flex-grow text-lg" class:hidden={collapsed}>{route.label}</span>
-						<Icon icon={route.icon} size="lg" class=" self-center " />
+						<span class="flex-grow text-md" class:hidden={collapsed}>{route.label}</span>
+						<Icon icon={route.icon} size="md" class=" self-center " />
 					</div>
 				</li>
 			{/each}

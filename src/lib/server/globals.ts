@@ -10,8 +10,4 @@ function loadCfg(cfgFile='./static/config.json') {
     return <Settings>jsonObj;
 }
 
-export function saveCfg(cfgFile='./static/config.json') {
-    console.log("🚀 ~ file: globals.ts ~ line 14 ~ saveCfg ~ cfgFile", cfgFile)
-}
-
 export const serverCfg = loadCfg();
