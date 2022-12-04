@@ -16,7 +16,7 @@ specifiers:
   daisyui: ^2.42.1
   dateformat: ^5.0.3
   eslint: ^8.26.0
-  pnpm: ^7.17.1
+  pnpm: ^7.18.0
   postcss: ^8.4.19
   prettier: ^2.7.1
   prettier-plugin-svelte: ^2.8.0
@@ -32,11 +32,11 @@ specifiers:
 
 dependencies:
   anylogger: 1.0.11
-  anylogger-console: 1.0.0
+  anylogger-console: 1.0.0_anylogger@1.0.11
   axios: 0.27.2
   daisyui: 2.42.1_2lwn2upnx27dqeg6hqdu7sq75m
   dateformat: 5.0.3
-  pnpm: 7.17.1
+  pnpm: 7.18.0
   uuid: 8.3.2
 
 devDependencies:
@@ -57,7 +57,7 @@ devDependencies:
   svelte-check: 2.9.2_ihqewwycgzwzieh4kifndbsfy4
   svelte-loader: 3.1.3_svelte@3.52.0
   svelte-preprocess: 4.10.7_mlsh6pvjpjxznz4mrycceqr6cm
-  tailwindcss: 3.2.4
+  tailwindcss: 3.2.4_postcss@8.4.19
   tslib: 2.4.0
   typescript: 4.8.4
   vite: 3.2.2
@@ -302,7 +302,7 @@ packages:
       tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.2.4
+      tailwindcss: 3.2.4_postcss@8.4.19
     dev: true
 
   /@tailwindcss/typography/0.5.8_tailwindcss@3.2.4:
@@ -314,7 +314,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4
+      tailwindcss: 3.2.4_postcss@8.4.19
     dev: true
 
   /@types/cookie/0.5.1:
@@ -530,8 +530,10 @@ packages:
       color-convert: 2.0.1
     dev: true
 
-  /anylogger-console/1.0.0:
+  /anylogger-console/1.0.0_anylogger@1.0.11:
     resolution: {integrity: sha512-xI6P4THJxkxOZP6JOqWttyiSS4P73wXXoMXK/eaMKtOKQtosMEboOcVR2J3J6I/OK5nkO3FIexKZiH3si0psmg==}
+    peerDependencies:
+      anylogger: ^1.0.6
     dependencies:
       anylogger: 1.0.11
     dev: false
@@ -754,7 +756,7 @@ packages:
       css-selector-tokenizer: 0.8.0
       postcss: 8.4.19
       postcss-js: 4.0.0_postcss@8.4.19
-      tailwindcss: 3.2.4
+      tailwindcss: 3.2.4_postcss@8.4.19
     transitivePeerDependencies:
       - ts-node
     dev: false
@@ -1725,8 +1727,8 @@ packages:
     hasBin: true
     dev: true
 
-  /pnpm/7.17.1:
-    resolution: {integrity: sha512-O76jPxzoeja81Z/8YyTfuXt+f7qkpsyEJsNBreWYBLHY5rJkjvNE/bIUGQ2uD/rcYPEtmrZZYox21OjAMC9EGw==}
+  /pnpm/7.18.0:
+    resolution: {integrity: sha512-igZRB0ip8cn9f1glYzsPTJblxQcidY7/fSfJ++j6GYLT0pqIlijsdW9ZI4Waaxhi22SC4HZHe5vMiSa2IKoIoA==}
     engines: {node: '>=14.6'}
     hasBin: true
     dev: false
@@ -2118,10 +2120,12 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /tailwindcss/3.2.4:
+  /tailwindcss/3.2.4_postcss@8.4.19:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3

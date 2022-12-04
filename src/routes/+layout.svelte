@@ -2,37 +2,29 @@
 </script>
 
 <script lang="ts">
-  import "../app.css";
-  import '$lib/globals'
-  import {uiCfg} from '$lib/globals'
+	import '../app.css';
+	import '$lib/globals';
+	import { uiCfg } from '$lib/globals';
 
-  import anylogger from "anylogger";
+	import anylogger from 'anylogger';
 
-  import { onMount } from "svelte";
-  const LOG = anylogger("Main App");
-  export let segment: string;
+	import { onMount } from 'svelte';
+	const LOG = anylogger('Main App');
+	export let segment: string;
 
-  // Check for Media Changes Management
-  // ----------------------------------
-  import { media } from  "$lib/client/state/global";
-  onMount(() => {
-    LOG.info("Mounted main Layout");
-  });
-  $: LOG.info("Viewport Changes :" + $media.classNames);
-  LOG.debug(" Root Navigation ::"+segment)
+	// Check for Media Changes Management
+	// ----------------------------------
+	import { media } from '$lib/client/state/global';
+	onMount(() => {
+		LOG.info('Mounted main Layout');
+	});
+	$: LOG.info('Viewport Changes :' + $media.classNames);
+	LOG.debug(' Root Navigation ::' + segment);
 
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 
-  import type {LayoutData} from './$types'
-  export let data:LayoutData;
-
-
-
-  console.log(data)
-  uiCfg.set(data.uiCfg)
-
-
-
-
+	uiCfg.set(data.uiCfg);
 </script>
 
 <slot />

@@ -187,7 +187,7 @@ export class TVHCache {
 		}
 	}
 
-	public loadFromCache(path = './static/cache') {
+	public loadFromCache(path = './epgcache') {
 		if (fs.existsSync(path + '/cache.json')) {
 			fs.readFile(path + '/cache.json', (err, data) => {
 				if (!err) {
