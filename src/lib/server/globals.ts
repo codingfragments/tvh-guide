@@ -10,4 +10,6 @@ function loadCfg(cfgFile='./static/config.json') {
     return <Settings>jsonObj;
 }
 
-export const serverCfg = loadCfg();
+const cfg = loadCfg();
+export const serverCfg = cfg.server;
+export const uiCfg = cfg.ui;

@@ -111,7 +111,7 @@ const config = {
 	},
 	plugins: [
 		// require('tailwindcss-scroll-snap'),
-		require('@tailwindcss/forms'),
+		// require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
 		//require('tailwindcss-elevation')(['responsive']),
 		require("daisyui"),
