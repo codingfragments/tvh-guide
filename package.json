@@ -5,6 +5,7 @@
     "dev": "vite dev --port 3000 --host 0.0.0.0",
     "build": "vite build",
     "package": "svelte-kit package",
+    "sync": "svelte-kit sync",
     "preview": "vite preview",
     "--prepare": "svelte-kit sync",
     "test": "playwright test",
