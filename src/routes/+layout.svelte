@@ -4,6 +4,7 @@
 <script lang="ts">
   import "../app.css";
   import '$lib/globals'
+  import {uiCfg} from '$lib/globals'
 
   import anylogger from "anylogger";
 
@@ -20,16 +21,11 @@
   $: LOG.info("Viewport Changes :" + $media.classNames);
   LOG.debug(" Root Navigation ::"+segment)
 
-  // CONFIG Management
-  // TODO Implement basic Config Holder !!!
-  // -----------------
-  // import { appConfig, updateCfg } from "../state/Settings";
-  // onMount(async () => {
-  //   updateCfg();
-  // });
-  // $: {
-  //   LOG.info(`Config Changed on Segment ${segment}`, $appConfig);
-  // }
+
+  /** @type {import('./$types').LayoutData} */
+  export let data;
+  uiCfg.set(data.uiCfg)
+
 
 </script>
 

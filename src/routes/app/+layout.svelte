@@ -2,6 +2,7 @@
 
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
+    import {uiCfg,uiThemeDark} from '$lib/globals'
 
     let segment:string;
 
@@ -29,8 +30,12 @@
             segment=$page.url.pathname.substring(pathPrefix.length).split("/")[0]
         }
     }
+
+
   </script>
-  <div class=" h-full" class:grid-container={!$media.lg} class:grid-containerXL={$media.lg} data-theme='bumblebee'>
+  <div class=" h-full" class:grid-container={!$media.lg}
+      class:grid-containerXL={$media.lg}
+      data-theme='{$uiThemeDark?$uiCfg.theme.dark:$uiCfg.theme.light}'>
 
     <div class="grdNav   bg-base-300 text-base-content elevation-5 z-tools">
       <Nav {segment} {routes} vertical={$media.lg == true} on:navigate={(ev)=>{goto(ev.detail.path)}}/>

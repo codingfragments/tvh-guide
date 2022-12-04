@@ -10,13 +10,22 @@ export interface TVHeadSettings {
 export interface PiconSettings {
     base_url: string;
 }
+export interface ThemeSettings {
+    light:string;
+    dark:string;
+}
 export interface UISettings {
+    picons: PiconSettings
     showChannelNumbers: boolean;
+    collapsed:boolean;
+    theme:ThemeSettings;
 }
 
-export interface Settings {
+export interface ServerSettings{
     tvheadend: TVHeadSettings;
-    picons: PiconSettings
+}
+export interface Settings {
+    server:ServerSettings
     ui: UISettings
 }
 

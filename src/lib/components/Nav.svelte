@@ -3,6 +3,7 @@
 
 <script lang="ts">
 	import type { NavRoute } from './NavRoute';
+	import { uiThemeDark } from '$lib/globals';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -17,6 +18,10 @@
 	const cssItem = 'overflow-hidden overflow-ellipsis w-14 justify-end text-base-content';
 	const cssItemSelected =
 		'overflow-hidden overflow-ellipsis w-14 text-primary-focus    justify-end';
+
+	function toggleDarkMode() {
+		$uiThemeDark = !$uiThemeDark;
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -41,8 +46,18 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="h-full flex-grow" />
-		<div class="mr-2 mb-2" on:click={() => (collapsed = !collapsed)}>
+		<div class="h-full" />
+		<div class="flex   pr-4 self-end  ">
+			<div class="tooltip tooltip-right" data-tip={$uiThemeDark?"Switch to light mode.":"Switch to dark mode."}>
+				<button
+					class="btn btn-circle btn-outline btn-sm"
+					on:click={() => ($uiThemeDark = !$uiThemeDark)}
+				>
+					<Icon icon={$uiThemeDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
+				</button>
+			</div>
+		</div>
+		<div class="mr-3 mb-2" on:click={() => (collapsed = !collapsed)}>
 			<Icon
 				icon="navigate_{collapsed ? 'next' : 'before'}"
 				class="{collapsed ? 'text-base-content' : 'text-base-content'} "
