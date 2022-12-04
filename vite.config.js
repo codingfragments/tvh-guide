@@ -4,7 +4,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 const config = {
 	plugins: [sveltekit()],
 	build: {
-		sourcemap: false
+		sourcemap: true
 	}
 
 
