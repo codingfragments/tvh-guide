@@ -1,7 +1,7 @@
-import { epgEventsQuery, EPGFilter, httpErr404, SearchRange } from '$lib/server/ApiHelper';
+import { epgEventsQuery, EPGFilter, httpErr404 } from '$lib/server/ApiHelper';
 
 import { tvhCache } from '$lib/server/tvh/tvh-cache';
-import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
+import type { ITVHChannel } from '$lib/types/epg-interfaces';
 
 import { json } from '@sveltejs/kit';
 

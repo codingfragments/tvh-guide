@@ -8,7 +8,6 @@ import type { ITVHChannel } from '$lib/types/epg-interfaces';
 
 import type { RequestHandler } from './$types';
 export const GET: RequestHandler = ({ params, url }) => {
-	const tags = tvhCache.channelTags;
 	const body: Record<string, unknown> = {};
 
 	// check for tags Either a clear type or UUID.

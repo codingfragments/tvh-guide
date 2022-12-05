@@ -1,6 +1,6 @@
 import type { UISettings } from '$lib/types/config';
 
-import type { LayoutLoad, LayoutData } from './$types';
+import type { LayoutLoad } from './$types';
 
 // type DataOutput = {
 //     uiCfg:UISettings

@@ -1,5 +1,4 @@
 import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
-import { error } from '@sveltejs/kit';
 
 import type { TVHCache } from '$lib/server/tvh/tvh-cache';
 

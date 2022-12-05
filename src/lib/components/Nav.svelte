@@ -15,13 +15,6 @@
 	export let routes: NavRoute[] = [];
 	export let vertical = false;
 	export let collapsed = false;
-	const cssItem = 'overflow-hidden overflow-ellipsis w-14 justify-end text-base-content';
-	const cssItemSelected =
-		'overflow-hidden overflow-ellipsis w-14 text-primary-focus    justify-end';
-
-	function toggleDarkMode() {
-		$uiThemeDark = !$uiThemeDark;
-	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
