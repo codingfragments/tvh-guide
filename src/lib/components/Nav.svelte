@@ -48,7 +48,10 @@
 		</ul>
 		<div class="h-full" />
 		<div class="flex   pr-4 self-end  ">
-			<div class="tooltip tooltip-right" data-tip={$uiThemeDark?"Switch to light mode.":"Switch to dark mode."}>
+			<div
+				class="tooltip tooltip-right"
+				data-tip={$uiThemeDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
+			>
 				<button
 					class="btn btn-circle btn-outline btn-sm"
 					on:click={() => ($uiThemeDark = !$uiThemeDark)}

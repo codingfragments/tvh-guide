@@ -1,21 +1,21 @@
 {
-    "server": {
-        "tvheadend": {
-            "host": "home-tvmaster",
-            "port": 9981,
-            "username": "vdr",
-            "password": "vdr"
-        }
-    },
-    "ui": {
-        "showChannelNumbers": false,
-        "collapsed": false,
-        "theme": {
-            "light": "light",
-            "dark": "dark"
-        },
-        "picons": {
-            "base_url": "https://codingfragments.github.io/tv-epg-picon.github.io/picons/"
-        }
-    }
+	"server": {
+		"tvheadend": {
+			"host": "home-tvmaster",
+			"port": 9981,
+			"username": "vdr",
+			"password": "vdr"
+		}
+	},
+	"ui": {
+		"showChannelNumbers": false,
+		"collapsed": false,
+		"theme": {
+			"light": "light",
+			"dark": "dark"
+		},
+		"picons": {
+			"base_url": "https://codingfragments.github.io/tv-epg-picon.github.io/picons/"
+		}
+	}
 }

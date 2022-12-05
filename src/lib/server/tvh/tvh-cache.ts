@@ -54,7 +54,7 @@ export class TVHCache {
 		});
 	}
 	get genres(): ITVHGenre[] {
-        // TODO Move trhis to a cleanup state after load all or load from cache !!!
+		// TODO Move trhis to a cleanup state after load all or load from cache !!!
 		const genre = new Map<string, ITVHGenre>();
 		for (const tvhGenreEntry of this._contentTypes.entries()) {
 			const newGenre: string[] = [];
@@ -64,18 +64,17 @@ export class TVHCache {
 					newGenre.push(g3.trim().toLowerCase());
 				}
 			} else {
-				newGenre.push( tvhGenre.trim().toLowerCase());
+				newGenre.push(tvhGenre.trim().toLowerCase());
 			}
 
-            for (const ng of newGenre){
-                if (genre.has(ng)) {
-                    const tempGenre = genre.get(ng);
-                    tempGenre.tvhIds.push(parseInt( tvhGenreEntry[0]))
-                } else {
-                    genre.set(ng,{name:ng,tvhIds:[parseInt(tvhGenreEntry[0])]})
-                }
-            }
-
+			for (const ng of newGenre) {
+				if (genre.has(ng)) {
+					const tempGenre = genre.get(ng);
+					tempGenre.tvhIds.push(parseInt(tvhGenreEntry[0]));
+				} else {
+					genre.set(ng, { name: ng, tvhIds: [parseInt(tvhGenreEntry[0])] });
+				}
+			}
 		}
 		return Array.from(genre.values());
 	}
@@ -224,7 +223,7 @@ export class TVHCache {
 	}
 
 	public async loadAll(clear = false) {
-		const tvhClient = createTVHClient()
+		const tvhClient = createTVHClient();
 		const channels = await tvhClient.getChannelGrid();
 		const channelTags = await tvhClient.getChannelTags();
 		const contentTypes = await tvhClient.getContentTypes();

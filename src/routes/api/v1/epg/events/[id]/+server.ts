@@ -4,7 +4,7 @@ import { httpErr404 } from '$lib/server/ApiHelper';
 import { tvhCache } from '$lib/server/tvh/tvh-cache';
 
 import type { RequestHandler } from './$types';
-export const GET: RequestHandler = ({params}) => {
+export const GET: RequestHandler = ({ params }) => {
 	const epgid = params.id;
 
 	if (!tvhCache.epg.has(epgid)) {

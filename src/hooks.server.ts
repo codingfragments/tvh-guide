@@ -1,11 +1,10 @@
-
 import { browser } from '$app/environment';
-import { tvhCache ,initCache} from "$lib/server/tvh/tvh-cache"
+import { tvhCache, initCache } from '$lib/server/tvh/tvh-cache';
 
 initCache(tvhCache);
 
 if (!browser) {
-    console.log("Server Startup")
+	console.log('Server Startup');
 }
 
-export {}
+export {};
