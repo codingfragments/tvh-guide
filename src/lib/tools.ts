@@ -21,10 +21,12 @@ export function mergeDate(day: Date, time: Date) {
 	return new Date(day.setMilliseconds(delta));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function exists(prop: any) {
 	return prop === undefined;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toBool(prop: any) {
 	if (prop === undefined) return false;
 	if (prop) return true;

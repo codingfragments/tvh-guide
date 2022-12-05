@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
 
 import { epgEventsQuery, EPGFilter } from '$lib/server/ApiHelper';
