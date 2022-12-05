@@ -1,27 +1,40 @@
 @tailwind base;
 
 h1 {
-    @apply text-xl font-bold;
-  }
-  h2 {
-    @apply text-lg;
-  }
-  h3 {
-    @apply font-bold;
-  }
-
+	@apply text-xl font-bold;
+}
+h2 {
+	@apply text-lg;
+}
+h3 {
+	@apply font-bold;
+}
 
 @tailwind components;
 @tailwind utilities;
 
 /* Rules for sizing the icon. */
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-32 { font-size: 32px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }
-.material-icons.md-128 { font-size: 128px; }
+.material-icons.md-18 {
+	font-size: 18px;
+}
+.material-icons.md-32 {
+	font-size: 32px;
+}
+.material-icons.md-24 {
+	font-size: 24px;
+}
+.material-icons.md-36 {
+	font-size: 36px;
+}
+.material-icons.md-48 {
+	font-size: 48px;
+}
+.material-icons.md-128 {
+	font-size: 128px;
+}
 
-html, body,#sapper{
-    @apply h-full max-h-full
+html,
+body,
+#sapper {
+	@apply h-full max-h-full;
 }
