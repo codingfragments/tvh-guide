@@ -3,7 +3,6 @@
 
 <script lang="ts">
 	import type { NavRoute } from './NavRoute';
-	import { uiThemeDark } from '$lib/globals';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -15,6 +14,7 @@
 	export let routes: NavRoute[] = [];
 	export let vertical = false;
 	export let collapsed = false;
+	export let themeDark: boolean;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -43,13 +43,13 @@
 		<div class="flex   pr-4 self-end  ">
 			<div
 				class="tooltip tooltip-right"
-				data-tip={$uiThemeDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
+				data-tip={themeDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
 			>
 				<button
 					class="btn btn-circle btn-outline btn-sm"
-					on:click={() => ($uiThemeDark = !$uiThemeDark)}
+					on:click={() => dispatch('toggleTheme', { dark: !themeDark })}
 				>
-					<Icon icon={$uiThemeDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
+					<Icon icon={themeDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
 				</button>
 			</div>
 		</div>
