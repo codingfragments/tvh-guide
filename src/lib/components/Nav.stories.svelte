@@ -21,6 +21,7 @@
 		collapsed: { controll: 'boolean' },
 		routes: { controll: 'object' },
 		onNavigate: { action: 'onNavigate' },
+		onToggleTheme: { action: 'onToggleTheme' },
 		theme: {
 			control: 'select',
 			options: ['light', 'dark'],
@@ -34,7 +35,12 @@
 		{#if args.vertical}
 			<div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
-					<Nav {...args} on:navigate={args.onNavigate} />
+					<Nav
+						{...args}
+						themeDark={args.theme === 'dark'}
+						on:navigate={args.onNavigate}
+						on:toggleTheme={args.onToggleTheme}
+					/>
 				</div>
 				<div class="flex-grow bg-base-100" />
 			</div>
@@ -42,7 +48,13 @@
 			<div class="flex flex-col absolute top-0 bottom-0 left-0 right-0">
 				<div class="flex-grow bg-base-100" />
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
-					<Nav {...args} on:navigate={args.onNavigate} />
+					<Nav
+						{...args}
+						themeDark={args.theme === 'dark'}
+						on:navigate={args.onNavigate}
+						on:toggleTheme={args.onToggleTheme}
+						on:toggleTheme={args.onToggleTheme}
+					/>
 				</div>
 			</div>
 		{/if}

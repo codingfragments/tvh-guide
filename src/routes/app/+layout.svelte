@@ -42,8 +42,12 @@
 			{segment}
 			{routes}
 			vertical={$media.lg == true}
+			themeDark={$uiThemeDark}
 			on:navigate={(ev) => {
 				goto(ev.detail.path);
+			}}
+			on:toggleTheme={(ev) => {
+				$uiThemeDark = ev.detail.dark;
 			}}
 		/>
 	</div>
