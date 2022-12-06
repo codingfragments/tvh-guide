@@ -1,4 +1,15 @@
 import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
+import { json, error } from '@sveltejs/kit';
+
+/** @type {import('./$types').RequestHandler} */
+export function GET() {
+	const resp = new Response();
+	resp.json;
+	return json({
+		serviceHealth: 'OK',
+		serviceUp: true
+	});
+}
 
 import type { TVHCache } from '$lib/server/tvh/tvh-cache';
 
@@ -13,13 +24,13 @@ export class EPGFilter {
 		private tvh: TVHCache,
 		private channels: ITVHChannel[] = [],
 		private genres: string[] = [],
-		private fromDate: Date = null,
-		private toDate: Date = null,
-		private nowDate: Date = null
+		private fromDate: Date | undefined = undefined,
+		private toDate: Date | undefined = undefined,
+		private nowDate: Date | undefined = undefined
 	) {}
 
-	public filter(epg: ITVHEpgEvent[] = null) {
-		if (epg == null) {
+	public filter(epg: ITVHEpgEvent[] | undefined = undefined) {
+		if (epg == undefined) {
 			epg = this.tvh.epgSorted;
 		}
 		if (this.channels.length > 0) {
@@ -47,12 +58,14 @@ export class EPGFilter {
 		}
 		epg = epg.filter((event) => {
 			let erg = true;
-			erg = this.fromDate ? new Date(event.startDate) >= this.fromDate : erg;
-			erg = this.toDate ? new Date(event.startDate) <= this.toDate : erg;
-			erg = this.nowDate
-				? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate
-				: erg;
-
+			// Date Filter only really works if both dates are given
+			if (event.startDate !== undefined && event.stopDate !== undefined) {
+				erg = this.fromDate ? new Date(event.startDate) >= this.fromDate : erg;
+				erg = this.toDate ? new Date(event.startDate) <= this.toDate : erg;
+				erg = this.nowDate
+					? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate
+					: erg;
+			}
 			return erg;
 		});
 		return epg;
@@ -64,21 +77,21 @@ export class EPGFilter {
 		// DATE Filter
 		if (params.has('filterFrom')) {
 			try {
-				this.fromDate = new Date(params.get('filterFrom'));
+				this.fromDate = new Date(<string>params.get('filterFrom'));
 			} catch {
 				console.error('Wrong conversion, keep default');
 			}
 		}
 		if (params.has('filterTo')) {
 			try {
-				this.toDate = new Date(params.get('filterTo'));
+				this.toDate = new Date(<string>params.get('filterTo'));
 			} catch {
 				console.error('Wrong conversion, keep default');
 			}
 		}
 		if (params.has('filterAt')) {
 			try {
-				this.nowDate = new Date(params.get('filterAt'));
+				this.nowDate = new Date(<string>params.get('filterAt'));
 			} catch {
 				console.error('Wrong conversion, keep default');
 			}
@@ -100,7 +113,7 @@ export class SearchRange<T> {
 	filter(epgs: T[]) {
 		return epgs.slice(this.first, this.last);
 	}
-	fillResponseInfo(body = {}, totalLength: number) {
+	fillResponseInfo(body: Record<string, unknown> = {}, totalLength: number) {
 		body['first'] = this.first;
 		body['page'] = this.page;
 		body['maxPage'] = Math.ceil(totalLength / this.range) - 1;
@@ -118,14 +131,14 @@ export class SearchRange<T> {
 	public fromUrl(url: URL) {
 		if (url.searchParams.has('page')) {
 			try {
-				this.page = parseInt(url.searchParams.get('page'));
+				this.page = parseInt(<string>url.searchParams.get('page'));
 			} catch {
 				console.error('Wrong conversion, keep default');
 			}
 		}
 		if (url.searchParams.has('range')) {
 			try {
-				this.range = parseInt(url.searchParams.get('range'));
+				this.range = parseInt(<string>url.searchParams.get('range'));
 			} catch {
 				console.error('Wrong conversion, keep default');
 			}

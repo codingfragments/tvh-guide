@@ -1,4 +1,5 @@
 export interface FSCache {
+	currentDataVersion: number;
 	channelTags: object;
 	contentTypes: object;
 	channels: object;
