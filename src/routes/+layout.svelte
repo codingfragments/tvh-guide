@@ -4,7 +4,7 @@
 <script lang="ts">
 	import '../app.css';
 	import '$lib/globals';
-	import { uiCfg } from '$lib/globals';
+	import { uiCfg, uiThemeDark } from '$lib/globals';
 
 	import anylogger from 'anylogger';
 
@@ -19,6 +19,8 @@
 		LOG.info('Mounted main Layout');
 	});
 	$: LOG.info('Viewport Changes :' + $media.classNames);
+	$: uiThemeDark.set($media.dark == true);
+
 	LOG.debug(' Root Navigation ::' + segment);
 
 	import type { LayoutData } from './$types';
