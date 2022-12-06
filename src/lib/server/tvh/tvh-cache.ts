@@ -10,6 +10,9 @@ import type { ServerStatus } from '$lib/types/api';
 import type { FSCache } from '$lib/types/cache';
 import { toBool } from '$lib/tools';
 import * as fs from 'fs';
+import anylogger from 'anylogger';
+
+const LOG = anylogger('CACHE');
 
 export class TVHCache {
 	private _channelTags = new Map<string, string>();
@@ -68,8 +71,8 @@ export class TVHCache {
 			}
 
 			for (const ng of newGenre) {
-				if (genre.has(ng)) {
-					const tempGenre = genre.get(ng);
+				const tempGenre = genre.get(ng);
+				if (typeof tempGenre !== 'undefined') {
 					tempGenre.tvhIds.push(parseInt(tvhGenreEntry[0]));
 				} else {
 					genre.set(ng, { name: ng, tvhIds: [parseInt(tvhGenreEntry[0])] });
@@ -119,24 +122,28 @@ export class TVHCache {
 		channelEpg.push(dto);
 
 		// Register Raw EPGEvent
-		this._epg.set(dto.uuid, dto);
+		this._epg.set(dto.uuid ?? '', dto);
 
 		// TODO: Make sure that during partial updates, and delete to check wether or not the first date need updates
 		// Check for Dates
-		if (this._firstDate) {
-			if (new Date(dto.startDate).getTime() < this._firstDate.getTime()) {
+		if (typeof dto.startDate !== 'undefined') {
+			if (this._firstDate) {
+				if (new Date(dto.startDate).getTime() < this._firstDate.getTime()) {
+					this._firstDate = new Date(dto.startDate);
+				}
+			} else {
 				this._firstDate = new Date(dto.startDate);
 			}
-		} else {
-			this._firstDate = new Date(dto.startDate);
 		}
 
-		if (this._lastDate) {
-			if (new Date(dto.stopDate).getTime() > this._lastDate.getTime()) {
+		if (typeof dto.stopDate !== 'undefined') {
+			if (this._lastDate) {
+				if (new Date(dto.stopDate).getTime() > this._lastDate.getTime()) {
+					this._lastDate = new Date(dto.stopDate);
+				}
+			} else {
 				this._lastDate = new Date(dto.stopDate);
 			}
-		} else {
-			this._lastDate = new Date(dto.stopDate);
 		}
 	}
 
@@ -149,8 +156,10 @@ export class TVHCache {
 		for (const ch of this._epgByChannel.keys()) {
 			const epg = this.epgByChannel.get(ch);
 
-			startDates.push(new Date(epg[0].startDate));
-			endDates.push(new Date(epg[epg.length - 1].stopDate));
+			if (typeof epg !== 'undefined') {
+				startDates.push(new Date(epg[0].startDate));
+				endDates.push(new Date(epg[epg.length - 1].stopDate));
+			}
 		}
 		this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[
 			Math.round(startDates.length * 0.5)
@@ -165,8 +174,14 @@ export class TVHCache {
 		epg.stopDate = new Date(epg.stop * 1000).toISOString();
 		epg.widescreen = toBool(epg.widescreen);
 		epg.subtitled = toBool(epg.subtitled);
-		epg.channel = this._channels.get(epg.channelUuid);
-		epg.uuid = '' + epg.eventId;
+		const channel = this._channels.get(epg.channelUuid);
+		if (typeof channel !== 'undefined') {
+			epg.channel = channel;
+		} else {
+			throw new Error(
+				'EPG Transform failed, EPG-Channel not found :\n' + JSON.stringify(epg, null, 2)
+			);
+		}
 		epg.nextEventUuid = '' + epg.nextEventId;
 		const newGenre = new Array<string>();
 		if (epg.genre) {
@@ -209,14 +224,15 @@ export class TVHCache {
 	public storeAll(path = './static/cache') {
 		if (fs.existsSync(path)) {
 			const data: FSCache = {
+				currentDataVersion: this.currentDataVersion,
 				channelTags: Object.fromEntries(this._channelTags),
 				channels: Object.fromEntries(this._channels),
 				contentTypes: Object.fromEntries(this._contentTypes),
 				epg: Object.fromEntries(this._epg),
 				epgByChannel: Object.fromEntries(this._epgByChannel),
-				firstDate: new Date(this._firstDate),
-				lastDate: new Date(this._lastDate),
-				lastUpdate: new Date(this._lastUpdate)
+				firstDate: new Date(this._firstDate ?? 0),
+				lastDate: new Date(this._lastDate ?? 0),
+				lastUpdate: new Date(this._lastUpdate ?? 0)
 			};
 			fs.writeFileSync(path + '/cache.json', JSON.stringify(data, null, 2));
 		}
@@ -245,10 +261,11 @@ export class TVHCache {
 		}
 
 		for (const channel of channels.entries) {
-			const tags = [];
+			const tags: string[] = [];
 			for (const tag of channel.tags) {
-				if (this._channelTags.has(tag)) {
-					tags.push(this._channelTags.get(tag));
+				const ctag = this._channelTags.get(tag);
+				if (typeof ctag !== 'undefined') {
+					tags.push(ctag);
 				}
 			}
 			// Convert to DTO and store
@@ -260,8 +277,12 @@ export class TVHCache {
 		// ------------------------
 
 		for (const epg of epgs) {
-			this.convertEPG(epg);
-			this.registerEvent(epg);
+			try {
+				this.convertEPG(epg);
+				this.registerEvent(epg);
+			} catch (err) {
+				LOG.error('Failed to convert, skipping element', err);
+			}
 		}
 
 		this._lastUpdate = new Date();
@@ -288,18 +309,14 @@ export class TVHCache {
 		this.clear();
 		await this.loadAll();
 	}
-	public searchEventsByChannel(
-		channelUuid: string,
-		start: Date,
-		stop: Date = undefined
-	): Array<ITVHEpgEvent> {
+	public searchEventsByChannel(channelUuid: string, start: Date, stop?: Date): Array<ITVHEpgEvent> {
 		const ch = this.epgByChannel.get(channelUuid);
 		if (ch === undefined) return [];
 		else {
 			const res: ITVHEpgEvent[] = [];
 			for (const epg of ch) {
 				if (new Date(epg.startDate) >= start || new Date(epg.stopDate) >= start) {
-					if (stop === undefined || new Date(epg.startDate) < stop) {
+					if (typeof stop === 'undefined' || new Date(epg.startDate) < stop) {
 						res.push(epg);
 					}
 				}

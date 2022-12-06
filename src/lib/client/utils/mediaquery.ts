@@ -29,15 +29,13 @@ export default function <Query extends Record<string, string>>(mediaqueries: Que
 		for (const key in mediaqueries) {
 			const foo = window.matchMedia(mediaqueries[key]);
 			mqls[key] = foo;
-			// TODO Fix Deprecated call
-			mqls[key].addListener(updateMedia);
+			foo.addEventListener('change', updateMedia);
 		}
 		updateMedia();
 		return () => {
 			for (const key in mqls) {
 				// TODO Fix Deprecated call
-
-				mqls[key].removeListener(updateMedia);
+				mqls[key].removeEventListener('change', updateMedia);
 			}
 		};
 	});

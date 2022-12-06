@@ -1,19 +1,14 @@
-import type { AxiosBasicCredentials, AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import type { ITVHChannel, ITVHEpgEvent, ITVHResponse, ITVHTag } from '$lib/types/epg-interfaces';
 import { HttpClient } from './http-client';
 import { serverCfg } from '../globals';
 
 export class TVHeadendClient extends HttpClient {
-	private auth: AxiosBasicCredentials;
+	// private auth: AxiosBasicCredentials;
 
-	public constructor(
-		private _host: string,
-		private _port: number,
-		private _username: string,
-		private _password: string
-	) {
+	public constructor(_host: string, _port: number, _username: string, _password: string) {
 		super(`http://${_host}:${_port}/api/`, { auth: { username: _username, password: _password } });
-		this.auth = { username: _username, password: _password };
+		// this.auth = { username: _username, password: _password };
 		this._initializeRequestInterceptor();
 	}
 
