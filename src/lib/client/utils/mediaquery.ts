@@ -21,8 +21,10 @@ function calculateMedia(mqls: MediaQueryLists) {
 	return media;
 }
 
-export default function <Query extends Record<string, string>>(mediaqueries: Query) {
-	return writable<Media<Query>>({ classNames: '' }, (set) => {
+export type MediaResult= Media<Record<string, string>>;
+
+export const watchMedia = function <Query extends Record<string, string>>(mediaqueries: Query) {
+	return writable<MediaResult>({ classNames: '' }, (set) => {
 		if (typeof window === 'undefined') return;
 		const mqls: MediaQueryLists = {};
 		const updateMedia = () => set(calculateMedia(mqls));

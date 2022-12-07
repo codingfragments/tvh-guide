@@ -2,6 +2,7 @@
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 	import Nav from '$lib/components/Nav.svelte';
 	import { NavRoute } from '$lib/components/NavRoute';
+	import ThemedStorybookContainer from './storybook/ThemedStorybookContainer.svelte';
 
 	const routes = [
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),
@@ -17,27 +18,23 @@
 	component={Nav}
 	argTypes={{
 		segment: { control: 'text' },
-		vertical: { controll: 'boolean' },
-		collapsed: { controll: 'boolean' },
-		routes: { controll: 'object' },
+		vertical: { control: 'boolean' },
+		collapsed: { control: 'boolean' },
+		routes: { control: 'object' },
 		onNavigate: { action: 'onNavigate' },
 		onToggleTheme: { action: 'onToggleTheme' },
-		theme: {
-			control: 'select',
-			options: ['light', 'dark'],
-			defaultValue: 'light'
-		}
+		dark: { control: 'boolean' }
 	}}
 />
 
 <Template let:args>
-	<div data-theme={args.theme}>
+	<ThemedStorybookContainer dark={args.dark} media={['sm', 'md', 'lg', 'xl']}>
 		{#if args.vertical}
 			<div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
 					<Nav
 						{...args}
-						themeDark={args.theme === 'dark'}
+						themeDark={args.dark}
 						on:navigate={args.onNavigate}
 						on:toggleTheme={args.onToggleTheme}
 					/>
@@ -50,7 +47,7 @@
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
 					<Nav
 						{...args}
-						themeDark={args.theme === 'dark'}
+						themeDark={args.dark}
 						on:navigate={args.onNavigate}
 						on:toggleTheme={args.onToggleTheme}
 						on:toggleTheme={args.onToggleTheme}
@@ -58,7 +55,7 @@
 				</div>
 			</div>
 		{/if}
-	</div>
+	</ThemedStorybookContainer>
 </Template>
 
 <Story

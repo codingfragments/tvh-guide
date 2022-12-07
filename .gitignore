@@ -10,3 +10,4 @@ node_modules
 OOLD
 static/cache/cache.json
 epgcache/cache.json
+*.secrets
