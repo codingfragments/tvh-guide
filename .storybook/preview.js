@@ -12,7 +12,7 @@ export const parameters = {
 import themecfg from '$lib/client/themecfg';
 
 export const globalTypes = {
-	themeLight: {
+	lightTheme: {
 		name: 'Theme',
 		description: 'Global theme for components',
 		defaultValue: themecfg.defaults.themeLight,
@@ -26,7 +26,7 @@ export const globalTypes = {
 			dynamicTitle: true
 		}
 	},
-	themeDark: {
+	darkTheme: {
 		name: 'Theme',
 		description: 'Global theme for components',
 		defaultValue: themecfg.defaults.themeDark,
