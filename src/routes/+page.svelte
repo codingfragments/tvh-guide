@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import { media } from '$lib/client/state/global';
 </script>
 
 <h1 class=" text-xl font-bold underline  ">Welcome to ssSvelteKit!</h1>

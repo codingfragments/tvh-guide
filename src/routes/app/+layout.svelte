@@ -1,16 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { uiCfg, uiThemeDark } from '$lib/globals';
+	import { uiCfg } from '$lib/globals';
 
 	let segment: string;
 
 	import Nav from '$lib/components/Nav.svelte';
 
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
 	import anylogger from 'anylogger';
-	import { media } from '$lib/client/state/global';
 	import { NavRoute } from '$lib/components/NavRoute';
+	import type { Writable } from 'svelte/store';
+	import { getMediaContext, getUIDarkContext } from '$lib/client/state/layoutContext';
+
+	const media = getMediaContext();
+	const uiThemeDark = getUIDarkContext();
+
 	const LOG = anylogger('App-Layout');
 	onMount(() => LOG('Inner Mount'));
 

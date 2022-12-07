@@ -9,12 +9,13 @@
 	const dispatch = createEventDispatcher();
 
 	import Icon from './Icon.svelte';
+	import { getUIDarkContext } from '$lib/client/state/layoutContext';
 
 	export let segment: string;
 	export let routes: NavRoute[] = [];
 	export let vertical = false;
 	export let collapsed = false;
-	export let themeDark: boolean;
+	const isDark = getUIDarkContext();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -43,13 +44,13 @@
 		<div class="flex   pr-4 self-end  ">
 			<div
 				class="tooltip tooltip-right"
-				data-tip={themeDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
+				data-tip={$isDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
 			>
 				<button
 					class="btn btn-circle btn-outline btn-sm"
-					on:click={() => dispatch('toggleTheme', { dark: !themeDark })}
+					on:click={() => dispatch('toggleTheme', { dark: !$isDark })}
 				>
-					<Icon icon={themeDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
+					<Icon icon={$isDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
 				</button>
 			</div>
 		</div>
