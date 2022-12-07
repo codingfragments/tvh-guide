@@ -19,19 +19,19 @@ module.exports = {
 	addons: [
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
-    'storybook-dark-mode',
-    '@storybook/addon-storysource',
+		'storybook-dark-mode',
+		'@storybook/addon-storysource',
 		// '@storybook/addon-interactions',
 		'@storybook/addon-svelte-csf',
-    '@storybook/addon-docs',
-    // {
-    //   name: '@storybook/addon-docs',
-    //   options: {
-    //     sourceLoaderOptions: {
-    //       injectStoryParameters: true,
-    //     },
-    //   },
-    // },
+		'@storybook/addon-docs'
+		// {
+		//   name: '@storybook/addon-docs',
+		//   options: {
+		//     sourceLoaderOptions: {
+		//       injectStoryParameters: true,
+		//     },
+		//   },
+		// },
 	],
 	framework: '@storybook/svelte',
 	core: {

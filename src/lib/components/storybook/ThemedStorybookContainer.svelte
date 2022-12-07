@@ -3,7 +3,7 @@
 	import type { MediaResult } from '$lib/client/utils/mediaquery';
 	import { writable } from 'svelte/store';
 
-	export let dark: false;
+	export let dark = false;
 	export let darkTheme = 'dark';
 	export let lightTheme = 'light';
 	let clazz = '';
@@ -18,12 +18,11 @@
 		| 'short'
 		| 'dark'
 		| 'noanimations';
-	export let media: Array<MediaCategories> = ['sm', 'md', 'lg'];
+	export let media: Array<MediaCategories> = ['sm', 'md', 'lg', 'xl'];
 
 	let mediaStore = writable<MediaResult>();
 	$: {
 		let tempMedia: MediaResult = { classNames: '' };
-		const values = ['xs', 'lg', 'xl'];
 		media.forEach((element) => {
 			tempMedia[element] = true;
 			tempMedia.classNames = 'media-' + element + ' ' + tempMedia.classNames;
@@ -36,6 +35,22 @@
 
 	setMediaContext(mediaStore);
 	setUIDarkContext(darkStore);
+
+	// React on Storybook Dark mode
+	import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
+	import addons from '@storybook/addons';
+	const channel = addons.getChannel();
+
+	import { onMount, onDestroy } from 'svelte';
+	function setDark(value: boolean) {
+		dark = value;
+	}
+	onMount(async () => {
+		channel.on(DARK_MODE_EVENT_NAME, setDark);
+	});
+	onDestroy(async () => {
+		channel.off(DARK_MODE_EVENT_NAME, setDark);
+	});
 </script>
 
 <div data-theme={dark ? darkTheme : lightTheme} class={clazz}>

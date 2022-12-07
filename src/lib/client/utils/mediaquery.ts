@@ -21,7 +21,7 @@ function calculateMedia(mqls: MediaQueryLists) {
 	return media;
 }
 
-export type MediaResult= Media<Record<string, string>>;
+export type MediaResult = Media<Record<string, string>>;
 
 export const watchMedia = function <Query extends Record<string, string>>(mediaqueries: Query) {
 	return writable<MediaResult>({ classNames: '' }, (set) => {
@@ -41,4 +41,4 @@ export const watchMedia = function <Query extends Record<string, string>>(mediaq
 			}
 		};
 	});
-}
+};

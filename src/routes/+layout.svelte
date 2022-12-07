@@ -9,7 +9,7 @@
 
 	import anylogger from 'anylogger';
 
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	const LOG = anylogger('Main App');
 	export let segment: string;
 

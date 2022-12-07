@@ -22,22 +22,16 @@
 		collapsed: { control: 'boolean' },
 		routes: { control: 'object' },
 		onNavigate: { action: 'onNavigate' },
-		onToggleTheme: { action: 'onToggleTheme' },
-		dark: { control: 'boolean' }
+		onToggleTheme: { action: 'onToggleTheme' }
 	}}
 />
 
 <Template let:args>
-	<ThemedStorybookContainer dark={args.dark} media={['sm', 'md', 'lg', 'xl']}>
+	<ThemedStorybookContainer>
 		{#if args.vertical}
 			<div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
-					<Nav
-						{...args}
-						themeDark={args.dark}
-						on:navigate={args.onNavigate}
-						on:toggleTheme={args.onToggleTheme}
-					/>
+					<Nav {...args} on:navigate={args.onNavigate} on:toggleTheme={args.onToggleTheme} />
 				</div>
 				<div class="flex-grow bg-base-100" />
 			</div>
@@ -47,7 +41,6 @@
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
 					<Nav
 						{...args}
-						themeDark={args.dark}
 						on:navigate={args.onNavigate}
 						on:toggleTheme={args.onToggleTheme}
 						on:toggleTheme={args.onToggleTheme}

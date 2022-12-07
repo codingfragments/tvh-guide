@@ -1,4 +1,4 @@
-import {watchMedia} from '$lib/client/utils/mediaquery';
+import { watchMedia } from '$lib/client/utils/mediaquery';
 
 const mediaqueries = {
 	xs: '(max-width: 639px)',

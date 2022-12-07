@@ -7,10 +7,9 @@
 
 	import Nav from '$lib/components/Nav.svelte';
 
-	import { onMount, getContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import anylogger from 'anylogger';
 	import { NavRoute } from '$lib/components/NavRoute';
-	import type { Writable } from 'svelte/store';
 	import { getMediaContext, getUIDarkContext } from '$lib/client/state/layoutContext';
 
 	const media = getMediaContext();
@@ -47,7 +46,6 @@
 			{segment}
 			{routes}
 			vertical={$media.lg == true}
-			themeDark={$uiThemeDark}
 			on:navigate={(ev) => {
 				goto(ev.detail.path);
 			}}
