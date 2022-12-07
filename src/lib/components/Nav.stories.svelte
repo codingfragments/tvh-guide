@@ -2,7 +2,7 @@
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 	import Nav from '$lib/components/Nav.svelte';
 	import { NavRoute } from '$lib/components/NavRoute';
-	import ThemedStorybookContainer from './storybook/ThemedStorybookContainer.svelte';
+	import ThemedStorybookContainer, { themeArgs } from './storybook/ThemedStorybookContainer.svelte';
 
 	const routes = [
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),
@@ -27,7 +27,7 @@
 />
 
 <Template let:args>
-	<ThemedStorybookContainer>
+	<ThemedStorybookContainer {...args}>
 		{#if args.vertical}
 			<div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">

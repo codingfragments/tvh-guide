@@ -1,3 +1,19 @@
+<script lang="ts" context="module">
+	import themecfg from '$lib/client/themecfg';
+	export const themeArgs = {
+		lightTheme: {
+			control: 'select',
+			options: themecfg.themes.light,
+			defaultValue: themecfg.defaults.themeLight
+		},
+		darkTheme: {
+			control: 'select',
+			options: themecfg.themes.dark,
+			defaultValue: themecfg.defaults.themeDark
+		}
+	};
+</script>
+
 <script lang="ts">
 	import { setMediaContext, setUIDarkContext } from '$lib/client/state/layoutContext';
 	import type { MediaResult } from '$lib/client/utils/mediaquery';
