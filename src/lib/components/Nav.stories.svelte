@@ -14,7 +14,7 @@
 </script>
 
 <Meta
-	title="AppLayout/Navigation"
+	title="App/Navigation"
 	component={Nav}
 	argTypes={{
 		segment: { control: 'text' },
