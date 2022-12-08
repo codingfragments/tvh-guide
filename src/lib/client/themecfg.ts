@@ -8,24 +8,26 @@ const themecfg = {
 			'dark',
 			'synthwave',
 			'halloween',
-			'garden',
 			'black',
 			'luxury',
 			'dracula',
 			'business',
 			'night',
+			'forest',
 			'coffee'
 		],
 		light: [
 			'light',
 			'cupcake',
+			'garden',
+
 			'bumblebee',
 			'emerald',
 			'corporate',
 			'retro',
 			'cyberpunk',
 			'valentine',
-			'forest',
+
 			'aqua',
 			'lofi',
 			'pastel',

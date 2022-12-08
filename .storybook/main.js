@@ -10,7 +10,7 @@ module.exports = {
 			resolve: {
 				alias: {
 					$lib: path.resolve(__dirname, '../src/lib'),
-					$components: path.resolve(__dirname, '../src/lib/components')
+					$stories: path.resolve(__dirname, '../src/stories')
 				}
 			}
 		});

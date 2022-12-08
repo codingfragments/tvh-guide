@@ -11,8 +11,8 @@
 		"showChannelNumbers": false,
 		"collapsed": false,
 		"theme": {
-			"light": "light",
-			"dark": "dark"
+			"light": "bumblebee",
+			"dark": "halloween"
 		},
 		"picons": {
 			"base_url": "https://codingfragments.github.io/tv-epg-picon.github.io/picons/"

@@ -2,7 +2,7 @@
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 	import Nav from '$lib/components/Nav.svelte';
 	import { NavRoute } from '$lib/components/NavRoute';
-	import ThemedStorybookContainer, { themeArgs } from './storybook/ThemedStorybookContainer.svelte';
+	import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
 
 	const routes = [
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),

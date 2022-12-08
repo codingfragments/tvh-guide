@@ -70,5 +70,5 @@
 </script>
 
 <div data-theme={dark ? darkTheme : lightTheme} class={clazz}>
-	<slot />
+	<slot {dark} />
 </div>
