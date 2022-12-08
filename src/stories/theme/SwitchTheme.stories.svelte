@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
+	import { Meta, Story } from '@storybook/addon-svelte-csf';
 	import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
 	import themecfg from '$lib/client/themecfg';
 
@@ -17,7 +17,7 @@
 		class=" bg-base-100 absolute top-0 bottom-0 left-0 right-0 p-12"
 	>
 		<div class="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-			{#each getThemes(dark) as theme, i}
+			{#each getThemes(dark) as theme}
 				<div
 					class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline outline-2 outline-offset-2"
 					data-set-theme={theme}

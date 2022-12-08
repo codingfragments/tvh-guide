@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { uiCfg } from '$lib/globals';
+	import { browser } from '$app/environment';
 
 	let segment: string;
 
@@ -16,7 +17,10 @@
 	const uiThemeDark = getUIDarkContext();
 
 	const LOG = anylogger('App-Layout');
-	onMount(() => LOG('Inner Mount'));
+	onMount(() => {
+		LOG.debug('Inner Mount');
+		LOG.debug('Navigate :' + segment);
+	});
 
 	const routes = [
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),
@@ -29,6 +33,13 @@
 	// calc segment based on full URL and current path
 	const pathPrefix = '/app/';
 	$: {
+		const logPara = $page.url.searchParams.get('LOG');
+		if (logPara) {
+			console.debug('log para', logPara);
+			if (browser) {
+				localStorage.setItem('log', logPara);
+			}
+		}
 		if ($page.url.pathname.startsWith(pathPrefix)) {
 			segment = $page.url.pathname.substring(pathPrefix.length).split('/')[0];
 		}
@@ -39,7 +50,7 @@
 	class=" h-full"
 	class:grid-container={!$media.lg}
 	class:grid-containerXL={$media.lg}
-	data-theme={$uiThemeDark ? $uiCfg.theme.dark : $uiCfg.theme.light}
+	data-theme={$uiThemeDark ? $uiCfg.themeDark : $uiCfg.themeLight}
 >
 	<div class="grdNav   bg-base-300 text-base-content elevation-5 z-tools">
 		<Nav
@@ -47,6 +58,7 @@
 			{routes}
 			vertical={$media.lg == true}
 			on:navigate={(ev) => {
+				LOG.debug('Navigate to', ev.detail);
 				goto(ev.detail.path);
 			}}
 			on:toggleTheme={(ev) => {

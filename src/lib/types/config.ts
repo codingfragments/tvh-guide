@@ -5,18 +5,11 @@ export interface TVHeadSettings {
 	password: string;
 }
 
-export interface PiconSettings {
-	base_url: string;
-}
-export interface ThemeSettings {
-	light: string;
-	dark: string;
-}
 export interface UISettings {
-	picons: PiconSettings;
+	piconsBaseUrl: string;
 	showChannelNumbers: boolean;
-	collapsed: boolean;
-	theme: ThemeSettings;
+	themeLight: string;
+	themeDark: string;
 }
 
 export interface ServerSettings {
