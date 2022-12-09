@@ -13,6 +13,9 @@ export function GET() {
 
 import type { TVHCache } from '$lib/server/tvh/tvh-cache';
 
+import anylogger from 'anylogger';
+const LOG = anylogger('apiHelper');
+
 export class EPGFilter {
 	addGenreTag(tag: string) {
 		this.genres.push(tag);
@@ -79,21 +82,21 @@ export class EPGFilter {
 			try {
 				this.fromDate = new Date(<string>params.get('filterFrom'));
 			} catch {
-				console.error('Wrong conversion, keep default');
+				LOG.error('Wrong conversion, keep default');
 			}
 		}
 		if (params.has('filterTo')) {
 			try {
 				this.toDate = new Date(<string>params.get('filterTo'));
 			} catch {
-				console.error('Wrong conversion, keep default');
+				LOG.error('Wrong conversion, keep default');
 			}
 		}
 		if (params.has('filterAt')) {
 			try {
 				this.nowDate = new Date(<string>params.get('filterAt'));
 			} catch {
-				console.error('Wrong conversion, keep default');
+				LOG.error('Wrong conversion, keep default');
 			}
 		}
 
@@ -133,14 +136,14 @@ export class SearchRange<T> {
 			try {
 				this.page = parseInt(<string>url.searchParams.get('page'));
 			} catch {
-				console.error('Wrong conversion, keep default');
+				LOG.error('Wrong conversion, keep default');
 			}
 		}
 		if (url.searchParams.has('range')) {
 			try {
 				this.range = parseInt(<string>url.searchParams.get('range'));
 			} catch {
-				console.error('Wrong conversion, keep default');
+				LOG.error('Wrong conversion, keep default');
 			}
 		}
 	}
