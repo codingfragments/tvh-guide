@@ -14,10 +14,11 @@ export const GET: RequestHandler = ({ params, url }) => {
 	// If a clear text tag is given it will return the first positive match.
 	// IF non unique Tagnames are used the UUID is the only way to make sure to be consistent
 
-	//TODO Make sure channel Tags are lowercase allways
-
 	const tagFilter = tvhCache.channelTags.find((tag) => {
-		return tag.uuid === params['tag'] || tag.name === params['tag'];
+		return (
+			tag.uuid.toLocaleLowerCase() === params['tag'].toLocaleLowerCase() ||
+			tag.name.toLocaleLowerCase() === params['tag'].toLocaleLowerCase()
+		);
 	});
 
 	if (!tagFilter) {
