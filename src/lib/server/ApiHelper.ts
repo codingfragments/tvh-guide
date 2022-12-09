@@ -100,9 +100,7 @@ export class EPGFilter {
 			}
 		}
 
-		// TODO allow Genre filter from URL
-		// TODO allow Channel filter from URL
-		// TODO allow ChannelTag Filter from URL
+		// TODO allow Complex filter from URL (Genre,Channel,Channeltag,Channelgroup)
 	}
 }
 export class SearchRange<T> {

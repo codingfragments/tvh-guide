@@ -36,7 +36,6 @@ export const watchMedia = function <Query extends Record<string, string>>(mediaq
 		updateMedia();
 		return () => {
 			for (const key in mqls) {
-				// TODO Fix Deprecated call
 				mqls[key].removeEventListener('change', updateMedia);
 			}
 		};

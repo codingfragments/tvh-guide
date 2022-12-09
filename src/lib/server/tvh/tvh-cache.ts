@@ -35,7 +35,7 @@ export class TVHCache {
 	// prep this in case we like to sync on shared datastopres between client and server
 	// using a trivial sync protocol later
 
-	// TODO: Maybe add a mutex to check for reloading and block higher level API calls while reloading
+	// FIXME: Maybe add a mutex to check for reloading and block higher level API calls while reloading. Potential Race condition
 	private uuid = uuidv4();
 	private currentDataVersion = 0;
 
@@ -63,7 +63,7 @@ export class TVHCache {
 		});
 	}
 	get genres(): ITVHGenre[] {
-		// TODO Move trhis to a cleanup state after load all or load from cache !!!
+		// FIXME Move this to a cleanup state after load all or load from cache !!!
 		const genre = new Map<string, ITVHGenre>();
 		for (const tvhGenreEntry of this._contentTypes.entries()) {
 			const newGenre: string[] = [];
@@ -125,12 +125,12 @@ export class TVHCache {
 			channelEpg = [];
 			this._epgByChannel.set(dto.channel.uuid, channelEpg);
 		}
-		// TODO: When doing partial updates, make sure this will remove duplicates first, or refill from epg store totally
+		// FUTURE: When doing partial updates, make sure this will remove duplicates first, or refill from epg store totally
 		channelEpg.push(dto);
 		// Register Raw EPGEvent
 		this._epg.set(dto.uuid ?? '', dto);
 
-		// TODO: Make sure that during partial updates, and delete to check wether or not the first date need updates
+		// FUTURE: Make sure that during partial updates, and delete to check wether or not the first date need updates
 		// Check for Dates
 		if (typeof dto.startDate !== 'undefined') {
 			if (this._firstDate) {
@@ -264,7 +264,7 @@ export class TVHCache {
 		const channelTags = await tvhClient.getChannelTags();
 		const contentTypes = await tvhClient.getContentTypes();
 
-		// TODO: Create better handling of big data
+		// FUTURE: Create better handling of big data
 		const events = await tvhClient.getEpgGrid(1000000000);
 		const epgs = events.entries.sort((a, b) => a.start - b.start);
 
@@ -327,7 +327,7 @@ export class TVHCache {
 	}
 
 	public async updateAll() {
-		// TODO: Try to add new and change existing, bbut keep the old one to cuttof
+		// FUTURE: Try to add new and change existing, bbut keep the old one to cuttof
 		this.clear();
 		await this.loadAll();
 	}
