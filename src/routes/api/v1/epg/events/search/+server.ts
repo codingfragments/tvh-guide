@@ -4,10 +4,9 @@ import { epgEventsQuery, EPGFilter } from '$lib/server/ApiHelper';
 
 import { tvhCache } from '$lib/server/tvh/tvh-cache';
 
-import anylogger from 'anylogger';
-
+// import anylogger from 'anylogger';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOG = anylogger('search');
+// const LOG = anylogger('search');
 
 import type { RequestHandler } from './$types';
 export const GET: RequestHandler = ({ url }) => {
@@ -18,6 +17,5 @@ export const GET: RequestHandler = ({ url }) => {
 		const results = tvhCache.search(query);
 		epgEventsQuery(filter, url, body, results);
 	}
-	// epgEventsQuery(filter, url, body, tvhCache.epgSorted);
 	return json(body);
 };
