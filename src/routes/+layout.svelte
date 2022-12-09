@@ -15,7 +15,7 @@
 	// ----------------------------------
 	import { media } from '$lib/client/state/global';
 
-	$: LOG.info('Viewport Changes :', $media.classNames);
+	$: LOG.info('Viewport Changes : ' + $media.classNames);
 	$: uiThemeDark.set($media.dark == true);
 
 	setMediaContext(media);

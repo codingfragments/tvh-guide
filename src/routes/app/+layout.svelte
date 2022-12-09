@@ -26,7 +26,7 @@
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),
 		new NavRoute('/app/now', 'now', 'Now', 'today'),
 		new NavRoute('/app/now2', 'now2', 'Now', 'today'),
-		new NavRoute('/app/recordings', 'recordings', 'Rec', 'voicemail'),
+		new NavRoute('/app/api', 'api', 'API', 'voicemail'),
 		new NavRoute('/app/settings', 'settings', 'Settings', 'settings')
 	];
 
@@ -58,7 +58,7 @@
 			{routes}
 			vertical={$media.lg == true}
 			on:navigate={(ev) => {
-				LOG.debug('Navigate to', ev.detail);
+				LOG.debug('Navigate to ' + ev.detail.path);
 				goto(ev.detail.path);
 			}}
 			on:toggleTheme={(ev) => {
