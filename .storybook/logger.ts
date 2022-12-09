@@ -1,4 +1,3 @@
-
 import pino from 'pino';
 const ROOT_LOG = pino({
 	name: 'SB',
@@ -7,8 +6,7 @@ const ROOT_LOG = pino({
 	}
 });
 
-ROOT_LOG.level = "debug";
-console.log('ROOT Loglevel set to ' + ROOT_LOG.level, ROOT_LOG);
+ROOT_LOG.level = 'debug';
 
 // Simple anylogger adapter
 import anylogger from 'anylogger';

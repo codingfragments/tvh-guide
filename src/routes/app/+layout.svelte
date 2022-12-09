@@ -35,7 +35,7 @@
 	$: {
 		const logPara = $page.url.searchParams.get('LOG');
 		if (logPara) {
-			console.debug('log para', logPara);
+			LOG.debug('log para', logPara);
 			if (browser) {
 				localStorage.setItem('log', logPara);
 			}

@@ -11,7 +11,7 @@ import type { FSCache } from '$lib/types/cache';
 import { toBool } from '$lib/tools';
 import * as fs from 'fs';
 import anylogger from 'anylogger';
-
+import Fuse from 'fuse.js';
 const LOG = anylogger('CACHE');
 
 export class TVHCache {
@@ -25,6 +25,12 @@ export class TVHCache {
 	private _firstDate?: Date;
 	private _lastDate?: Date;
 	private _lastUpdate?: Date;
+
+	private _searchIndex: Fuse<ITVHEpgEvent> = new Fuse(this._epgSorted, {
+		includeScore: true,
+		useExtendedSearch: false,
+		keys: ['channelName', 'description', 'title', 'genre', 'copyright_year']
+	});
 
 	// prep this in case we like to sync on shared datastopres between client and server
 	// using a trivial sync protocol later
@@ -95,6 +101,7 @@ export class TVHCache {
 		this._epgSorted = [];
 		this._firstDate = undefined;
 		this._lastDate = undefined;
+		this._searchIndex.setCollection(this._epgSorted);
 		this.uuid = uuidv4();
 		this.currentDataVersion = 0;
 	}
@@ -120,7 +127,6 @@ export class TVHCache {
 		}
 		// TODO: When doing partial updates, make sure this will remove duplicates first, or refill from epg store totally
 		channelEpg.push(dto);
-
 		// Register Raw EPGEvent
 		this._epg.set(dto.uuid ?? '', dto);
 
@@ -144,6 +150,17 @@ export class TVHCache {
 			} else {
 				this._lastDate = new Date(dto.stopDate);
 			}
+		}
+	}
+
+	public search(query: string): Array<ITVHEpgEvent> {
+		const result = this._searchIndex?.search(query);
+		if (result) {
+			return Array.from(result.values(), (e) => {
+				return e.item;
+			});
+		} else {
+			return [];
 		}
 	}
 
@@ -182,6 +199,8 @@ export class TVHCache {
 				'EPG Transform failed, EPG-Channel not found :\n' + JSON.stringify(epg, null, 2)
 			);
 		}
+		epg.uuid = '' + epg.eventId;
+
 		epg.nextEventUuid = '' + epg.nextEventId;
 		const newGenre = new Array<string>();
 		if (epg.genre) {
@@ -217,6 +236,7 @@ export class TVHCache {
 					this._epgSorted = Array.from(this._epg.values()).sort((a, b) => {
 						return a.start - b.start;
 					});
+					this._searchIndex.setCollection(this._epgSorted);
 				}
 			});
 		}
@@ -290,6 +310,8 @@ export class TVHCache {
 		this._epgSorted = Array.from(this._epg.values()).sort((a, b) => {
 			return a.start - b.start;
 		});
+		// Init search Index
+		this._searchIndex.setCollection(this._epgSorted);
 
 		this.storeAll();
 	}
@@ -298,8 +320,8 @@ export class TVHCache {
 		try {
 			await this.loadAll(true);
 		} catch (error) {
-			console.error(error); // from creation or business logic
-			console.log('Retry !!');
+			LOG.error(error); // from creation or business logic
+			LOG.info('Retry !!');
 			setTimeout(() => this.reloadAll(retryTime), 1000 * 60 * retryTime);
 		}
 	}
@@ -330,19 +352,19 @@ export const tvhCache = new TVHCache();
 tvhCache.loadFromCache();
 
 export function initCache(cache: TVHCache, reloadTime = 30, retryTime = 1, retries = 5) {
-	console.log('preload Started');
+	LOG.info('preload Started');
 	// preload cache
 	const loading = cache.loadAll(true);
 	loading
 		.then(() => {
-			console.log(`Preload Finished `);
+			LOG.info(`Preload Finished `);
 			setInterval(() => cache.reloadAll(retryTime), 1000 * 60 * reloadTime);
 		})
 		.catch((error) => {
-			console.error(error);
-			console.error('Initial load failed.');
+			LOG.error(error);
+			LOG.info('Initial load failed.');
 			if (retries > 0) {
-				console.error('Retry scheduled in ' + retryTime + '  minutes!');
+				LOG.info('Retry scheduled in ' + retryTime + '  minutes!');
 				setTimeout(
 					() => initCache(cache, reloadTime, retryTime, retries - 1),
 					1000 * 60 * retryTime

@@ -1,7 +1,7 @@
 {
 	"server": {
 		"tvheadend": {
-			"host": "home-tvmaster",
+			"host": "172.17.0.2",
 			"port": 9981,
 			"username": "vdr",
 			"password": "vdr"
