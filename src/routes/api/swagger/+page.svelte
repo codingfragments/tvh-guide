@@ -7,12 +7,12 @@
 	let swagger;
 	onMount(() => {
 		console.log(swagger);
-		SwaggerUIBundle({ url: 'https://petstore3.swagger.io/api/v3/openapi.json', domNode: swagger });
+		SwaggerUIBundle({ url: '/epgapi.yaml', domNode: swagger });
 	});
 	// SwaggerUI({})
 </script>
 
-<div id="swagger" class="flex text-red-50">
+<div id="swagger" class="flex flex-col text-red-50 w-full h-full">
 	<a class="btn" href="/app">HOME</a>
 	<div bind:this={swagger} />
 	>

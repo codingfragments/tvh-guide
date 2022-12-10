@@ -9,3 +9,10 @@ export interface ServerStatus {
 	numChannels: number;
 	cacheUUID: string;
 }
+
+export interface ApiResultStats {
+	first: number;
+	page: number;
+	maxPage: number;
+	results: number;
+}
