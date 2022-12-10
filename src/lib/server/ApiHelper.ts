@@ -14,6 +14,7 @@ export function GET() {
 import type { TVHCache } from '$lib/server/tvh/tvh-cache';
 
 import anylogger from 'anylogger';
+import type { ApiResultStats } from '$lib/types/api';
 const LOG = anylogger('apiHelper');
 
 export class EPGFilter {
@@ -115,10 +116,13 @@ export class SearchRange<T> {
 		return epgs.slice(this.first, this.last);
 	}
 	fillResponseInfo(body: Record<string, unknown> = {}, totalLength: number) {
-		body['first'] = this.first;
-		body['page'] = this.page;
-		body['maxPage'] = Math.ceil(totalLength / this.range) - 1;
-		body['results'] = totalLength;
+		const results: ApiResultStats = {
+			first: this.first,
+			page: this.page,
+			maxPage: Math.ceil(totalLength / this.range) - 1,
+			results: totalLength
+		};
+		body['query'] = results;
 	}
 	constructor(public page = 0, public range = 10) {}
 

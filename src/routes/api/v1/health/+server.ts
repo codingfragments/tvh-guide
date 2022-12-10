@@ -1,3 +1,4 @@
+import { tvhCache } from '$lib/server/tvh/tvh-cache';
 import { json } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
@@ -6,6 +7,7 @@ export const GET: RequestHandler = () => {
 	resp.json;
 	return json({
 		serviceHealth: 'OK',
-		serviceUp: true
+		serviceUp: true,
+		cache: tvhCache.status
 	});
 };

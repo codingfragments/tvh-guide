@@ -1,0 +1,357 @@
+---
+openapi: 3.0.2
+info:
+  title: tvheadend-epg APIv1
+  description: ''
+  contact:
+    email: stefan@codingfragments.org
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: '0.1'
+servers:
+  - url: '/api/v1'
+tags: []
+paths:
+  /health:
+    get:
+      description: Returns basic Health Stats of the Server
+      tags:
+        - 'health'
+      responses:
+        '200':
+          description: Successful Response
+  /epg/channels:
+    get:
+      description: Returns a list of all channels.
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  channels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Channel'
+  /epg/channels/{channelId}:
+    get:
+      description: Returns a single Channel
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - in: path
+          name: 'channelId'
+          schema:
+            type: string
+          required: true
+          description: The selected Channel UUID
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channel:
+                    '$ref': '#/components/schemas/Channel'
+
+  /epg/channels/{channelId}/events:
+    get:
+      description: Returns a list of EPG Events for a given channel
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - '$ref': '#/components/parameters/filterFrom'
+        - '$ref': '#/components/parameters/filterTo'
+        - '$ref': '#/components/parameters/filterAt'
+        - in: path
+          name: 'channelId'
+          schema:
+            type: string
+          required: true
+          description: The selected Channel UUID
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channel:
+                    '$ref': '#/components/schemas/Channel'
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+
+  /epg/events:
+    get:
+      description: Returns a list of EPG Events
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - '$ref': '#/components/parameters/filterFrom'
+        - '$ref': '#/components/parameters/filterTo'
+        - '$ref': '#/components/parameters/filterAt'
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+  /epg/events/{eventId}:
+    get:
+      description: Returns a list of EPG Events
+      tags:
+        - 'EPG'
+      parameters:
+        - in: path
+          name: 'eventId'
+          schema:
+            type: string
+          required: true
+          description: The selected EPG UUID
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    '$ref': '#/components/schemas/EPGEvent'
+
+components:
+  schemas:
+    QueryStats:
+      type: object
+      example:
+        first: 0,
+        page: 0,
+        maxPage: 7,
+        results: 78
+      properties:
+        first:
+          type: integer
+        page:
+          type: integer
+        maxPage:
+          type: integer
+        results:
+          type: integer
+    Channel:
+      type: object
+      example:
+        uuid: 5598019a48ff25dde7c680928fa452ea
+        enabled: true
+        autoname: true
+        name: tagesschau24 HD
+        number: 60
+        icon: picon://1_0_1_2887_40F_1_C00000_0_0_0.png
+        icon_public_url: imagecache/5005
+        epgauto: true
+        epglimit: 0
+        epggrab:
+          - 58a7cc7793af43a6338fc1dffa1caf1a
+        dvr_pre_time: 1
+        dvr_pst_time: 10
+        epg_running: -1
+        remote_timeshift: false
+        services:
+          - 0bada24900e30ee0830be4b39137a4df
+        tags:
+          - Nachrichten
+        bouquet: ''
+      properties:
+        uuid:
+          type: string
+        enabled:
+          type: boolean
+        autoname:
+          type: boolean
+        name:
+          type: string
+        number:
+          type: integer
+        icon:
+          type: string
+        icon_public_url:
+          type: string
+        epgauto:
+          type: boolean
+        epglimit:
+          type: integer
+        epggrab:
+          type: array
+          items:
+            type: string
+        dvr_pre_time:
+          type: integer
+        dvr_pst_time:
+          type: integer
+        epg_running:
+          type: integer
+        remote_timeshift:
+          type: boolean
+        services:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        bouquet:
+          type: string
+    EPGEvent:
+      type: object
+      example:
+        eventId: 75366617
+        channelName: tagesschau24 HD
+        channelUuid: 5598019a48ff25dde7c680928fa452ea
+        channelNumber: '60'
+        channelIcon: imagecache/5005
+        start: 1672876200
+        stop: 1672876800
+        title: Tagesschau
+        widescreen: true
+        audiodesc: 1
+        hd: 1
+        genre:
+          - Nachrichten
+          - Zeitgeschehen
+        startDate: '2023-01-04T23:50:00.000Z'
+        stopDate: '2023-01-05T00:00:00.000Z'
+        subtitled: false
+        channel:
+          uuid: 5598019a48ff25dde7c680928fa452ea
+          enabled: true
+          autoname: true
+          name: tagesschau24 HD
+          number: 60
+          icon: picon://1_0_1_2887_40F_1_C00000_0_0_0.png
+          icon_public_url: imagecache/5005
+          epgauto: true
+          epglimit: 0
+          epggrab:
+            - 58a7cc7793af43a6338fc1dffa1caf1a
+          dvr_pre_time: 1
+          dvr_pst_time: 10
+          epg_running: -1
+          remote_timeshift: false
+          services:
+            - 0bada24900e30ee0830be4b39137a4df
+          tags:
+            - Nachrichten
+          bouquet: ''
+        nextEventUuid: undefined
+      properties:
+        eventId:
+          type: number
+          description: TVH Event ID
+        channelName:
+          type: string
+        channelUuid:
+          type: string
+        channelNumber:
+          type: string
+        channelIcon:
+          type: string
+        start:
+          type: integer
+        stop:
+          type: integer
+        title:
+          type: string
+        widescreen:
+          type: boolean
+        audiodesc:
+          type: integer
+        hd:
+          type: integer
+        genre:
+          type: array
+          items:
+            type: string
+        startDate:
+          type: string
+        stopDate:
+          type: string
+        subtitled:
+          type: boolean
+        channel:
+          '$ref': '#/components/schemas/Channel'
+        nextEventUuid:
+          type: string
+  responses: {}
+  parameters:
+    page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 0
+      required: false
+
+      description: Page number to Query (start by 0)
+    range:
+      in: query
+      name: range
+      schema:
+        type: integer
+        minimum: 0
+      required: false
+      description: Number of max elements per Page
+    filterFrom:
+      name: 'filterFrom'
+      in: query
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: Date to start event export, events that are started at or after the date are included. Date Format (2017-07-21T17:32:28Z)
+    filterTo:
+      name: 'filterTo'
+      in: query
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: Date to end event export, events that are ended at or after the date are included. Date Format (2017-07-21T17:32:28Z)
+    filterAt:
+      name: 'filterAt'
+      in: query
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: Date to start event export, events that are active during the date are included. Date Format (2017-07-21T17:32:28Z)
