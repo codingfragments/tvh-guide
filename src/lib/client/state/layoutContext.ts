@@ -2,10 +2,12 @@
 
 import { getContext, setContext } from 'svelte';
 import type { MediaResult } from '$lib/client/utils/mediaquery';
-import type { Writable } from 'svelte/store';
+import { readable, type Writable } from 'svelte/store';
+import anylogger from 'anylogger';
 
 export const CTX_MEDIA_STORE = 'mediaStore';
 export const CTX_THEME_DARK_STORE = 'themeDarkStore';
+const LOG = anylogger('HLP.context');
 
 export function setMediaContext(media: Writable<MediaResult>) {
 	setContext(CTX_MEDIA_STORE, media);
@@ -28,6 +30,10 @@ export function getUIDarkContext() {
 	if (typeof dark !== 'undefined') {
 		return dark;
 	} else {
-		throw new Error(CTX_THEME_DARK_STORE + ': Context can not be retrieved before being set');
+		LOG.warn({
+			msg: 'Tried to get CTX before being established, default to FALSE. CTX will be disconnected. ',
+			func: 'getUIDarkContext'
+		});
+		return readable(false);
 	}
 }
