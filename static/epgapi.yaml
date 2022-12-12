@@ -21,6 +21,18 @@ paths:
       responses:
         '200':
           description: Successful Response
+  /settings/ui:
+    get:
+      description: Get the UI Config as stored in server defaults
+      tags:
+        - 'config'
+      responses:
+        '200':
+          description: Return UI cfg as json doc
+          content:
+            application/json:
+              schema:
+                type: object
   /epg/channels:
     get:
       description: Returns a list of all channels.
@@ -127,6 +139,39 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/EPGEvent'
+  /epg/events/search:
+    get:
+      description: Returns a list of EPG Events
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - '$ref': '#/components/parameters/filterFrom'
+        - '$ref': '#/components/parameters/filterTo'
+        - '$ref': '#/components/parameters/filterAt'
+        - in: 'query'
+          name: 'q'
+          schema:
+            type: string
+          description: Query string, will be fuzzy matched
+          required: true
+
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+
   /epg/events/{eventId}:
     get:
       description: Returns a list of EPG Events
@@ -149,9 +194,172 @@ paths:
                 properties:
                   event:
                     '$ref': '#/components/schemas/EPGEvent'
+  /epg/channeltags:
+    get:
+      description: Returns a list of active Channeltags/Groups
+      tags:
+        - 'EPG'
+      responses:
+        '200':
+          description: Channellist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+  /epg/channeltags/{tag}/channels:
+    get:
+      description: Returns a list of active Channeltags/Groups
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - in: path
+          name: 'tag'
+          schema:
+            type: string
+          required: true
+          description: The selected TAG to filter for Events
+      responses:
+        '200':
+          description: Events by Tag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  channels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Channel'
+                  tag:
+                    $ref: '#/components/schemas/Tag'
+
+  /epg/channeltags/{tag}/events:
+    get:
+      description: Returns a list of active Channeltags/Groups
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - '$ref': '#/components/parameters/filterFrom'
+        - '$ref': '#/components/parameters/filterTo'
+        - '$ref': '#/components/parameters/filterAt'
+
+        - in: path
+          name: 'tag'
+          schema:
+            type: string
+          required: true
+          description: The selected TAG to filter for Events
+      responses:
+        '200':
+          description: Events by Tag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+                  tag:
+                    $ref: '#/components/schemas/Tag'
+  /epg/contenttags:
+    get:
+      description: Returns a list of active Channeltags/Groups
+      tags:
+        - 'EPG'
+
+      responses:
+        '200':
+          description: Contents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContentTag'
+
+  /epg/contenttags/{tag}/events:
+    get:
+      description: Returns a list of active Channeltags/Groups
+      tags:
+        - 'EPG'
+      parameters:
+        - '$ref': '#/components/parameters/page'
+        - '$ref': '#/components/parameters/range'
+        - '$ref': '#/components/parameters/filterFrom'
+        - '$ref': '#/components/parameters/filterTo'
+        - '$ref': '#/components/parameters/filterAt'
+
+        - in: path
+          name: 'tag'
+          schema:
+            type: string
+          required: true
+          description: The selected TAG to filter for Events
+
+      responses:
+        '200':
+          description: Contents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+                  tag:
+                    $ref: '#/components/schemas/ContentTag'
 
 components:
   schemas:
+    Tag:
+      type: object
+      example:
+        name: 'HD+'
+        uuid: '0f0519ad6aec12b28cc9dd1e3beafeb0'
+      properties:
+        name:
+          type: string
+        uuid:
+          type: string
+
+    ContentTag:
+      type: object
+      example:
+        name: 'nachrichten'
+        tvhIds:
+          - 32
+          - 44
+          - 10
+      properties:
+        name:
+          type: string
+        tvhIds:
+          type: array
+          items:
+            type: integer
+
     QueryStats:
       type: object
       example:
