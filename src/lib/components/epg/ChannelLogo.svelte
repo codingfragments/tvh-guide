@@ -6,12 +6,7 @@
 	// Picon prefix (make sure the right picon library is available as subdir of base)
 	// Example: big, big_light, default, default_light
 	// small, small_light, small_tile, xs, xs_light,xs_tile
-	enum Sizes {
-		md = 'default',
-		lg = 'big',
-		sm = 'small',
-		xs = 'xs'
-	}
+
 	export let piconPrefix: 'default' | 'xs' | 'big' | 'small' = 'default';
 	const isDark = getUIDarkContext();
 

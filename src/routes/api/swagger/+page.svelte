@@ -1,10 +1,10 @@
 <script lang="ts">
-	// @ts-nocheck
-
 	import { onMount } from 'svelte';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
-	let swagger;
+
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	let swagger: any;
 	onMount(() => {
 		console.log(swagger);
 		SwaggerUIBundle({ url: '/epgapi.yaml', domNode: swagger });
