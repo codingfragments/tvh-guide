@@ -5,6 +5,7 @@
 
 	const defaultIcon = 'picon://1_0_1_283D_3FB_1_C00000_0_0_0.png';
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
+	const sizes = ['w-10', 'w-20', 'w-36'];
 </script>
 
 <Meta
@@ -24,7 +25,10 @@
 		lightTheme={context.globals.lightTheme}
 		class="absolute left-0 top-0 right-0 bottom-0"
 	>
-		<ChannelLogo {...args} />
+		<div class="flex bg-base-100 shadow-xl m-5">
+			<ChannelLogo {...args} />
+			<span class="text-md my-auto ml-5 ">Simple Channel Logo</span>
+		</div>
 	</ThemedStorybookContainer>
 </Template>
 
@@ -52,8 +56,11 @@
 		lightTheme={context.globals.lightTheme}
 		class="absolute left-0 top-0 right-0 bottom-0 flex flex-col p-10 space-y-5"
 	>
-		<ChannelLogo {...args} class="w-10" />
-		<ChannelLogo {...args} class="w-20" />
-		<ChannelLogo {...args} class="w-36" />
+		{#each sizes as s}
+			<div class="flex bg-base-100 shadow-xl border-2 rounded-md  m-5 p-1 pl-4">
+				<ChannelLogo {...args} class="{s} my-auto" />
+				<span class="text-md my-auto ml-5 ">Simple Channel Logo Size {s}</span>
+			</div>
+		{/each}
 	</ThemedStorybookContainer>
 </Story>

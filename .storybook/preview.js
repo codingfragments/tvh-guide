@@ -23,7 +23,7 @@ export const globalTypes = {
 			// Array of plain string values or MenuItem shape (see below)
 			items: themecfg.themes.light,
 			// Property that specifies if the name of the item will be displayed
-			showName: true,
+			title: true,
 			// Change title based on selected value
 			dynamicTitle: true
 		}
@@ -37,7 +37,7 @@ export const globalTypes = {
 			// Array of plain string values or MenuItem shape (see below)
 			items: themecfg.themes.dark,
 			// Property that specifies if the name of the item will be displayed
-			showName: true,
+			title: true,
 			// Change title based on selected value
 			dynamicTitle: true
 		}

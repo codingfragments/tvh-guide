@@ -11,5 +11,8 @@
 		"**/.settings": true,
 		"**/.factorypath": true
 	},
-	"explorerExclude.backup": {}
+	"explorerExclude.backup": {},
+	"search.exclude": {
+		"**/node_modules": false
+	}
 }
