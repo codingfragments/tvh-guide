@@ -58,6 +58,8 @@ export interface ITVHChannel {
 	icon_public_url: string;
 	name: string;
 	number: number;
+	epglimit?: number;
+	remote_timeshift?: boolean;
 	services: TVHUuid[];
 	tags: TVHUuid[];
 	uuid: TVHUuid;
@@ -68,32 +70,33 @@ export interface ITVHEpgEvent {
 	startDate: string;
 	nextEventUuid?: string;
 	uuid: string;
-	ageRating: string;
+	ageRating?: string;
 	channelIcon: string;
 	channelName: string;
 	channelNumber: string;
 	channelUuid: string;
 	description: string;
-	dvrState: string;
-	dvrUuid: string;
-	episodeId: string;
-	episodeNumber: number;
-	episodeOnscreen: string;
-	eventId: string;
+	dvrState?: string;
+	dvrUuid?: string;
+	episodeId?: string;
+	episodeNumber?: number;
+	episodeOnscreen?: string;
+	eventId: number;
 	genre: string[];
-	hd: number;
+	hd?: number;
 	image: string;
-	nextEventId: string;
-	seasonNumber: number;
-	starRating: string;
+	nextEventId: number;
+	seasonNumber?: number;
+	starRating?: string;
 	start: number;
 	stop: number;
-	subtitle: string;
+	subtitle?: string;
 	channel: ITVHChannel;
 	subtitled: boolean;
-	summary: string;
+	summary?: string;
 	title: string;
 	widescreen: boolean;
+	copyright_year?: number;
 }
 
 export interface ITVHTag {

@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { Meta, Story } from '@storybook/addon-svelte-csf';
 	import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
-	import themecfg from '$lib/client/themecfg';
-
-	function getThemes(dark: boolean): Array<string> {
-		return dark ? themecfg.themes.dark : themecfg.themes.light;
-	}
 </script>
 
 <Meta title="Sandbox/play" />
