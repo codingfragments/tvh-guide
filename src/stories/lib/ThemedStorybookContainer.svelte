@@ -22,7 +22,7 @@
 	export let dark = false;
 	export let darkTheme = 'dark';
 	export let lightTheme = 'light';
-	let clazz = '';
+	let clazz = 'absolute inset-0';
 	export { clazz as class };
 	type MediaCategories =
 		| 'xs'
