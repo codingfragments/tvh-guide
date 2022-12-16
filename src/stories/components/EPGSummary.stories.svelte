@@ -9,7 +9,7 @@
 	component={EpgEventSummary}
 	title="Components/EPGSummary"
 	argTypes={{
-		expaned: { control: 'boolean' },
+		expanded: { control: 'boolean' },
 		showFullDate: { control: 'boolean' },
 		showChannelNumber: { control: 'boolean' },
 		interactive: { control: 'boolean' },
@@ -24,14 +24,23 @@
 
 <Template let:args let:context>
 	<ThemedStorybookContainer {...context.globals}>
-		<div class="p-10 lg:w-1/2">
-			<div class="p-2 border rounded">
+		<div class="px-10 lg:w-1/2">
+			<div class="mt-2 card card-compact	 bg-base-100 shadow-md">
+				<div class="card-body">
+					<EpgEventSummary
+						{...args}
+						searchDate={new Date(args.searchDate)}
+						on:timeSelected={args.onTimeSelected}
+					/>
+				</div>
+			</div>
+			<!-- <div class="mt-2 rounded shadow-md p-1 ">
 				<EpgEventSummary
 					{...args}
 					searchDate={new Date(args.searchDate)}
 					on:timeSelected={args.onTimeSelected}
 				/>
-			</div>
+			</div> -->
 		</div>
 	</ThemedStorybookContainer>
 </Template>
