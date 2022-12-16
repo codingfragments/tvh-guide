@@ -8,8 +8,8 @@
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
 
 	export let epgEvent: ITVHEpgEvent;
-	export let epgPrev: ITVHEpgEvent | undefined;
-	export let epgNext: ITVHEpgEvent | undefined;
+	export let epgPrev: ITVHEpgEvent | undefined = undefined;
+	export let epgNext: ITVHEpgEvent | undefined = undefined;
 
 	export let showChannelNumber = false;
 	export let showFullDate = false;

@@ -305,6 +305,16 @@ export class TVHCache {
 			}
 		}
 
+		// second Pass, relink EPGs
+		for (const epg of epgs) {
+			if (typeof epg.nextEventUuid !== 'undefined') {
+				const targetEpg = this._epg.get(epg.nextEventUuid);
+				if (typeof targetEpg !== 'undefined') {
+					targetEpg.prevEventUuid = epg.uuid;
+				}
+			}
+		}
+
 		this._lastUpdate = new Date();
 		this.calcDateRanges();
 		this._epgSorted = Array.from(this._epg.values()).sort((a, b) => {
