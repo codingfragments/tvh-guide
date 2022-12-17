@@ -41,14 +41,8 @@
 			{/if}
 		</span>
 	</div>
-	<!-- <div class="grid grid-cols-2 grid-rows-2  gap-3 flex-grow mt-2">
-		<div class=" lg:row-span-2 lg:col-span-1 col-span-2">
-			<img src={epgEvent.image} alt="Programm Images" width="100%" height="100%" class="m-auto" />
-		</div>
-		<div class="shadow-md lg:row-span-2 lg:col-span-1 col-span-2">2</div>
-	</div> -->
 
-	<div class=" shadow-xl p-2 mt-8 mb-4 overflow-hidden flex max-md:flex-col rounded-xl">
+	<div class="shadow-xl p-2 mt-8 mb-4 overflow-hidden flex max-md:flex-col rounded-xl">
 		<img
 			src={epgEvent.image}
 			alt="Programm Images"
@@ -63,13 +57,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- .container {  display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content minmax(0,1fr);
-    gap: 0px 0px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      "."
-      ".";
-  } -->
