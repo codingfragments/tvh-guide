@@ -66,7 +66,7 @@
 			}}
 		/>
 	</div>
-	<main class="grdMain bg-base-100 overflow-y-scroll">
+	<main class="grdMain bg-base-100 overflow-hidden max-h-full h-full">
 		<slot />
 	</main>
 </div>
