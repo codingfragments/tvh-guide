@@ -41,7 +41,8 @@ export const epgEvent_Single_pre: ITVHEpgEvent = {
 		bouquet: ''
 	},
 	uuid: '74975293',
-	nextEventUuid: '74975294'
+	nextEventUuid: '74975294',
+	prevEventUuid: '74847811'
 };
 export const epgEvent_Single_post: ITVHEpgEvent = {
 	eventId: 74975295,
@@ -130,5 +131,6 @@ export const epgEvent_Single: ITVHEpgEvent = {
 		bouquet: ''
 	},
 	uuid: '74975294',
-	nextEventUuid: '74975295'
+	nextEventUuid: '74975295',
+	prevEventUuid: 'jksjkdj'
 };
