@@ -16,9 +16,7 @@
 		searchDate: { control: 'date' },
 
 		epgEvent: { control: 'object' },
-		epgNext: { control: 'object' },
-		epgPrev: { control: 'object' },
-		onTimeSelected: { action: 'onTimeSelected' }
+		onEpgSelected: { action: 'onEpgSelected' }
 	}}
 />
 
@@ -30,7 +28,7 @@
 					<EpgEventSummary
 						{...args}
 						searchDate={new Date(args.searchDate)}
-						on:timeSelected={args.onTimeSelected}
+						on:epgSelected={args.onEpgSelected}
 					/>
 				</div>
 			</div>
@@ -53,9 +51,7 @@
 		showChannelNumber: false,
 		showFullDate: false,
 		searchDate: new Date('2022-12-11T20:00'),
-		epgEvent: epgEvent_Single,
-		epgNext: undefined,
-		epgPrev: undefined
+		epgEvent: epgEvent_Single
 	}}
 />
 
@@ -63,8 +59,7 @@
 	name="Pre/Next"
 	args={{
 		epgEvent: epgEvent_Single,
-		epgNext: epgEvent_Single_post,
-		epgPrev: epgEvent_Single_pre,
+
 		expanded: true
 	}}
 />
@@ -72,7 +67,7 @@
 	name="Next"
 	args={{
 		epgEvent: epgEvent_Single,
-		epgNext: epgEvent_Single_post,
+
 		expanded: true,
 		interactive: false
 	}}

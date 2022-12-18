@@ -8,8 +8,6 @@
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
 
 	export let epgEvent: ITVHEpgEvent;
-	export let epgPrev: ITVHEpgEvent | undefined = undefined;
-	export let epgNext: ITVHEpgEvent | undefined = undefined;
 
 	export let showChannelNumber = false;
 	export let showFullDate = false;
@@ -97,22 +95,20 @@
 			<!-- Lineup next and previous -->
 			{#if expanded}
 				<div class="grid grid-cols-2 mt-1 ">
-					{#if epgPrev}
+					{#if epgEvent.prevEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
 							class="btn btn-outline btn-sm col-start-1 mx-0.5"
-							on:click|stopPropagation={() =>
-								dispatch('timeSelected', new Date(epgPrev?.startDate ?? ''))}
+							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.prevEventUuid)}
 						>
 							<Icon icon="navigate_before" size="sm" />
 						</div>
 					{/if}
-					{#if epgNext}
+					{#if epgEvent.nextEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
 							class="btn btn-outline btn-sm col-start-2 mx-0.5"
-							on:click|stopPropagation={() =>
-								dispatch('timeSelected', new Date(epgNext?.startDate ?? ''))}
+							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.nextEventUuid)}
 						>
 							<Icon icon="navigate_next" size="sm" />
 						</div>
