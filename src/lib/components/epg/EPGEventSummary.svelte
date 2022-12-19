@@ -14,22 +14,12 @@
 	export let expanded = false;
 	let percentage = 0;
 
-	export let interactive = false;
-
 	export let searchDate: Date | undefined;
 	$: {
 		if (typeof searchDate !== 'undefined') {
 			const total = new Date(epgEvent.stopDate).getTime() - new Date(epgEvent.startDate).getTime();
 			const dist = searchDate.getTime() - new Date(epgEvent.startDate).getTime();
 			percentage = Math.round((dist * 100) / total); //total
-		}
-	}
-
-	// Helper
-	function toggleExpand() {
-		if (interactive) {
-			expanded = !expanded;
-			dispatch('epgExpand', expanded);
 		}
 	}
 
@@ -63,7 +53,7 @@
 
 <!-- EPG Container-->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="grid grid-rows-1 grid-cols-[6rem_minmax(6rem,_1fr)]" on:click={() => toggleExpand()}>
+<div class="grid grid-rows-1 grid-cols-[6rem_minmax(6rem,_1fr)]" on:click>
 	<!-- Left hand Channel Container-->
 	<div
 		class="grid col-start-1

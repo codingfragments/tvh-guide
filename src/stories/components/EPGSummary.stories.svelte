@@ -12,11 +12,11 @@
 		expanded: { control: 'boolean' },
 		showFullDate: { control: 'boolean' },
 		showChannelNumber: { control: 'boolean' },
-		interactive: { control: 'boolean' },
 		searchDate: { control: 'date' },
 
 		epgEvent: { control: 'object' },
-		onEpgSelected: { action: 'onEpgSelected' }
+		onEpgSelected: { action: 'onEpgSelected' },
+		onClick: { action: 'onClick' }
 	}}
 />
 
@@ -29,6 +29,7 @@
 						{...args}
 						searchDate={new Date(args.searchDate)}
 						on:epgSelected={args.onEpgSelected}
+						on:click={args.onClick}
 					/>
 				</div>
 			</div>
@@ -47,7 +48,6 @@
 	name="Simple - all Options"
 	args={{
 		expanded: false,
-		interactive: false,
 		showChannelNumber: false,
 		showFullDate: false,
 		searchDate: new Date('2022-12-11T20:00'),
@@ -68,8 +68,7 @@
 	args={{
 		epgEvent: epgEvent_Single,
 
-		expanded: true,
-		interactive: false
+		expanded: true
 	}}
 />
 
@@ -77,8 +76,7 @@
 	name="Current"
 	args={{
 		epgEvent: epgEvent_Single,
-		searchDate: new Date('2022-12-18T21:00'),
-		interactive: false
+		searchDate: new Date('2022-12-18T21:00')
 	}}
 />
 
@@ -86,7 +84,6 @@
 	name="Interactive"
 	args={{
 		epgEvent: epgEvent_Single,
-		searchDate: new Date('2022-12-18T21:00'),
-		interactive: true
+		searchDate: new Date('2022-12-18T21:00')
 	}}
 />
