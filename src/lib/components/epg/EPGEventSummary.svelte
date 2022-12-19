@@ -1,4 +1,7 @@
 <script lang="ts">
+	import anylogger from 'anylogger';
+	const LOG = anylogger('Comp_EPGSummary');
+
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import dateformat from 'dateformat';
 	import ChannelLogo from './ChannelLogo.svelte';
@@ -50,6 +53,12 @@
 		desc = desc.replace('\n', '<br/>');
 		return desc;
 	}
+
+	// overflow management - might need a better solution if slows down on epg-now display
+	let cheight = 0;
+	let theight = 0;
+	let overflow = false;
+	$: overflow = cheight > 0 && theight > 0 && expanded && theight > cheight;
 </script>
 
 <!-- EPG Container-->
@@ -128,16 +137,22 @@
 		</div>
 		{#if expanded}
 			<div
-				class="h-36  row-start-3 mr-2 overflow-y-clip "
-				class:overflow-ellipsis={!scrollableSummary}
+				class="relative h-[8rem]  row-start-3 mr-2 overflow-hidden "
 				class:overflow-y-scroll={scrollableSummary}
+				bind:clientHeight={cheight}
 			>
 				{#if epgEvent.description == undefined}
 					{subtitleForDisplayExceptDescription()}
 				{:else}
-					{@html descriptionHtml()}
+					<div bind:clientHeight={theight}>{@html descriptionHtml()}</div>
 				{/if}
 			</div>
+			<button
+				class="badge badge-primary absolute bottom-10 z-overlay right-6  p-1"
+				class:hidden={!overflow}
+			>
+				<Icon icon="more_horiz" />
+			</button>
 		{/if}
 		<div class=" row-start-4 mt-2 overflow-x-auto overflow-y-hidden">
 			{#if epgEvent.genre && epgEvent.genre.length > 0}
