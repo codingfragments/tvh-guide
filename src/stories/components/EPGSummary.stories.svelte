@@ -13,6 +13,7 @@
 		showFullDate: { control: 'boolean' },
 		showChannelNumber: { control: 'boolean' },
 		interactive: { control: 'boolean' },
+		scrollableSummary: { control: 'boolean' },
 		searchDate: { control: 'date' },
 
 		epgEvent: { control: 'object' },
