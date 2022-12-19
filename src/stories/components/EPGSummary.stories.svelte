@@ -12,7 +12,7 @@
 		expanded: { control: 'boolean' },
 		showFullDate: { control: 'boolean' },
 		showChannelNumber: { control: 'boolean' },
-		scrollableSummary: { control: 'boolean' },
+		scrollableSummary: { control: 'boolean', defaultValue: true },
 		searchDate: { control: 'date' },
 
 		epgEvent: { control: 'object' },
