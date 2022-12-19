@@ -13,6 +13,7 @@
 	export let showFullDate = false;
 	export let expanded = false;
 	let percentage = 0;
+	export let scrollableSummary = true;
 
 	export let searchDate: Date | undefined;
 	$: {
@@ -126,7 +127,11 @@
 			{subtitleForDisplayExceptDescription(expanded)}
 		</div>
 		{#if expanded}
-			<div class="h-36 overflow-y-scroll row-start-3 mr-2 ">
+			<div
+				class="h-36  row-start-3 mr-2 overflow-y-clip "
+				class:overflow-ellipsis={!scrollableSummary}
+				class:overflow-y-scroll={scrollableSummary}
+			>
 				{#if epgEvent.description == undefined}
 					{subtitleForDisplayExceptDescription()}
 				{:else}
