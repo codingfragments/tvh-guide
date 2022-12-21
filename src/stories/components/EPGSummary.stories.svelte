@@ -14,10 +14,14 @@
 		showChannelNumber: { control: 'boolean' },
 		scrollableSummary: { control: 'boolean', defaultValue: true },
 		searchDate: { control: 'date' },
-
+		actions: {
+			control: 'object',
+			defaultValue: [{ name: 'details', label: 'details', css: 'btn-primary' }]
+		},
 		epgEvent: { control: 'object' },
 		onEpgSelected: { action: 'onEpgSelected' },
-		onClick: { action: 'onClick' }
+		onClick: { action: 'onClick' },
+		onAction: { action: 'onAction' }
 	}}
 />
 
@@ -31,6 +35,7 @@
 						searchDate={new Date(args.searchDate)}
 						on:epgSelected={args.onEpgSelected}
 						on:click={args.onClick}
+						on:action={args.onAction}
 					/>
 				</div>
 			</div>
@@ -55,7 +60,35 @@
 		epgEvent: epgEvent_Single
 	}}
 />
+<Story
+	name="Actions"
+	args={{
+		epgEvent: epgEvent_Single,
 
+		expanded: true,
+		actions: [
+			{ name: 'similar', label: 'Similar Events', css: 'btn-outline' },
+			{ name: 'record', label: 'record', css: 'btn-error' },
+			{ name: 'details', label: 'details' }
+		]
+	}}
+/>
+
+<Story
+	name="ActionsLong"
+	args={{
+		epgEvent: epgEvent_Single,
+
+		expanded: true,
+		actions: [
+			{ name: 'similar-1', label: 'Similar Events', css: 'btn-outline' },
+			{ name: 'similar-2', label: 'Similar Events', css: 'btn-outline' },
+			{ name: 'similar-3', label: 'Similar Events', css: 'btn-outline' },
+			{ name: 'record', label: 'record', css: 'btn-error' },
+			{ name: 'details', label: 'details' }
+		]
+	}}
+/>
 <Story
 	name="Pre/Next"
 	args={{

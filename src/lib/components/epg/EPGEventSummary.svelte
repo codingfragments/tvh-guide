@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+	export type Action = { name: string; label: string; css?: string };
+</script>
+
 <script lang="ts">
 	import anylogger from 'anylogger';
 	const LOG = anylogger('Comp_EPGSummary');
@@ -10,6 +14,7 @@
 
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
 
+	export let actions: Action[] = [];
 	export let epgEvent: ITVHEpgEvent;
 
 	export let showChannelNumber = false;
@@ -54,11 +59,7 @@
 		return desc;
 	}
 
-	// overflow management - might need a better solution if slows down on epg-now display
-	let cheight = 0;
-	let theight = 0;
-	let overflow = false;
-	$: overflow = cheight > 0 && theight > 0 && expanded && theight > cheight;
+	let showActionPanel = false;
 </script>
 
 <!-- EPG Container-->
@@ -98,7 +99,7 @@
 					{#if epgEvent.prevEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
-							class="btn btn-outline btn-sm col-start-1 mx-0.5"
+							class="btn btn-outline btn-xs col-start-1 mx-0.5"
 							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.prevEventUuid)}
 						>
 							<Icon icon="navigate_before" size="sm" />
@@ -107,7 +108,7 @@
 					{#if epgEvent.nextEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
-							class="btn btn-outline btn-sm col-start-2 mx-0.5"
+							class="btn btn-outline btn-xs col-start-2 mx-0.5"
 							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.nextEventUuid)}
 						>
 							<Icon icon="navigate_next" size="sm" />
@@ -118,9 +119,35 @@
 		</div>
 		<!-- TODO Add some actions to control 'record' and custom details -->
 		{#if expanded}
-			<div class="row-start-4 col-start-1 col-span-2 self-end">
+			<div class="row-start-4 col-start-1 col-span-2 self-end flex flex-col gap-y-1">
 				<!-- IDEA, run some (2) main action as direct buttons. If more then 2 add overlay on Details Column, higher Z layer and blurred -->
 				<!-- <slot /> -->
+				{#if actions.length > 3}
+					<button
+						class="btn btn-sm w-full btn-outline"
+						on:click|stopPropagation={() => {
+							showActionPanel = true;
+						}}><Icon icon="more_horiz" /></button
+					>
+
+					{#each actions.slice(-2) as action (action.name)}
+						<button
+							class="btn btn-sm w-full {action.css ?? ''}"
+							on:click|stopPropagation={() => {
+								dispatch('action', action.name);
+							}}>{action.label}</button
+						>
+					{/each}
+				{:else}
+					{#each actions as action (action.name)}
+						<button
+							class="btn btn-sm w-full {action.css ?? ''}"
+							on:click|stopPropagation={() => {
+								dispatch('action', action.name);
+							}}>{action.label}</button
+						>
+					{/each}
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -137,22 +164,15 @@
 		</div>
 		{#if expanded}
 			<div
-				class="relative h-[8rem]  row-start-3 mr-2 overflow-hidden "
+				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden "
 				class:overflow-y-scroll={scrollableSummary}
-				bind:clientHeight={cheight}
 			>
 				{#if epgEvent.description == undefined}
 					{subtitleForDisplayExceptDescription()}
 				{:else}
-					<div bind:clientHeight={theight}>{@html descriptionHtml()}</div>
+					<div>{@html descriptionHtml()}</div>
 				{/if}
 			</div>
-			<button
-				class="badge badge-primary absolute bottom-6 z-overlay right-0  p-1"
-				class:hidden={!overflow}
-			>
-				<Icon icon="more_horiz" />
-			</button>
 		{/if}
 		<div class=" row-start-4 mt-2 overflow-x-auto overflow-y-hidden">
 			{#if epgEvent.genre && epgEvent.genre.length > 0}
@@ -160,6 +180,25 @@
 					<span class="badge badge-outline mr-2">{genre}</span>
 				{/each}
 			{/if}
+		</div>
+	</div>
+	<div
+		class="bg-base-200 bg-opacity-90 absolute inset-0 z-front "
+		class:hidden={!showActionPanel}
+		on:click|stopPropagation={() => {
+			showActionPanel = false;
+		}}
+	>
+		<div class="grid grid-cols-2 pl-[8rem] pr-4 py-4 gap-2">
+			{#each actions as action (action.name)}
+				<button
+					class="btn btn-sm w-full {action.css ?? ''} bg-opacity-100"
+					on:click|stopPropagation={() => {
+						showActionPanel = false;
+						dispatch('action', action.name);
+					}}>{action.label}</button
+				>
+			{/each}
 		</div>
 	</div>
 </div>
