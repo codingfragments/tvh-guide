@@ -125,7 +125,7 @@
 		{/if}
 	</div>
 	<div
-		class="grid ml-2 mt-1 col-start-2
+		class="relative grid ml-2 mt-1 col-start-2
                 grid-cols-1
                 grid-rows-[minmax(0,_auto)_minmax(0,_auto)_minmax(0,_1fr)_32px]  "
 	>
@@ -148,7 +148,7 @@
 				{/if}
 			</div>
 			<button
-				class="badge badge-primary absolute bottom-10 z-overlay right-6  p-1"
+				class="badge badge-primary absolute bottom-6 z-overlay right-0  p-1"
 				class:hidden={!overflow}
 			>
 				<Icon icon="more_horiz" />

@@ -11,7 +11,7 @@
 	const media = getMediaContext();
 	let bigMode = false;
 	$: {
-		bigMode = $media.xl == true;
+		bigMode = $media.lg == true;
 		epgEvents = epgEvents;
 	}
 	let channelsExpanded: string[] = [];
