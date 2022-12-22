@@ -1,6 +1,10 @@
+<script lang="ts" context="module">
+	export type Action = { name: string; label: string; css?: string };
+</script>
+
 <script lang="ts">
-	import anylogger from 'anylogger';
-	const LOG = anylogger('Comp_EPGSummary');
+	// import anylogger from 'anylogger';
+	// const LOG = anylogger('Comp_EPGSummary');
 
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import dateformat from 'dateformat';
@@ -10,14 +14,13 @@
 
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
 
+	export let actions: Action[] = [];
 	export let epgEvent: ITVHEpgEvent;
 
 	export let showChannelNumber = false;
 	export let showFullDate = false;
 	export let expanded = false;
 	let percentage = 0;
-
-	export let interactive = false;
 	export let scrollableSummary = true;
 
 	export let searchDate: Date | undefined;
@@ -26,14 +29,6 @@
 			const total = new Date(epgEvent.stopDate).getTime() - new Date(epgEvent.startDate).getTime();
 			const dist = searchDate.getTime() - new Date(epgEvent.startDate).getTime();
 			percentage = Math.round((dist * 100) / total); //total
-		}
-	}
-
-	// Helper
-	function toggleExpand() {
-		if (interactive) {
-			expanded = !expanded;
-			dispatch('epgExpand', expanded);
 		}
 	}
 
@@ -64,16 +59,12 @@
 		return desc;
 	}
 
-	// overflow management - might need a better solution if slows down on epg-now display
-	let cheight = 0;
-	let theight = 0;
-	let overflow = false;
-	$: overflow = cheight > 0 && theight > 0 && expanded && theight > cheight;
+	let showActionPanel = false;
 </script>
 
 <!-- EPG Container-->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="grid grid-rows-1 grid-cols-[6rem_minmax(6rem,_1fr)]" on:click={() => toggleExpand()}>
+<div class="grid grid-rows-1 grid-cols-[6rem_minmax(6rem,_1fr)]" on:click>
 	<!-- Left hand Channel Container-->
 	<div
 		class="grid col-start-1
@@ -108,7 +99,7 @@
 					{#if epgEvent.prevEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
-							class="btn btn-outline btn-sm col-start-1 mx-0.5"
+							class="btn btn-outline btn-xs col-start-1 mx-0.5"
 							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.prevEventUuid)}
 						>
 							<Icon icon="navigate_before" size="sm" />
@@ -117,7 +108,7 @@
 					{#if epgEvent.nextEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
-							class="btn btn-outline btn-sm col-start-2 mx-0.5"
+							class="btn btn-outline btn-xs col-start-2 mx-0.5"
 							on:click|stopPropagation={() => dispatch('epgSelected', epgEvent.nextEventUuid)}
 						>
 							<Icon icon="navigate_next" size="sm" />
@@ -128,14 +119,40 @@
 		</div>
 		<!-- TODO Add some actions to control 'record' and custom details -->
 		{#if expanded}
-			<div class="row-start-4 col-start-1 col-span-2 self-end">
+			<div class="row-start-4 col-start-1 col-span-2 self-end flex flex-col gap-y-1">
 				<!-- IDEA, run some (2) main action as direct buttons. If more then 2 add overlay on Details Column, higher Z layer and blurred -->
 				<!-- <slot /> -->
+				{#if actions.length > 3}
+					<button
+						class="btn btn-sm w-full btn-outline"
+						on:click|stopPropagation={() => {
+							showActionPanel = true;
+						}}><Icon icon="more_horiz" /></button
+					>
+
+					{#each actions.slice(-2) as action (action.name)}
+						<button
+							class="btn btn-sm w-full {action.css ?? ''}"
+							on:click|stopPropagation={() => {
+								dispatch('action', action.name);
+							}}>{action.label}</button
+						>
+					{/each}
+				{:else}
+					{#each actions as action (action.name)}
+						<button
+							class="btn btn-sm w-full {action.css ?? ''}"
+							on:click|stopPropagation={() => {
+								dispatch('action', action.name);
+							}}>{action.label}</button
+						>
+					{/each}
+				{/if}
 			</div>
 		{/if}
 	</div>
 	<div
-		class="grid ml-2 mt-1 col-start-2
+		class="relative grid ml-2 mt-1 col-start-2
                 grid-cols-1
                 grid-rows-[minmax(0,_auto)_minmax(0,_auto)_minmax(0,_1fr)_32px]  "
 	>
@@ -147,14 +164,14 @@
 		</div>
 		{#if expanded}
 			<div
-				class="relative h-[8rem]  row-start-3 mr-2 overflow-hidden "
+				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden "
 				class:overflow-y-scroll={scrollableSummary}
 				bind:clientHeight={cheight}
 			>
 				{#if epgEvent.description == undefined}
 					{subtitleForDisplayExceptDescription()}
 				{:else}
-					<div bind:clientHeight={theight}>{@html descriptionHtml()}</div>
+					<div>{@html descriptionHtml()}</div>
 				{/if}
 			</div>
 			<button
@@ -170,6 +187,25 @@
 					<span class="badge badge-outline mr-2">{genre}</span>
 				{/each}
 			{/if}
+		</div>
+	</div>
+	<div
+		class="bg-base-200 bg-opacity-90 absolute inset-0 z-front "
+		class:hidden={!showActionPanel}
+		on:click|stopPropagation={() => {
+			showActionPanel = false;
+		}}
+	>
+		<div class="grid grid-cols-2 pl-[8rem] pr-4 py-4 gap-2">
+			{#each actions as action (action.name)}
+				<button
+					class="btn btn-sm w-full {action.css ?? ''} bg-opacity-100"
+					on:click|stopPropagation={() => {
+						showActionPanel = false;
+						dispatch('action', action.name);
+					}}>{action.label}</button
+				>
+			{/each}
 		</div>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-import { apiGetEvent } from '$lib/apiWrapper';
+import { apiGetEvent } from '$lib/client/apiWrapper';
 import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';

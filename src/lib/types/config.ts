@@ -10,6 +10,10 @@ export interface UISettings {
 	showChannelNumbers: boolean;
 	themeLight: string;
 	themeDark: string;
+	dateLong: string;
+	dateShort: string;
+	timeLong: string;
+	timeShort: string;
 }
 
 export interface ServerSettings {

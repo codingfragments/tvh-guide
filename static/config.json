@@ -11,6 +11,10 @@
 		"showChannelNumbers": false,
 		"themeLight": "bumblebee",
 		"themeDark": "halloween",
-		"piconsBaseUrl": "https://codingfragments.github.io/tv-epg-picon.github.io/picons/"
+		"piconsBaseUrl": "https://codingfragments.github.io/tv-epg-picon.github.io/picons/",
+		"dateLong": "dddd dd.mm.yyyy",
+		"dateShort": "ddd dd.mm",
+		"timeLong": " HH:MM",
+		"timeShort": "HH:MM"
 	}
 }
