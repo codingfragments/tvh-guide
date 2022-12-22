@@ -241,7 +241,7 @@ export class TVHCache {
 			});
 		}
 	}
-	public storeAll(path = './static/cache') {
+	public storeAll(path = './epgcache') {
 		if (fs.existsSync(path)) {
 			const data: FSCache = {
 				currentDataVersion: this.currentDataVersion,
