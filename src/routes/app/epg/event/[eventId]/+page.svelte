@@ -69,6 +69,7 @@
 		</div>
 	</div>
 </div>
+<!-- TODO Turn this into a component, with specific button as groundcomponent -->
 <div class="absolute bottom-0 right-0 z-overlay mr-10 mb-10">
 	<button
 		class="btn btn-circle btn-primary"
