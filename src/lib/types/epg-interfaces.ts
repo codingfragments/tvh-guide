@@ -69,7 +69,7 @@ export interface ITVHEpgEvent {
 	stopDate: string;
 	startDate: string;
 	nextEventUuid?: string;
-	prevEventUuid?: string; //TODO need to be chained after load
+	prevEventUuid?: string; // need to be chained after load
 	uuid: string;
 	ageRating?: string;
 	channelIcon: string;

@@ -117,7 +117,6 @@
 				</div>
 			{/if}
 		</div>
-		<!-- TODO Add some actions to control 'record' and custom details -->
 		{#if expanded}
 			<div class="row-start-4 col-start-1 col-span-2 self-end flex flex-col gap-y-1">
 				<!-- IDEA, run some (2) main action as direct buttons. If more then 2 add overlay on Details Column, higher Z layer and blurred -->
