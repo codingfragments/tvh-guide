@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import anylogger from 'anylogger';
+	const LOG = anylogger('Page:/epgEvent');
+
+	import { afterNavigate, goto } from '$app/navigation';
 	import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
@@ -9,6 +12,15 @@
 	let epgEvent: ITVHEpgEvent;
 
 	$: epgEvent = data.event;
+
+	// allow a back navigation to be visible IF navigation within the app. If external link was used, it will default to false
+	let showBackButton = false;
+	afterNavigate(({ from }) => {
+		LOG.debug({ msg: ' Navigate hit', from });
+		if (from) {
+			showBackButton = true;
+		}
+	});
 </script>
 
 <div class="grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4">
@@ -18,7 +30,7 @@
 			{#if epgEvent.prevEventUuid}
 				<button
 					on:click={() => {
-						goto('./' + epgEvent.prevEventUuid);
+						goto('./' + epgEvent.prevEventUuid, { invalidateAll: true, replaceState: true });
 					}}
 				>
 					<Icon size="xl" icon="navigate_before" />
@@ -33,7 +45,7 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<button
 					on:click={() => {
-						goto('./' + epgEvent.nextEventUuid);
+						goto('./' + epgEvent.nextEventUuid, { invalidateAll: true, replaceState: true });
 					}}
 				>
 					<Icon size="xl" icon="navigate_next" />
@@ -56,4 +68,15 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div class="absolute bottom-0 right-0 z-overlay mr-10 mb-10">
+	<button
+		class="btn btn-circle btn-primary"
+		class:hidden={!showBackButton}
+		on:click={() => {
+			history.back();
+		}}
+	>
+		<Icon icon="undo" />
+	</button>
 </div>

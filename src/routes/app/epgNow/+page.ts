@@ -3,8 +3,26 @@ import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ fetch, url }) => {
-	const searchDate = new Date();
+import anylogger from 'anylogger';
+
+const LOG = anylogger('Page:/epgNow:LOAD');
+
+export const load: PageLoad = async ({ fetch, url, depends }) => {
+	depends('app:epgNow');
+
+	let searchDate = new Date();
+	let modeNow = true;
+
+	try {
+		if (url.searchParams.has('time')) {
+			const paramDate = new Date(url.searchParams.get('time') ?? '');
+			searchDate = paramDate;
+			LOG.debug({ msg: 'loadtime detected', date: searchDate });
+			modeNow = false;
+		}
+	} catch (e) {
+		LOG.warn('Error while converting time parameter', e);
+	}
 	const result = await apiGetEvents(fetch, url, { range: 1000, filterAt: searchDate });
 	if (result.status >= 300) {
 		throw error(result.status, result.statusText);
@@ -15,6 +33,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
 	});
 	return {
 		searchDate: searchDate,
-		events: events
+		events: events,
+		modeNow: modeNow
 	};
 };

@@ -24,7 +24,7 @@
 
 	const routes = [
 		new NavRoute('/app/epg', 'epg', 'EPG', 'dvr'),
-		new NavRoute('/app/epgNow', 'now', 'Now', 'today'),
+		new NavRoute('/app/epgNow', 'epgNow', 'Now', 'today'),
 		new NavRoute('/api/swagger', 'api', 'API', 'voicemail'),
 		new NavRoute('/app/settings', 'settings', 'Settings', 'settings')
 	];
