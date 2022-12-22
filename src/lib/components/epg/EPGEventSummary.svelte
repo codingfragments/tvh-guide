@@ -3,8 +3,8 @@
 </script>
 
 <script lang="ts">
-	import anylogger from 'anylogger';
-	const LOG = anylogger('Comp_EPGSummary');
+	// import anylogger from 'anylogger';
+	// const LOG = anylogger('Comp_EPGSummary');
 
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import dateformat from 'dateformat';

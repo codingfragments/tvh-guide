@@ -7,7 +7,7 @@
 	import EpgEventSummary, { type Action } from '$lib/components/epg/EPGEventSummary.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Icon from '$lib/components/Icon.svelte';
 	import { dateformat } from '$lib/format';
 	import { onDestroy, onMount } from 'svelte';
@@ -43,7 +43,10 @@
 		return channelsExpanded.includes(epg.channel.uuid);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getActions(event: ITVHEpgEvent): Action[] {
+		if (event) {
+		}
 		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
 	}
 
@@ -54,7 +57,7 @@
 		}
 	}
 
-	let refresher: NodeJS.Timeout;
+	let refresher: NodeJS.Timer;
 	onMount(() => {
 		refresher = setInterval(() => {
 			LOG.debug({ msg: 'In Loop', data: data });
@@ -87,11 +90,12 @@
 
 <div class="flex flex-col h-full w-full bg-base-200">
 	<div class="flex-none px-2 py-2">
-		<div class="navbar bg-base-100 min-h-8 rounded-lg pr-4 shadow-lg">
-			<!-- TODO choose different Design-->
-			<div class="flex-none ml-5" class:hidden={!data.modeNow}>LIVE</div>
+		<div class="navbar bg-base-100 min-h-8 rounded-lg pr-4 shadow-lg relative">
+			<span class="absolute badge badge-ghost top-[-5px] left-[-2px]" class:hidden={!data.modeNow}>
+				live
+			</span>
 			<div class="flex-1">
-				<button class="pl-2 btn btn-sm btn-ghost px-0"
+				<button class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
 					>{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}<Icon
 						icon="expand_more"
 						size="sm"

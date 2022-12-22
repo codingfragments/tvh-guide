@@ -2,7 +2,7 @@
 	import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
 	import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
-	import { epgEvent_Single, epgEvent_Single_post, epgEvent_Single_pre } from './Events';
+	import { epgEvent_Single } from './Events';
 </script>
 
 <Meta
