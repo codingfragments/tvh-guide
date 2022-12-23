@@ -1,3 +1,4 @@
+import type { ServerStatus } from '$lib/types/api';
 import type { UISettings } from '$lib/types/config';
 
 import type { LayoutLoad } from './$types';
@@ -12,5 +13,6 @@ import type { LayoutLoad } from './$types';
 // You need to run the dev server or `svelte-kit sync` to generate them.
 export const load: LayoutLoad = async ({ fetch }) => {
 	const settings = <UISettings>await (await fetch('/api/v1/settings/ui')).json();
-	return { uiCfg: settings };
+	const health = <ServerStatus>await (await fetch('/api/v1/health')).json();
+	return { uiCfg: settings, serverHealth: health };
 };

@@ -14,10 +14,14 @@ export function floorDate(d: Date): Date {
 	d2.setMilliseconds(0);
 	return d2;
 }
+export function extractTime(timestamp: Date) {
+	const dateOffset = new Date(timestamp.toDateString()).getTime();
+	return new Date(timestamp.getTime() - dateOffset);
+}
 
 export function mergeDate(day: Date, time: Date) {
-	const plain = floorDate(time);
-	const delta = time.getTime() - plain.getTime();
+	const delta = extractTime(time).getTime();
+
 	return new Date(day.setMilliseconds(delta));
 }
 

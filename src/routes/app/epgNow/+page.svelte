@@ -13,6 +13,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { apiGetEvent } from '$lib/client/apiWrapper';
+	import CalPicker from '$lib/components/calendar/CalPicker.svelte';
+	import { extractTime, mergeDate } from '$lib/tools';
 
 	export let data: PageData;
 	let epgEvents: ITVHEpgEvent[];
@@ -45,8 +47,6 @@
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getActions(event: ITVHEpgEvent): Action[] {
-		if (event) {
-		}
 		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
 	}
 
@@ -79,12 +79,34 @@
 		apiGetEvent(fetch, eventUUID).then((event) => {
 			event.json().then((data) => {
 				const epgEvent: ITVHEpgEvent = data.event;
-				const url = $page.url;
-				url.searchParams.set('time', epgEvent.startDate);
-				LOG.debug({ msg: 'Select new Time', startTimeStr: epgEvent.startDate, url: url });
-				goto(url, { invalidateAll: true, replaceState: true });
+				gotoTime(epgEvent.startDate);
 			});
 		});
+	}
+
+	let showDateDlg = false;
+
+	function dateSelected(e: CustomEvent<Date>): void {
+		const mergedDate = mergeDate(e.detail, data.searchDate);
+
+		LOG.debug({
+			msg: 'New Date Selected',
+			date: e.detail,
+			time: extractTime(data.searchDate),
+			newDate: mergedDate
+		});
+		showDateDlg = false;
+		gotoTime(mergedDate);
+	}
+
+	function gotoTime(gotoDate: string | Date) {
+		if (!(gotoDate instanceof Date)) {
+			gotoDate = new Date(gotoDate);
+		}
+		const url = $page.url;
+		url.searchParams.set('time', gotoDate.toISOString());
+		LOG.debug({ msg: 'Select new Time', startTime: gotoDate, url: url });
+		goto(url, { invalidateAll: true, replaceState: true });
 	}
 </script>
 
@@ -95,12 +117,23 @@
 				live
 			</span>
 			<div class="flex-1">
-				<button class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
-					>{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}<Icon
-						icon="expand_more"
-						size="sm"
-					/></button
-				>
+				<div class="relative">
+					<button
+						class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
+						on:click={() => (showDateDlg = !showDateDlg)}
+					>
+						{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}<Icon
+							icon="expand_more"
+							size="sm"
+						/>
+					</button>
+					<div
+						class="p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 ml-4"
+						class:hidden={!showDateDlg}
+					>
+						<CalPicker date={data.searchDate} on:dateSelected={dateSelected} />
+					</div>
+				</div>
 				<button class="btn btn-sm btn-ghost px-0"
 					>{dateformat(data.searchDate, bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort)}<Icon
 						icon="expand_more"

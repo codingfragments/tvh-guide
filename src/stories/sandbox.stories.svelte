@@ -13,5 +13,6 @@
 			<div class="flex-grow self-center ">Lorem Ispudm dkihd k hdkljhd kljhd</div>
 			<div class="bg-base-200 w-20 ">3</div>
 		</div>
+		<!-- <button class="btn" on:click={(ev) => logger()}>TEST</button> -->
 	</ThemedStorybookContainer>
 </Story>
