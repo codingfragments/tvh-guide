@@ -35,6 +35,7 @@
 		| 'dark'
 		| 'noanimations';
 	export let media: Array<MediaCategories> = ['sm', 'md', 'lg', 'xl'];
+	import { media as media2 } from '$lib/client/state/global';
 
 	let mediaStore = writable<MediaResult>();
 	$: {
@@ -49,7 +50,7 @@
 	let darkStore = writable(dark);
 	$: darkStore.set(dark);
 
-	setMediaContext(mediaStore);
+	setMediaContext(media2);
 	setUIDarkContext(darkStore);
 
 	// React on Storybook Dark mode
