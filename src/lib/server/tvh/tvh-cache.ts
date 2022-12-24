@@ -129,28 +129,6 @@ export class TVHCache {
 		channelEpg.push(dto);
 		// Register Raw EPGEvent
 		this._epg.set(dto.uuid ?? '', dto);
-
-		// FUTURE: Make sure that during partial updates, and delete to check wether or not the first date need updates
-		// Check for Dates
-		if (typeof dto.startDate !== 'undefined') {
-			if (this._firstDate) {
-				if (new Date(dto.startDate).getTime() < this._firstDate.getTime()) {
-					this._firstDate = new Date(dto.startDate);
-				}
-			} else {
-				this._firstDate = new Date(dto.startDate);
-			}
-		}
-
-		if (typeof dto.stopDate !== 'undefined') {
-			if (this._lastDate) {
-				if (new Date(dto.stopDate).getTime() > this._lastDate.getTime()) {
-					this._lastDate = new Date(dto.stopDate);
-				}
-			} else {
-				this._lastDate = new Date(dto.stopDate);
-			}
-		}
 	}
 
 	public search(query: string): Array<ITVHEpgEvent> {
@@ -178,11 +156,12 @@ export class TVHCache {
 				endDates.push(new Date(epg[epg.length - 1].stopDate));
 			}
 		}
+		// TODO Check this calculation
 		this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[
 			Math.round(startDates.length * 0.5)
 		];
 		this._lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[
-			Math.round(endDates.length * 0.5)
+			Math.round(endDates.length * 0.8)
 		];
 	}
 
