@@ -15,8 +15,22 @@
 	import { apiGetEvent } from '$lib/client/apiWrapper';
 	import CalPicker from '$lib/components/calendar/CalPicker.svelte';
 	import { extractTime, mergeDate } from '$lib/tools';
+	import type { ServerStatus } from '$lib/types/api';
 
 	export let data: PageData;
+	let epgDateFirst: Date;
+	let epgDateLast: Date;
+
+	// Convert Date Format from server Response
+	$: {
+		if (typeof data.serverHealth.cache.firstDate !== 'undefined') {
+			epgDateFirst = new Date(data.serverHealth.cache.firstDate);
+		}
+		if (typeof data.serverHealth.cache.lastDate !== 'undefined') {
+			epgDateLast = new Date(data.serverHealth.cache.lastDate);
+		}
+	}
+
 	let epgEvents: ITVHEpgEvent[];
 	$: epgEvents = data.events;
 
@@ -26,6 +40,7 @@
 		bigMode = $media.lg == true;
 		epgEvents = epgEvents;
 	}
+
 	let channelsExpanded: string[] = [];
 	function toggleChannel(epg: ITVHEpgEvent) {
 		// NOOP if media is lg or bigger
@@ -108,6 +123,20 @@
 		LOG.debug({ msg: 'Select new Time', startTime: gotoDate, url: url });
 		goto(url, { invalidateAll: true, replaceState: true });
 	}
+
+	function toggleDatePicker() {
+		if (showDateDlg) {
+			showDateDlg = false;
+			return;
+		}
+
+		// fetch('/api/v1/health').then((resp) => {
+		// 	resp.json().then((result: ServerStatus) => {
+		// 		LOG.debug({ msg: 'Status', stats: result, epgDateFirst, epgDateLast });
+		// 	});
+		// });
+		showDateDlg = true;
+	}
 </script>
 
 <div class="flex flex-col h-full w-full bg-base-200">
@@ -120,7 +149,7 @@
 				<div class="relative">
 					<button
 						class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
-						on:click={() => (showDateDlg = !showDateDlg)}
+						on:click={() => toggleDatePicker()}
 					>
 						{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}<Icon
 							icon="expand_more"
@@ -128,10 +157,16 @@
 						/>
 					</button>
 					<div
-						class="p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 ml-4"
+						class="p-1 lg:p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 lg:ml-4 flex flex-row"
 						class:hidden={!showDateDlg}
 					>
-						<CalPicker date={data.searchDate} on:dateSelected={dateSelected} />
+						<CalPicker
+							date={data.searchDate}
+							on:dateSelected={dateSelected}
+							dateStart={epgDateFirst}
+							dateEnd={epgDateLast}
+							rangeMode="underlined"
+						/>
 					</div>
 				</div>
 				<button class="btn btn-sm btn-ghost px-0"

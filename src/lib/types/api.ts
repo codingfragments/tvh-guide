@@ -1,10 +1,14 @@
 // Types used to communicate
 
+export interface ApiResultHealth {
+	serviceHealth: string;
+	serviceUp: boolean;
+	cache: ServerStatus;
+}
 export interface ServerStatus {
 	firstDate?: Date;
 	lastDate?: Date;
 	lastUpdate?: Date;
-
 	numEvents: number;
 	numChannels: number;
 	cacheUUID: string;

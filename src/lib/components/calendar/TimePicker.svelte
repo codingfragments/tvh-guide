@@ -1,0 +1,84 @@
+<script lang="ts">
+	import anylogger from 'anylogger';
+
+	const LOG = anylogger('Comp_TimePicker');
+
+	import { dateformat } from '$lib/format';
+	import { floorDate } from '$lib/tools';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
+	export let date: Date;
+	export let segmentsPerHour = 4;
+
+	type TimeItem = { time: Date; dom?: HTMLElement; current: boolean };
+	let h: HTMLElement;
+	let b = new Object();
+	let dateList: TimeItem[] = createDateList();
+	function createDateList(): TimeItem[] {
+		const startDate = new Date('1.1.2022');
+		let dateList = [];
+
+		for (let idx = 0; idx < 24 * segmentsPerHour; idx++) {
+			dateList.push({
+				time: new Date(startDate.getTime() + idx * (60 / segmentsPerHour) * 60 * 1000),
+				current: false
+			});
+		}
+		LOG.debug({ msg: 'Dates  Created', dateList });
+		return dateList;
+	}
+
+	let listContainerElement: HTMLElement;
+	$: {
+		// find Element that represents the local time best
+		dateList.forEach((te) => {
+			te.current = false;
+		});
+		const minDiffMs = (60 / segmentsPerHour / 2) * 60 * 1000;
+		let found = false;
+		const dateMs = date.getTime() - floorDate(date).getTime();
+		dateList.forEach((te) => {
+			if (!found) {
+				const itemMs = te.time.getTime() - floorDate(te.time).getTime();
+
+				if (Math.abs(itemMs - dateMs) < minDiffMs) {
+					te.current = true;
+					found = true;
+					LOG.debug({ msg: 'Current nearest Date found.', timeElement: te });
+					if (typeof te.dom !== 'undefined') {
+						const rect = te.dom.getBoundingClientRect();
+						const rectC = listContainerElement.getBoundingClientRect();
+						const scrollTop = rect.top - rectC.top - rectC.height / 2 + rect.height / 2;
+						listContainerElement.scrollBy(0, scrollTop);
+						LOG.debug({
+							msg: 'Try to scroll to Position.',
+							scrollTop,
+							rect,
+							rectC
+						});
+					}
+				}
+			}
+		});
+		dateList = dateList;
+	}
+</script>
+
+<div class="overflow-y-scroll h-full px-2 pr-4 shadow-md" bind:this={listContainerElement}>
+	{#each dateList as d (d.time.getTime())}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div
+			bind:this={d.dom}
+			class:bg-primary={d.current}
+			class="cursor-pointer"
+			on:click|stopPropagation={() => {
+				date = d.time;
+				dispatch('timeSelected', d.time);
+			}}
+		>
+			{dateformat(d.time, 'HH:MM')}
+		</div>
+	{/each}
+</div>

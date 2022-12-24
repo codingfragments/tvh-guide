@@ -4,8 +4,13 @@
 	import { dateformat } from '$lib/format';
 	import Icon from '../Icon.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { floorDate } from '$lib/tools';
 
 	export let date: Date;
+	export let dateStart: Date | undefined = undefined;
+	export let dateEnd: Date | undefined = undefined;
+	export let rangeMode: 'underlined' | 'hide' = 'underlined';
+
 	let displayMonth: Date;
 	let displayDay: Date;
 
@@ -21,17 +26,16 @@
 	}
 
 	$: {
-		LOG.debug({ msg: 'reset Cal View', date, displayDate: displayMonth });
 		let offset = (displayMonth.getDay() + 6) % 7;
-		LOG.debug({ msg: 'Delta calc', dayOfset: offset });
 		displayStart = new Date(displayMonth.getTime() - 1000 * 60 * 60 * 24 * offset);
-		LOG.debug({ msg: 'DateStart', ds: dateformat(displayStart, 'dddd dd.mm.yyyy') });
+		LOG.debug({ msg: 'DateStart', date, ds: dateformat(displayStart, 'dddd dd.mm.yyyy') });
+		LOG.debug({ msg: 'Range', dateStart, dateEnd });
 	}
 
 	function dateList(start: Date, days: number): Date[] {
 		const results = Array<Date>(days)
 			.fill(start)
-			.map((_, i) => new Date(start.getTime() + 1000 * 60 * 60 * 24 * i));
+			.map((_, i) => new Date(start.getTime() + 1000 * 60 * 60 * (12 + 24 * i)));
 		return results;
 	}
 
@@ -40,8 +44,20 @@
 	}
 
 	function dateSelected(day: Date) {
-		date = day;
+		if (hasDateRange()) {
+			if (!checkVisibillity(day)) {
+				return;
+			}
+		}
+		date = floorDate(day);
 		dispatch('dateSelected', day);
+	}
+
+	function hasDateRange() {
+		return typeof dateStart !== 'undefined' || typeof dateEnd !== 'undefined';
+	}
+	function checkVisibillity(day: Date) {
+		return dateStart && day > dateStart && dateEnd && day < dateEnd;
 	}
 </script>
 
@@ -81,15 +97,20 @@
 		{#each dateList(displayStart, 7 * 6) as day (day.getTime())}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<button
-				class="  {day.getTime() === displayDay.getTime()
+				class=" underline-offset-2  {floorDate(day).getTime() === floorDate(displayDay).getTime()
 					? 'p-1    bg-primary text-primary-content m-auto rounded-lg'
 					: 'p-1'}"
 				class:font-thin={day.getMonth() !== displayMonth.getMonth()}
 				class:italic={day.getMonth() !== displayMonth.getMonth()}
 				class:font-extrabold={day.getMonth() === displayMonth.getMonth()}
+				class:underline={checkVisibillity(day) && rangeMode === 'underlined'}
 				on:click={() => dateSelected(day)}
 			>
-				{dateformat(day, 'dd')}
+				{#if !hasDateRange() || rangeMode !== 'hide' || checkVisibillity(day)}
+					{dateformat(day, 'dd')}
+				{:else}
+					&nbsp;
+				{/if}
 			</button>
 		{/each}
 	</div>
