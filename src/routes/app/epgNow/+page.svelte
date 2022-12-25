@@ -16,6 +16,7 @@
 	import CalPicker from '$lib/components/calendar/CalPicker.svelte';
 	import { extractTime, mergeDate } from '$lib/tools';
 	import type { ServerStatus } from '$lib/types/api';
+	import DateTimePicker from '$lib/components/calendar/DateTimePicker.svelte';
 
 	export let data: PageData;
 	let epgDateFirst: Date;
@@ -102,7 +103,7 @@
 	let showDateDlg = false;
 
 	function dateSelected(e: CustomEvent<Date>): void {
-		const mergedDate = mergeDate(e.detail, data.searchDate);
+		const mergedDate = e.detail;
 
 		LOG.debug({
 			msg: 'New Date Selected',
@@ -110,7 +111,7 @@
 			time: extractTime(data.searchDate),
 			newDate: mergedDate
 		});
-		showDateDlg = false;
+		// showDateDlg = false;
 		gotoTime(mergedDate);
 	}
 
@@ -121,6 +122,14 @@
 		const url = $page.url;
 		url.searchParams.set('time', gotoDate.toISOString());
 		LOG.debug({ msg: 'Select new Time', startTime: gotoDate, url: url });
+		goto(url, { invalidateAll: true, replaceState: true });
+	}
+
+	function gotoNow() {
+		const url = $page.url;
+		LOG.debug({ msg: 'Reset to live', url: url });
+		url.hash = '';
+		url.search = '';
 		goto(url, { invalidateAll: true, replaceState: true });
 	}
 
@@ -151,30 +160,39 @@
 						class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
 						on:click={() => toggleDatePicker()}
 					>
-						{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}<Icon
-							icon="expand_more"
-							size="sm"
-						/>
+						{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}
+						{dateformat(data.searchDate, bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort)}
+						<Icon icon="expand_more" size="sm" />
 					</button>
 					<div
-						class="p-1 lg:p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 lg:ml-4 flex flex-row"
+						class="p-1 lg:p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 lg:ml-4 flex flex-col"
 						class:hidden={!showDateDlg}
 					>
-						<CalPicker
+						<DateTimePicker
 							date={data.searchDate}
-							on:dateSelected={dateSelected}
+							on:dateTimeSelected={dateSelected}
 							dateStart={epgDateFirst}
 							dateEnd={epgDateLast}
 							rangeMode="underlined"
 						/>
+						<div class="flex flex-row ">
+							<div class="flex-grow" />
+							<button
+								class="btn btn-primary"
+								on:click={() => {
+									showDateDlg = false;
+									gotoNow();
+								}}>reset</button
+							>
+							<button
+								class="btn btn-primary ml-4"
+								on:click={() => {
+									showDateDlg = false;
+								}}>close</button
+							>
+						</div>
 					</div>
 				</div>
-				<button class="btn btn-sm btn-ghost px-0"
-					>{dateformat(data.searchDate, bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort)}<Icon
-						icon="expand_more"
-						size="sm"
-					/></button
-				>
 			</div>
 
 			<div class="flex-none">

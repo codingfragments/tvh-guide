@@ -11,7 +11,7 @@
 
 <Meta
 	component={TimePicker}
-	title="Components/TimePicker"
+	title="Components/app/TimePicker"
 	argTypes={{
 		date: { control: 'date' },
 
