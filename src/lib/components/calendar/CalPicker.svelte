@@ -29,7 +29,6 @@
 		let offset = (displayMonth.getDay() + 6) % 7;
 		displayStart = new Date(displayMonth.getTime() - 1000 * 60 * 60 * 24 * offset);
 		LOG.debug({ msg: 'DateStart', date, ds: dateformat(displayStart, 'dddd dd.mm.yyyy') });
-		LOG.debug({ msg: 'Range', dateStart, dateEnd });
 	}
 
 	function dateList(start: Date, days: number): Date[] {
@@ -88,7 +87,7 @@
 	<div
 		class=" bg-primary text-primary-content grid grid-cols-[repeat(7,35px)] justify-items-center"
 	>
-		{#each dateList(displayStart, 7) as day (day.getTime())}
+		{#each dateList(displayStart, 7) as day}
 			<div>{dateformat(day, 'ddd')}</div>{/each}
 	</div>
 	<div

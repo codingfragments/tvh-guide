@@ -76,6 +76,8 @@
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: minmax(0, 1fr) 75px;
 		gap: 0px 0px;
+		padding-bottom: max(0px, env(safe-area-inset-bottom));
+
 		grid-template-areas:
 			'grdMain'
 			'grdNav';

@@ -22,7 +22,7 @@ export function extractTime(timestamp: Date) {
 export function mergeDate(day: Date, time: Date) {
 	const delta = extractTime(time).getTime();
 
-	return new Date(day.setMilliseconds(delta));
+	return new Date(floorDate(day).getTime() + delta);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
