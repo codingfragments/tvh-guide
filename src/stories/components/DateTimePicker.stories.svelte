@@ -47,7 +47,7 @@
 	}}
 />
 
-<Story name="Popup" let:context let:args>
+<Story name="Popup" let:context>
 	<ThemedStorybookContainer {...context.globals}>
 		<div class="my-20  mx-20 max-md:mx-4 flex flex-row  ">
 			<div class="relative">

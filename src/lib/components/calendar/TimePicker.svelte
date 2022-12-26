@@ -12,8 +12,7 @@
 	export let segmentsPerHour = 4;
 
 	type TimeItem = { time: Date; dom?: HTMLElement; current: boolean };
-	let h: HTMLElement;
-	let b = new Object();
+
 	let dateList: TimeItem[] = createDateList();
 	function createDateList(): TimeItem[] {
 		const startDate = floorDate(date);

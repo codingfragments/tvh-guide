@@ -13,9 +13,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { apiGetEvent } from '$lib/client/apiWrapper';
-	import CalPicker from '$lib/components/calendar/CalPicker.svelte';
-	import { extractTime, mergeDate } from '$lib/tools';
-	import type { ServerStatus } from '$lib/types/api';
+	import { extractTime } from '$lib/tools';
 	import DateTimePicker from '$lib/components/calendar/DateTimePicker.svelte';
 
 	export let data: PageData;
@@ -63,6 +61,7 @@
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getActions(event: ITVHEpgEvent): Action[] {
+		LOG.debug({ msg: 'Action retrival for EPGEvent', event });
 		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
 	}
 
