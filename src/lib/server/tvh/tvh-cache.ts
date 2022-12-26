@@ -25,6 +25,10 @@ export class TVHCache {
 	private _firstDate?: Date;
 	private _lastDate?: Date;
 	private _lastUpdate?: Date;
+	private _searchCache = new Map<
+		string,
+		{ timestamp: Date; results: Fuse.FuseResult<ITVHEpgEvent>[] }
+	>();
 
 	private _searchIndex: Fuse<ITVHEpgEvent> = new Fuse(this._epgSorted, {
 		includeScore: true,
@@ -93,6 +97,7 @@ export class TVHCache {
 	}
 
 	private prepSearchIndex() {
+		this._searchCache.clear();
 		const filteredEPG = this._epgSorted.filter((e) => {
 			return e.description && e.description.length > 10;
 		});
@@ -142,16 +147,40 @@ export class TVHCache {
 		this._epg.set(dto.uuid ?? '', dto);
 	}
 
+	private cachedSearch(query: string): Fuse.FuseResult<ITVHEpgEvent>[] {
+		if (this._searchCache.has(query)) {
+			const cachedResult = this._searchCache.get(query);
+			LOG.debug({ msg: 'Cache hit for Query', ts: cachedResult?.timestamp, query });
+			return cachedResult?.results ?? [];
+		}
+		const results = this._searchIndex?.search(query);
+		// just make sure to call cache Cleanup regulary
+		// TODO Move this to a more clever offline scheduler
+		this.cacheHousekeeping();
+		this._searchCache.set(query, { timestamp: new Date(), results });
+		return results;
+	}
+	private cacheHousekeeping() {
+		// This is mainly to have some minimum protection against memory leaks. Better, keep 50% of the most recent results
+		// Cache will be completly cleared on every epg reload anyways (as long as this is not done in a merge-update way in the future)
+		//TODO Change this if merge update gets implemented
+		//TODO check for memory and performance impacts and add more logic
+		if (this._searchCache.size > 30) {
+			this._searchCache.clear();
+		}
+	}
 	public search(query: string, scoreFilter = 0.75): Array<ITVHEpgEvent> {
-		const result = this._searchIndex?.search(query).filter((e) => {
+		let result = this.cachedSearch(query);
+		result = result.filter((e) => {
 			return e.score && e.score <= scoreFilter;
 		});
 		if (result) {
-			return Array.from(result.values(), (e) => {
+			const apiResult = Array.from(result.values(), (e) => {
 				const epg = e.item;
 				epg._searchScore = e.score;
 				return e.item;
 			});
+			return apiResult;
 		} else {
 			return [];
 		}
