@@ -1,5 +1,7 @@
 import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 export const epgEvent_Single_pre: ITVHEpgEvent = {
+	_searchScore: 0.5,
+
 	eventId: 74975293,
 	channelName: 'Das Erste HD',
 	channelUuid: 'd9aa745ad4e1f51d5970ea53c3de3b46',
@@ -45,6 +47,8 @@ export const epgEvent_Single_pre: ITVHEpgEvent = {
 	prevEventUuid: '74847811'
 };
 export const epgEvent_Single_post: ITVHEpgEvent = {
+	_searchScore: 0.5,
+
 	eventId: 74975295,
 	channelName: 'Das Erste HD',
 	channelUuid: 'd9aa745ad4e1f51d5970ea53c3de3b46',
@@ -90,6 +94,7 @@ export const epgEvent_Single_post: ITVHEpgEvent = {
 };
 
 export const epgEvent_Single: ITVHEpgEvent = {
+	_searchScore: 0.5,
 	eventId: 74975294,
 	channelName: 'Das Erste HD',
 	channelUuid: 'd9aa745ad4e1f51d5970ea53c3de3b46',
