@@ -141,6 +141,9 @@
 				</div>
 				<input type="hidden" value="50" name="range" />
 			</form>
+
+			<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
+
 			<button class="btn my-auto ml-2 mr-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button
 			>
 		</div>
