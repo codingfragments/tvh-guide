@@ -66,6 +66,7 @@ export interface ITVHChannel {
 }
 
 export interface ITVHEpgEvent {
+	_searchScore: number | undefined;
 	stopDate: string;
 	startDate: string;
 	nextEventUuid?: string;
