@@ -9,14 +9,13 @@
 	import type { PageData } from './$types';
 	import { goto, invalidateAll } from '$app/navigation';
 
-	import { fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/stores';
 
 	import Icon from '$lib/components/Icon.svelte';
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
-	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
@@ -82,8 +81,12 @@
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 	function getActions(event: ITVHEpgEvent): Action[] {
-		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
+		if (event) {
+			return [{ name: 'details', label: 'details', css: 'btn-primary' }];
+		}
+		return [];
 	}
 
 	function handleAction(action: string, event?: ITVHEpgEvent) {
@@ -132,7 +135,6 @@
 							placeholder="Search…"
 							class="input  input-bordered w-full  "
 							value={data.searchString}
-							autofocus
 						/>
 						<button class="btn btn-square">
 							<Icon icon="search" />
