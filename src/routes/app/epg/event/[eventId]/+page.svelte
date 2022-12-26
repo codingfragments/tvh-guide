@@ -21,9 +21,13 @@
 			showBackButton = true;
 		}
 	});
+
+	let showFullPic = false;
 </script>
 
-<div class="grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4">
+<div
+	class="relative grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4 max-w-2xl mx-auto "
+>
 	<!-- HEADER and NAV-->
 	<div class="shadow-md py-2   flex flex-row  bg-base-100 z-front rounded-xl">
 		<span class="my-auto w-10">
@@ -55,29 +59,52 @@
 	</div>
 
 	<div class="shadow-xl p-2 mt-8 mb-4 overflow-hidden flex max-md:flex-col rounded-xl">
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<img
 			src={epgEvent.image}
 			alt="Programm Images"
 			class="rounded-lg max-md:w-1/2 mx-auto object-contain lg:w-1/3 lg:mb-auto lg:mt-2"
+			on:click={() => {
+				showFullPic = !showFullPic;
+			}}
 		/>
 		<div class=" lg:w-2/3 max-md:mt-2 overflow-hidden flex flex-col">
-			<div class="overflow-y-scroll flex-grow px-4 max-md:my-4 lg:mb-4">{epgEvent.description}</div>
+			<div class="overflow-y-scroll flex-grow px-4 max-md:my-4 lg:mb-4">
+				{epgEvent.description}
+			</div>
 			<!-- TODO add action buttons based on config (record, edit, cancel, switch ...)-->
 			<div class="card-actions justify-center ">
 				<!-- <button class="btn btn-sm">NOPE</button> -->
 			</div>
 		</div>
 	</div>
+
+	<!-- TODO Turn this into a component, with specific button as groundcomponent -->
+	<div class="absolute bottom-0 right-0 z-overlay mr-1 mb-1  ">
+		<button
+			class="btn btn-circle btn-primary"
+			class:hidden={!showBackButton}
+			on:click={() => {
+				history.back();
+			}}
+		>
+			<Icon icon="undo" />
+		</button>
+	</div>
 </div>
-<!-- TODO Turn this into a component, with specific button as groundcomponent -->
-<div class="absolute bottom-0 right-0 z-overlay mr-1 mb-1  ">
-	<button
-		class="btn btn-circle btn-primary"
-		class:hidden={!showBackButton}
-		on:click={() => {
-			history.back();
-		}}
-	>
-		<Icon icon="undo" />
-	</button>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+	class="absolute inset-0 z-modal bg-base-200 bg-opacity-80 flex flex-col"
+	class:hidden={!showFullPic}
+	on:click|stopPropagation={() => {
+		showFullPic = !showFullPic;
+	}}
+>
+	<div class="flex-1" />
+	<img
+		src={epgEvent.image}
+		alt="Programm Images"
+		class="rounded-lg p-4 object-contain  max-w-full max-h-full"
+	/>
+	<div class="flex-1" />
 </div>

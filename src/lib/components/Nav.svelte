@@ -74,7 +74,7 @@
 				</div>
 			{/each}
 		</div> -->
-		<ul class="menu menu-compact flex-1 flex flex-row justify-evenly self-center  ">
+		<ul class="menu menu-compact flex-1 grid grid-rows-1 grid-cols-5  ">
 			{#each routes as route}
 				<li class="">
 					<div

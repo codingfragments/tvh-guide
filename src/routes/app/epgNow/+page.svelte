@@ -148,6 +148,11 @@
 </script>
 
 <div class="flex flex-col h-full w-full bg-base-200">
+	<!--
+		Top bar Nav and Filter
+	    ----------------------
+	-->
+
 	<div class="flex-none px-2 py-2">
 		<div class="navbar bg-base-100 min-h-8 rounded-lg pr-4 shadow-lg relative">
 			<span class="absolute badge badge-ghost top-[-5px] left-[-2px]" class:hidden={!data.modeNow}>
@@ -201,6 +206,10 @@
 		</div>
 	</div>
 
+	<!--
+		EPG Display and scroll
+	    ----------------------
+	-->
 	<div class="overflow-y-scroll flex-1 grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 ">
 		{#each epgEvents as event (event.uuid)}
 			<div class="rounded-lg p-4 shadow-md bg-base-100">
