@@ -7,6 +7,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
+	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 
 	export let data: PageData;
 	let epgEvent: ITVHEpgEvent;
@@ -60,17 +61,19 @@
 
 	<div class="shadow-xl p-2 mt-8 mb-4 overflow-hidden flex max-md:flex-col rounded-xl">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<img
-			src={epgEvent.image}
-			alt="Programm Images"
-			class="rounded-lg max-md:w-1/2 mx-auto object-contain lg:w-1/3 lg:mb-auto lg:mt-2"
-			on:click={() => {
-				showFullPic = !showFullPic;
-			}}
-		/>
+		{#if epgEvent.image}
+			<img
+				src={epgEvent.image}
+				alt="Programm Images"
+				class="rounded-lg max-md:w-1/2 mx-auto object-contain lg:w-1/3 lg:mb-auto lg:mt-2"
+				on:click={() => {
+					showFullPic = !showFullPic;
+				}}
+			/>
+		{/if}
 		<div class=" lg:w-2/3 max-md:mt-2 overflow-hidden flex flex-col">
 			<div class="overflow-y-scroll flex-grow px-4 max-md:my-4 lg:mb-4">
-				{epgEvent.description}
+				<EpgDescription {epgEvent} mode="description" />
 			</div>
 			<!-- TODO add action buttons based on config (record, edit, cancel, switch ...)-->
 			<div class="card-actions justify-center ">

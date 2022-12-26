@@ -7,24 +7,33 @@
 	import EpgEventSummary, { type Action } from '$lib/components/epg/EPGEventSummary.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 
-	import { onDestroy, onMount } from 'svelte';
+	import { fade, fly } from 'svelte/transition';
+
 	import { page } from '$app/stores';
-	import { apiGetEvent } from '$lib/client/apiWrapper';
-	import { extractTime } from '$lib/tools';
+
 	import Icon from '$lib/components/Icon.svelte';
+	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
+	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
-	let searchString = '';
+	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
+
+	// Establish media Query, following
+	const media = getMediaContext();
+	let isLarge = false;
+	$: isLarge = $media.lg == true;
 
 	let epgEvents: ITVHEpgEvent[] = [];
 	$: {
 		if (typeof data.events !== 'undefined') {
 			epgEvents = data.events;
+			showLoading = false;
 		}
 	}
-
+	let showLoading = false;
 	let maxPage = 0;
 	let curPage = 0;
 	let pages: string[] = [];
@@ -53,9 +62,12 @@
 			}
 		}
 	}
-
 	let eventsExpended: string[] = [];
-	function toggleChannel(epg: ITVHEpgEvent) {
+	function onClick_EPGEvent(epg: ITVHEpgEvent) {
+		if (isLarge) {
+			selectedEpgEvent = epg;
+			return;
+		}
 		const index = eventsExpended.indexOf(epg.uuid, 0);
 		if (index > -1) {
 			eventsExpended.splice(index, 1);
@@ -74,27 +86,17 @@
 		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
 	}
 
-	function handleAction(action: string, event: ITVHEpgEvent) {
+	function handleAction(action: string, event?: ITVHEpgEvent) {
+		if (!event) return;
 		LOG.debug({ action: action, epgEvent: event });
 		if (action == 'details') {
 			goto(`/app/epg/event/${event.uuid}`);
 		}
 	}
 
-	function doSearch(): any {
-		const url = $page.url;
-		url.searchParams.set('q', data.searchString);
-		url.searchParams.set('range', '50');
-		goto(url, { invalidateAll: true, replaceState: true });
-	}
-
-	function submitSearch(
-		event: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
-	): any {
-		LOG.debug({ msg: 'Search Submited', event });
-	}
-
 	function switchPage(p: string) {
+		showLoading = true;
+
 		if (p === '...') return;
 
 		const url = $page.url;
@@ -107,30 +109,41 @@
 	}
 </script>
 
-<div class="h-full bg-base-200">
-	<div class="flex flex-col h-full w-full px-4  xl:px-10 xl:pb-8">
+<div class="h-full bg-base-200 flex flex-row">
+	<div class="flex flex-col h-full w-full px-4  xl:px-10 xl:pb-8 flex-1">
 		<!--
 		EPG Display and scroll
 	    ----------------------
-	-->
-		<form method="get">
-			<div class="form-control mb-4 mt-2 w-full ">
-				<div class="relative input-group w-full ml-auto rounded-lg ">
-					<input
-						type="text"
-						name="q"
-						placeholder="Search…"
-						class="input  input-bordered w-full  "
-						value={data.searchString}
-						autofocus
-					/>
-					<button class="btn btn-square">
-						<Icon icon="search" />
-					</button>
+	    -->
+		<div class="flex flex-row w-full pt-2 pb-4">
+			<form
+				method="get"
+				on:submit={() => {
+					invalidateAll();
+					showLoading = true;
+				}}
+				class="flex-grow"
+			>
+				<div class="form-control   ">
+					<div class="relative input-group  ml-auto rounded-lg  ">
+						<input
+							type="text"
+							name="q"
+							placeholder="Search…"
+							class="input  input-bordered w-full  "
+							value={data.searchString}
+							autofocus
+						/>
+						<button class="btn btn-square">
+							<Icon icon="search" />
+						</button>
+					</div>
 				</div>
-			</div>
-			<input type="hidden" value="50" name="range" />
-		</form>
+				<input type="hidden" value="50" name="range" />
+			</form>
+			<button class="btn my-auto ml-2 mr-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button
+			>
+		</div>
 		<div class="flex flex-row">
 			<div class="flex-1" />
 			<div class="btn-group mb-2">
@@ -148,10 +161,9 @@
 				{/each}
 			</div>
 		</div>
-		<div class="overflow-y-scroll flex-1 grid grid-cols-1 gap-x-2 gap-y-2 ">
+		<div class="overflow-y-scroll flex-1 flex flex-col relative shadow-lg ">
 			{#each epgEvents as event (event.uuid)}
-				<div class="rounded-lg p-4 shadow-md bg-base-100">
-					{event._searchScore}
+				<div class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2">
 					<EpgEventSummary
 						epgEvent={event}
 						searchDate={new Date()}
@@ -159,11 +171,54 @@
 						actions={getActions(event)}
 						showNavigationButtons={false}
 						showFullDate
-						on:click={() => toggleChannel(event)}
+						on:click={() => onClick_EPGEvent(event)}
 						on:action={(ev) => handleAction(ev.detail, event)}
 					/>
 				</div>
 			{/each}
+			{#if showLoading}
+				<div class="bg-base-200 bg-opacity-75 absolute inset-0 " transition:fade>
+					<div class="flex flex-col">
+						<div class="mx-auto pt-32 text-2xl">Loading</div>
+						<progress class="progress w-56 mx-auto" />
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
+
+	{#if isLarge && selectedEpgEvent}
+		<Sidebar
+			on:closed={() => {
+				selectedEpgEvent = undefined;
+			}}
+		>
+			{#key selectedEpgEvent}
+				<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
+					<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
+				</div>
+				{#if selectedEpgEvent.image}
+					<div class="p-4">
+						<img
+							src={selectedEpgEvent.image}
+							alt="Programm Images"
+							width="100%"
+							class="rounded-lg object-scale-down shadow-md  "
+						/>
+					</div>
+				{/if}
+				<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1">
+					<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
+				</div>
+				<div class="my-4  ml-auto ">
+					<button
+						class="btn btn-primary"
+						on:click={() => {
+							handleAction('details', selectedEpgEvent);
+						}}>details</button
+					>
+				</div>
+			{/key}
+		</Sidebar>
+	{/if}
 </div>

@@ -11,6 +11,7 @@
 	import ChannelLogo from './ChannelLogo.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import EpgDescription from './EPGDescription.svelte';
 
 	const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
 
@@ -24,7 +25,7 @@
 	let percentage = 0;
 	export let scrollableSummary = true;
 
-	export let searchDate: Date | undefined;
+	export let searchDate: Date = new Date();
 	$: {
 		if (typeof searchDate !== 'undefined') {
 			const total = new Date(epgEvent.stopDate).getTime() - new Date(epgEvent.startDate).getTime();
@@ -34,31 +35,6 @@
 	}
 
 	const dispatch = createEventDispatcher();
-
-	function subtitleForDisplayExceptDescription(expanded = false): string {
-		if (!expanded) {
-			if (epgEvent.summary) return epgEvent.summary;
-			if (epgEvent.subtitle) return epgEvent.subtitle;
-		}
-		let additionalInfo = '';
-		if (
-			typeof epgEvent.episodeNumber !== 'undefined' &&
-			typeof epgEvent.seasonNumber !== 'undefined' &&
-			epgEvent.seasonNumber > 0 &&
-			epgEvent.episodeNumber > 0
-		) {
-			additionalInfo += `S${epgEvent.seasonNumber}/E${epgEvent.episodeNumber}`;
-		}
-		if (typeof epgEvent.copyright_year !== 'undefined') {
-			additionalInfo += ` (${epgEvent.copyright_year})`;
-		}
-		return additionalInfo;
-	}
-	function descriptionHtml(): string {
-		let desc = epgEvent.description;
-		desc = desc.replace('\n', '<br/>');
-		return desc;
-	}
 
 	let showActionPanel = false;
 </script>
@@ -160,18 +136,14 @@
 			{epgEvent.title}
 		</div>
 		<div class="h-6 text-sm  overflow-hidden row-start-2">
-			{subtitleForDisplayExceptDescription(expanded)}
+			<EpgDescription {epgEvent} mode={expanded ? 'expandedLabel' : 'normal'} />
 		</div>
 		{#if expanded}
 			<div
 				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden "
 				class:overflow-y-scroll={scrollableSummary}
 			>
-				{#if epgEvent.description == undefined}
-					{subtitleForDisplayExceptDescription()}
-				{:else}
-					<div>{@html descriptionHtml()}</div>
-				{/if}
+				<EpgDescription {epgEvent} mode="description" />
 			</div>
 		{/if}
 		<div class=" row-start-4 mt-2 overflow-x-auto overflow-y-hidden">
