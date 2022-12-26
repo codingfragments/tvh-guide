@@ -19,6 +19,7 @@
 
 	export let showChannelNumber = false;
 	export let showFullDate = false;
+	export let showNavigationButtons = true;
 	export let expanded = false;
 	let percentage = 0;
 	export let scrollableSummary = true;
@@ -94,7 +95,7 @@
 			{/if}
 
 			<!-- Lineup next and previous -->
-			{#if expanded}
+			{#if expanded && showNavigationButtons}
 				<div class="grid grid-cols-2 mt-1 ">
 					{#if epgEvent.prevEventUuid}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -29,7 +29,7 @@ export class TVHCache {
 	private _searchIndex: Fuse<ITVHEpgEvent> = new Fuse(this._epgSorted, {
 		includeScore: true,
 		useExtendedSearch: false,
-		keys: ['channelName', 'description', 'title', 'genre', 'copyright_year']
+		keys: ['channelName', 'description', 'title', 'genre', 'copyright_year', 'channel.tags']
 	});
 
 	// prep this in case we like to sync on shared datastopres between client and server
@@ -92,6 +92,17 @@ export class TVHCache {
 		return Array.from(this._epg.values()).slice(start, end);
 	}
 
+	private prepSearchIndex() {
+		const filteredEPG = this._epgSorted.filter((e) => {
+			return e.description && e.description.length > 10;
+		});
+		LOG.debug({
+			msg: 'Filter and prep search Index',
+			count: filteredEPG.length,
+			all: this._epgSorted.length
+		});
+		this._searchIndex.setCollection(filteredEPG);
+	}
 	public clear() {
 		this._channels.clear();
 		this._channelTags.clear();
@@ -101,7 +112,7 @@ export class TVHCache {
 		this._epgSorted = [];
 		this._firstDate = undefined;
 		this._lastDate = undefined;
-		this._searchIndex.setCollection(this._epgSorted);
+		this.prepSearchIndex();
 		this.uuid = uuidv4();
 		this.currentDataVersion = 0;
 	}
@@ -131,10 +142,14 @@ export class TVHCache {
 		this._epg.set(dto.uuid ?? '', dto);
 	}
 
-	public search(query: string): Array<ITVHEpgEvent> {
-		const result = this._searchIndex?.search(query);
+	public search(query: string, scoreFilter = 0.75): Array<ITVHEpgEvent> {
+		const result = this._searchIndex?.search(query).filter((e) => {
+			return e.score && e.score <= scoreFilter;
+		});
 		if (result) {
 			return Array.from(result.values(), (e) => {
+				const epg = e.item;
+				epg._searchScore = e.score;
 				return e.item;
 			});
 		} else {
@@ -215,7 +230,7 @@ export class TVHCache {
 					this._epgSorted = Array.from(this._epg.values()).sort((a, b) => {
 						return a.start - b.start;
 					});
-					this._searchIndex.setCollection(this._epgSorted);
+					this.prepSearchIndex();
 				}
 			});
 		}
@@ -300,7 +315,7 @@ export class TVHCache {
 			return a.start - b.start;
 		});
 		// Init search Index
-		this._searchIndex.setCollection(this._epgSorted);
+		this.prepSearchIndex();
 
 		this.storeAll();
 	}
