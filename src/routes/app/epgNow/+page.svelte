@@ -61,7 +61,7 @@
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getActions(event: ITVHEpgEvent): Action[] {
-		LOG.debug({ msg: 'Action retrival for EPGEvent', event });
+		// LOG.debug({ msg: 'Action retrival for EPGEvent', event });
 		return [{ name: 'details', label: 'details', css: 'btn-primary' }];
 	}
 
