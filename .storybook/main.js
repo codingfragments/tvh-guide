@@ -4,8 +4,11 @@ const preprocess = require('svelte-preprocess');
 
 module.exports = {
 	async viteFinal(config, { configType }) {
+		// const sveltePluginsWithoutKit = config.plugins[0].filter(
+		// 	(plugin) => plugin.name !== 'vite-plugin-svelte-kit'
+		// );
 		// return the customized config
-		return mergeConfig(config, {
+		const finalConfig = mergeConfig(config, {
 			// customize the Vite config here
 			resolve: {
 				alias: {
@@ -14,6 +17,9 @@ module.exports = {
 				}
 			}
 		});
+		// finalConfig.plugins[0] = sveltePluginsWithoutKit;
+		// console.log(finalConfig);
+		return finalConfig;
 	},
 	stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx|svelte)'],
 	addons: [
