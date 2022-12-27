@@ -12,6 +12,7 @@
     "package": "svelte-kit sync && svelte-package",
     "sync": "svelte-kit sync",
     "preview": "vite preview",
+    "runServer": "node -r dotenv/config dist",
     "--prepare": "svelte-kit sync",
     "test": "playwright test",
     "storybook": "NODE_OPTIONS='--openssl-legacy-provider $NODE_OPTIONS' start-storybook -p 6006 --ci",
