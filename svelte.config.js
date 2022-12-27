@@ -18,7 +18,7 @@ const config = {
 	}),
 
 	kit: {
-		adapter: adapter({ out: 'dist/app' })
+		adapter: adapter({ out: 'dist' })
 	}
 };
 

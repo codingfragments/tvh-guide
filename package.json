@@ -48,6 +48,7 @@
     "autoprefixer": "^10.4.13",
     "babel-loader": "^8.3.0",
     "chromatic": "^6.11.4",
+    "dotenv": "^16.0.3",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-storybook": "^0.6.8",
@@ -82,7 +83,7 @@
   "volta": {
     "node": "18.12.1",
     "yarn": "3.3.0",
-    "npm": "9.1.2"
+    "npm": "9.2.0"
   },
   "readme": "ERROR: No README data found!",
   "_id": "tvheadend-guide@0.0.1"
