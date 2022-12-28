@@ -1,10 +1,11 @@
-import EpgEventSummary from './EPGSummaryWrapper.svelte';
+// import EpgEventSummary from './EPGSummaryWrapper.svelte';
 // See above for pre-wrapped components, this will allow the event handler to be applied
-// import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
+import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
 import CardHalfWidth from '$stories/lib/Card_halfWidth.svelte';
 import type { Meta, StoryObj } from '@storybook/svelte';
 import { wrapThemedContext, wrapContext } from '$stories/lib/SB7StoryDecorators';
 import { epgEvent_Single } from './Events';
+import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
 
 const meta = {
 	title: 'Components/EPGSummary',
@@ -24,11 +25,12 @@ const meta = {
 		epgEvent: { control: 'object' }
 	},
 	decorators: [
-		wrapContext
+		wrapContext,
 		// enable the generic wrappers in case the action hack isn't needed
 		// this will allow direct addon of Components but as of today (SB7 Beta-15)
 		// the actions wrapper is applied to the decorator which will hide all events
-		// () => CardHalfWidth,
+		() => CardHalfWidth,
+		() => ThemedStorybookContainer
 		// wrapThemedContext()
 	]
 	// play: wrapContext
