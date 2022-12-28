@@ -95,33 +95,39 @@
 			{/if}
 		</div>
 		{#if expanded}
-			<div class="row-start-4 col-start-1 col-span-2 self-end flex flex-col gap-y-1">
+			<div class="row-start-4 col-start-1 col-span-2 self-end flex flex-col gap-y-1 mt-2">
 				<!-- IDEA, run some (2) main action as direct buttons. If more then 2 add overlay on Details Column, higher Z layer and blurred -->
 				<!-- <slot /> -->
 				{#if actions.length > 3}
-					<button
-						class="btn btn-sm w-full btn-outline"
-						on:click|stopPropagation={() => {
-							showActionPanel = true;
-						}}><Icon icon="more_horiz" /></button
-					>
+					<div>
+						<button
+							class="btn btn-sm w-full btn-outline overflow-clip"
+							on:click|stopPropagation={() => {
+								showActionPanel = true;
+							}}><Icon icon="more_horiz" size="sm" /></button
+						>
+					</div>
 
 					{#each actions.slice(-2) as action (action.name)}
-						<button
-							class="btn btn-sm w-full {action.css ?? ''}"
-							on:click|stopPropagation={() => {
-								dispatch('action', action.name);
-							}}>{action.label}</button
-						>
+						<div>
+							<button
+								class="btn btn-sm w-full {action.css ?? ''}"
+								on:click|stopPropagation={() => {
+									dispatch('action', action.name);
+								}}>{action.label}</button
+							>
+						</div>
 					{/each}
 				{:else}
 					{#each actions as action (action.name)}
-						<button
-							class="btn btn-sm w-full {action.css ?? ''}"
-							on:click|stopPropagation={() => {
-								dispatch('action', action.name);
-							}}>{action.label}</button
-						>
+						<div>
+							<button
+								class="btn btn-sm w-full {action.css ?? ''}"
+								on:click|stopPropagation={() => {
+									dispatch('action', action.name);
+								}}>{action.label}</button
+							>
+						</div>
 					{/each}
 				{/if}
 			</div>
@@ -163,13 +169,15 @@
 	>
 		<div class="grid grid-cols-2 pl-[8rem] pr-4 py-4 gap-2">
 			{#each actions as action (action.name)}
-				<button
-					class="btn btn-sm w-full {action.css ?? ''} bg-opacity-100"
-					on:click|stopPropagation={() => {
-						showActionPanel = false;
-						dispatch('action', action.name);
-					}}>{action.label}</button
-				>
+				<div>
+					<button
+						class="btn btn-sm w-full {action.css ?? ''} bg-opacity-100"
+						on:click|stopPropagation={() => {
+							showActionPanel = false;
+							dispatch('action', action.name);
+						}}>{action.label}</button
+					>
+				</div>
 			{/each}
 		</div>
 	</div>

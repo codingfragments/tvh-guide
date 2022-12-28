@@ -1,7 +1,5 @@
 const { mergeConfig } = require('vite');
 const path = require('path');
-const preprocess = require('svelte-preprocess');
-
 module.exports = {
 	async viteFinal(config, { configType }) {
 		// const sveltePluginsWithoutKit = config.plugins[0].filter(
@@ -21,34 +19,21 @@ module.exports = {
 		// console.log(finalConfig);
 		return finalConfig;
 	},
-	stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx|svelte)'],
+	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
 	addons: [
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
-		'storybook-dark-mode',
-		'@storybook/addon-storysource',
-		// '@storybook/addon-interactions',
-		'@storybook/addon-svelte-csf',
+		'@storybook/addon-interactions',
 		'@storybook/addon-docs'
-		// {
-		//   name: '@storybook/addon-docs',
-		//   options: {
-		//     sourceLoaderOptions: {
-		//       injectStoryParameters: true,
-		//     },
-		//   },
-		// },
+
+		// BROKEN from SB7 will use workarround in the meantime
+		// 'storybook-dark-mode'
 	],
-	framework: '@storybook/svelte',
-	core: {
-		builder: '@storybook/builder-vite'
+	framework: {
+		name: '@storybook/sveltekit',
+		options: {}
 	},
-	svelteOptions: {
-		// https://codingcat.dev/tutorial/integrating-storybook-with-sveltekit
-		// Tutorial used
-		preprocess: preprocess()
-	},
-	features: {
-		storyStoreV7: false
+	docs: {
+		autodocs: 'tag'
 	}
 };
