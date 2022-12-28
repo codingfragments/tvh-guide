@@ -8,28 +8,9 @@
 	export let lightTheme = 'light';
 	let clazz = 'p-4';
 	export { clazz as class };
-	type MediaCategories =
-		| 'xs'
-		| 'sm'
-		| 'md'
-		| 'lg'
-		| 'xl'
-		| 'xxl'
-		| 'short'
-		| 'dark'
-		| 'noanimations';
-	export let media: Array<MediaCategories> = ['sm', 'md', 'lg', 'xl'];
 	import { media as media2 } from '$lib/client/state/global';
 
 	let mediaStore = writable<MediaResult>();
-	$: {
-		let tempMedia: MediaResult = { classNames: '' };
-		media.forEach((element) => {
-			tempMedia[element] = true;
-			tempMedia.classNames = 'media-' + element + ' ' + tempMedia.classNames;
-		});
-		mediaStore.set(tempMedia);
-	}
 
 	let darkStore = writable(dark);
 	$: darkStore.set(dark);
@@ -46,12 +27,6 @@
 	function setDark(value: boolean) {
 		dark = value;
 	}
-	// onMount(async () => {
-	// 	channel.on(DARK_MODE_EVENT_NAME, setDark);
-	// });
-	// onDestroy(async () => {
-	// 	channel.off(DARK_MODE_EVENT_NAME, setDark);
-	// });
 
 	onMount(() => {
 		checkGlobals();
@@ -83,16 +58,22 @@
 	}
 	let layoutClass = '';
 	let thisComp: HTMLDivElement;
-	$: {
-		const pid = thisComp?.parentElement?.id;
-		if (pid && pid == 'storybook-root') {
-			layoutClass = 'absolute inset-0 ';
-		} else {
-			layoutClass = '';
-		}
-	}
+	let thisIsRoot = false;
+
+	// onMount(() => {
+	// 	if (thisComp) {
+	// 		const pid = thisComp?.parentElement?.id;
+	// 		console.log('PID', pid);
+	// 		if (pid && pid == 'storybook-root') {
+	// 			thisIsRoot = true;
+	// 		} else {
+	// 			thisIsRoot = false;
+	// 		}
+	// 	}
+	// });
 </script>
 
-<div data-theme={dark ? darkTheme : lightTheme} class="{clazz} {layoutClass}" bind:this={thisComp}>
+<div data-theme={dark ? darkTheme : lightTheme} class="{clazz} " bind:this={thisComp}>
 	<slot {dark} />
 </div>
+<!-- <slot /> -->

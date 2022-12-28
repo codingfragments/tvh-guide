@@ -97,7 +97,7 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<button
 				class=" underline-offset-2  {floorDate(day).getTime() === floorDate(displayDay).getTime()
-					? 'p-1    bg-primary text-primary-content m-auto rounded-lg'
+					? 'p-1    bg-primary text-primary-content  rounded-lg'
 					: 'p-1'}"
 				class:font-thin={day.getMonth() !== displayMonth.getMonth()}
 				class:italic={day.getMonth() !== displayMonth.getMonth()}
