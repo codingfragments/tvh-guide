@@ -38,3 +38,11 @@ body,
 #sapper {
 	@apply h-full max-h-full;
 }
+
+/* This is a fix for the storybook integration.
+It allows the Storywrapper to be full-viewport in fullscreen views
+while adaptive height in doc mode */
+#storybook-root > div {
+	@apply absolute;
+	@apply inset-0;
+}
