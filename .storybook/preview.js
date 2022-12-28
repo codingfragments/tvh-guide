@@ -41,5 +41,19 @@ export const globalTypes = {
 			// Change title based on selected value
 			dynamicTitle: true
 		}
+	},
+	darkMode: {
+		name: 'ThemeMode',
+		description: 'Global theme for components',
+		defaultValue: 'light',
+		toolbar: {
+			icon: 'switchalt',
+			// Array of plain string values or MenuItem shape (see below)
+			items: ['light', 'dark'],
+			// Property that specifies if the name of the item will be displayed
+			title: true,
+			// Change title based on selected value
+			dynamicTitle: true
+		}
 	}
 };
