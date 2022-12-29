@@ -27,7 +27,7 @@
 </script>
 
 <div
-	class="relative grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4 max-w-2xl mx-auto "
+	class="relative grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4 xl:w-2/3 2xl:w-1/2 mx-auto "
 >
 	<!-- HEADER and NAV-->
 	<div class="shadow-md py-2   flex flex-row  bg-base-100 z-front rounded-xl">

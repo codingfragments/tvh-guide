@@ -168,7 +168,7 @@
 		</div>
 		<div class="overflow-y-scroll flex-1 flex flex-col relative shadow-lg ">
 			{#each epgEvents as event (event.uuid)}
-				<div class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2">
+				<div class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer">
 					<EpgEventSummary
 						epgEvent={event}
 						searchDate={new Date()}
