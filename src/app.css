@@ -42,7 +42,7 @@ body,
 /* This is a fix for the storybook integration.
 It allows the Storywrapper to be full-viewport in fullscreen views
 while adaptive height in doc mode */
-#storybook-root > div {
+#storybook-root > #themed {
 	@apply absolute;
 	@apply inset-0;
 }

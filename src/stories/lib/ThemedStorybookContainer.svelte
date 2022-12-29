@@ -73,7 +73,7 @@
 	// });
 </script>
 
-<div data-theme={dark ? darkTheme : lightTheme} class="{clazz} " bind:this={thisComp}>
+<div data-theme={dark ? darkTheme : lightTheme} class="{clazz} " bind:this={thisComp} id="themed">
 	<slot {dark} />
 </div>
 <!-- <slot /> -->
