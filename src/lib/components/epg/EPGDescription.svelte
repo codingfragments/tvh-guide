@@ -35,7 +35,7 @@
 	{#if epgEvent.description == undefined}
 		{subtitleForDisplayExceptDescription()}
 	{:else}
-		<div>{@html descriptionHtml()}</div>
+		{@html descriptionHtml()}
 	{/if}
 {:else}
 	{subtitleForDisplayExceptDescription(mode === 'expandedLabel')}

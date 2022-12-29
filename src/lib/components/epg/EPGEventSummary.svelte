@@ -136,7 +136,7 @@
 	<div
 		class="relative grid ml-2 mt-1 col-start-2
                 grid-cols-1
-                grid-rows-[minmax(0,_auto)_minmax(0,_auto)_minmax(0,_1fr)_32px]  "
+                grid-rows-[minmax(0,_auto)_minmax(0,_auto)_minmax(0,_min-content)_32px]  "
 	>
 		<div class="relative font-bold h-6 overflow-hidden row-start-1">
 			{epgEvent.title}
@@ -146,7 +146,7 @@
 		</div>
 		{#if expanded}
 			<div
-				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden "
+				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden h-full"
 				class:overflow-y-scroll={scrollableSummary}
 			>
 				<EpgDescription {epgEvent} mode="description" />
