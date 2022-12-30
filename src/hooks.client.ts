@@ -6,13 +6,14 @@ const ROOT_LOG = pino({
 	name: 'ROOT',
 	browser: {
 		asObject: true
-	}
+	},
+	timestamp: pino.stdTimeFunctions.isoTime
 });
 
 //WARN TODO Currently the adapter-node doesn't inject env on hook level. Therefore this falls back to debug for prod
 // Future Enhancement, track the logger in a central dictionary and allow changes at runtime
 ROOT_LOG.level = env.PUBLIC_CLIENT_LOG_LEVEL ?? 'debug';
-console.log('ROOT Loglevel set to ' + ROOT_LOG.level, ROOT_LOG);
+console.log('WS ROOT Loglevel set to ' + ROOT_LOG.level, ROOT_LOG);
 
 // Simple anylogger adapter
 import anylogger from 'anylogger';

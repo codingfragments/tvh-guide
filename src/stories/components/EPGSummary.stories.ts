@@ -3,7 +3,7 @@
 import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
 import CardHalfWidth from '$stories/lib/Card_halfWidth.svelte';
 import type { Meta, StoryObj } from '@storybook/svelte';
-import { wrapThemedContext, wrapContext } from '$stories/lib/SB7StoryDecorators';
+import { wrapContext } from '$stories/lib/SB7StoryDecorators';
 import { epgEvent_Single } from './Events';
 import ThemedStorybookContainer from '$stories/lib/ThemedStorybookContainer.svelte';
 

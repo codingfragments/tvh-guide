@@ -2,12 +2,12 @@
   "name": "tvheadend-guide",
   "version": "0.0.1",
   "scripts": {
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --ignore './src/stories/tutorial'",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --ignore './src/stories/'",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "dev": "vite dev --port 3000 --host 0.0.0.0",
+    "dev": "vite dev --port 3000 --host 0.0.0.0 | npx pino-pretty -c -l",
     "build": "vite build",
     "package": "svelte-kit sync && svelte-package",
     "sync": "svelte-kit sync",
@@ -81,6 +81,7 @@
     "pino": "^8.8.0",
     "svelte-scrollto-element": "^0.7.0",
     "swagger-ui": "^4.15.5",
+    "ts-debounce": "^4.0.0",
     "uuid": "^8.3.2"
   },
   "volta": {
