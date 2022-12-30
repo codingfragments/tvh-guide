@@ -1,11 +1,13 @@
 import { env } from '$env/dynamic/private';
 import pino, { levels } from 'pino';
+
 const ROOT_LOG = pino({
 	name: 'ROOT_APP',
 	base: {},
 	mixin(_context, level) {
 		return { 'level-label': levels.labels[level] };
-	}
+	},
+	timestamp: pino.stdTimeFunctions.isoTime
 });
 
 ROOT_LOG.level = env.SERVER_LOG_LEVEL;

@@ -19,8 +19,8 @@
 	setUIDarkContext(darkStore);
 
 	// React on Storybook Dark mode
-	import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
-	import addons from '@storybook/addons';
+	// import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
+	// import addons from '@storybook/addons';
 	// const channel = addons.getChannel();
 
 	import { onMount } from 'svelte';

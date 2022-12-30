@@ -4,7 +4,7 @@ import { wrapThemedContext } from '$stories/lib/SB7StoryDecorators';
 
 const defaultIcon = 'picon://1_0_1_283D_3FB_1_C00000_0_0_0.png';
 const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picons/';
-const sizes = ['w-10', 'w-20', 'w-36'];
+// const sizes = ['w-10', 'w-20', 'w-36'];
 
 const meta = {
 	title: 'Components/app/ChannelLogo',

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 	import Nav from '$lib/components/Nav.svelte';
 	import { NavRoute } from '$lib/components/NavRoute';
@@ -69,4 +69,4 @@
 		segment: 'now',
 		collapsed: false
 	}}
-/>
+/> -->
