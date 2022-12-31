@@ -34,7 +34,7 @@
 			offset += 20;
 			scroller.scrollToGridY(current - 20, false, true);
 		}
-		if (gridPos.y < 20) {
+		if (gridPos.y < 20 && offset > 0) {
 			let current = gridPos.y;
 			const oldOffset = offset;
 			offset = Math.max(offset - 20, 0);
@@ -45,6 +45,17 @@
 	// const debouncedScrollHandles = debounce(scrollEnded, 500);
 
 	let scroller: XYScroller;
+
+	function delay(ms: number) {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
+	async function columnSpecs(columnData: GridData<any>, loffset: number): any {
+		const cdata = Array.from(Array(maxRows).keys()).map(
+			(x) => columnData.data + '::' + (x + 1 + loffset)
+		);
+		await delay(1000);
+		return cdata;
+	}
 </script>
 
 <div class="w-[800px] h-[480px] relative border overflow-hidden">
@@ -67,10 +78,20 @@
 				<div style="height:{cellHeight}px">{h}</div>
 			{/each}
 		</div>
-		<div slot="column" class="border" let:columnData>
-			{#each hdata as h}
-				<div style="height:{cellHeight}px">{columnData.data}::{h}</div>
-			{/each}
+		<div
+			slot="column"
+			class="border relative overflow-clip"
+			style:height="{cellHeight * maxRows}px"
+			let:columnData
+		>
+			{#await columnSpecs(columnData, offset)}
+				<div class="absolute inset-0 bg-base-200 bg-opacity-50" />
+				<!-- <div style:height="{cellHeight * maxRows}px">&nbsp;</div> -->
+			{:then cols}
+				{#each cols as h}
+					<div style="height:{cellHeight}px">{columnData.data}::{h}</div>
+				{/each}
+			{/await}
 		</div>
 	</XYScroller>
 </div>
