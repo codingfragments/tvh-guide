@@ -110,8 +110,10 @@
 	}
 </script>
 
-<div class="h-full bg-base-200 flex flex-row">
-	<div class="flex flex-col h-full w-full px-4  xl:px-10 xl:pb-8 flex-grow">
+<div
+	class="bg-base-200 grid grid-cols-[1fr_minmax(0,min-content)] grid-rows-[min-content_1fr] h-full "
+>
+	<div class="flex flex-col  px-4  xl:px-10 xl:pb-8 col-start-1 row-start-1">
 		<!--
 		EPG Display and scroll
 	    ----------------------
@@ -137,8 +139,7 @@
 
 			<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
 
-			<button class="btn my-auto ml-2 mr-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button
-			>
+			<button class="btn my-auto ml-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button>
 		</div>
 		<div class="flex flex-row">
 			<div class="flex-1" />
@@ -157,58 +158,68 @@
 				{/each}
 			</div>
 		</div>
-		<div class="overflow-y-scroll flex-1 flex flex-col relative shadow-lg ">
-			{#each epgEvents as event (event.uuid)}
-				<div class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer">
-					<EpgEventSummary
-						epgEvent={event}
-						searchDate={new Date()}
-						expanded={isExpanded(event)}
-						actions={getActions(event)}
-						showNavigationButtons={false}
-						showFullDate
-						on:click={() => onClick_EPGEvent(event)}
-						on:action={(ev) => handleAction(ev.detail, event)}
-					/>
-				</div>
-			{/each}
-			<!-- Replace result table with Nav Spinner while waiting for server response-->
-			<NavigationSpinner />
-		</div>
+	</div>
+	<div
+		class="overflow-y-scroll flex-1 flex flex-col relative shadow-lg  col-start-1 row-start-2 px-4"
+	>
+		{#each epgEvents as event (event.uuid)}
+			<div
+				class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer
+			 {selectedEpgEvent && isLarge && selectedEpgEvent.uuid == event.uuid
+					? 'border-l-8 border-primary'
+					: ''}"
+			>
+				<EpgEventSummary
+					epgEvent={event}
+					searchDate={new Date()}
+					expanded={isExpanded(event)}
+					actions={getActions(event)}
+					showNavigationButtons={false}
+					showFullDate
+					on:click={() => onClick_EPGEvent(event)}
+					on:action={(ev) => handleAction(ev.detail, event)}
+				/>
+			</div>
+		{/each}
+		<!-- Replace result table with Nav Spinner while waiting for server response-->
+		<NavigationSpinner />
 	</div>
 
 	{#if isLarge && selectedEpgEvent}
-		<Sidebar
-			on:closed={() => {
-				selectedEpgEvent = undefined;
-			}}
-		>
-			{#key selectedEpgEvent}
-				<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
-					<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
-				</div>
-				{#if selectedEpgEvent.image}
-					<div class="p-4">
-						<img
-							src={selectedEpgEvent.image}
-							alt="Programm Images"
-							width="100%"
-							class="rounded-lg object-scale-down shadow-md  "
-						/>
+		<div class="row-start-1 col-start-2 row-span-2 ">
+			<Sidebar
+				on:closed={() => {
+					selectedEpgEvent = undefined;
+				}}
+				class="h-full xl:w-[500px]"
+			>
+				{#key selectedEpgEvent}
+					<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
+						<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
 					</div>
-				{/if}
-				<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1">
-					<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
-				</div>
-				<div class="my-4  ml-auto ">
-					<button
-						class="btn btn-primary"
-						on:click={() => {
-							handleAction('details', selectedEpgEvent);
-						}}>details</button
-					>
-				</div>
-			{/key}
-		</Sidebar>
+					{#if selectedEpgEvent.image}
+						<div class="p-4">
+							<img
+								src={selectedEpgEvent.image}
+								alt="Programm Images"
+								width="100%"
+								class="rounded-lg object-scale-down shadow-md  "
+							/>
+						</div>
+					{/if}
+					<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1">
+						<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
+					</div>
+					<div class="my-4  ml-auto ">
+						<button
+							class="btn btn-primary"
+							on:click={() => {
+								handleAction('details', selectedEpgEvent);
+							}}>details</button
+						>
+					</div>
+				{/key}
+			</Sidebar>
+		</div>
 	{/if}
 </div>
