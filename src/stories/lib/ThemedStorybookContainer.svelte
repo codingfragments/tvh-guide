@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { setMediaContext, setUIDarkContext } from '$lib/client/state/layoutContext';
-	import type { MediaResult } from '$lib/client/utils/mediaquery';
 	import { writable } from 'svelte/store';
 
 	export let dark = false;
@@ -9,8 +8,6 @@
 	let clazz = 'p-4';
 	export { clazz as class };
 	import { media as media2 } from '$lib/client/state/global';
-
-	let mediaStore = writable<MediaResult>();
 
 	let darkStore = writable(dark);
 	$: darkStore.set(dark);
@@ -30,11 +27,13 @@
 
 	onMount(() => {
 		checkGlobals();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const wmap: Record<string, any> = window;
 		wmap['sb7_chkGlobals_container'] = checkGlobals;
 	});
 
 	function checkGlobals() {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const wmap: Record<string, any> = window;
 		const globs = wmap['sb7_globals'];
 		console.log('CHECK', globs);
@@ -56,9 +55,7 @@
 			}
 		}
 	}
-	let layoutClass = '';
 	let thisComp: HTMLDivElement;
-	let thisIsRoot = false;
 
 	// onMount(() => {
 	// 	if (thisComp) {

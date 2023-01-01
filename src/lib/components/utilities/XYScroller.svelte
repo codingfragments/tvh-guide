@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export interface GridData<T = any> {
 		uuid: string;
 		data: T;
@@ -142,7 +143,7 @@
 	}
 	const debouncedSnap = debounce(snap, scrollDebounceTime / 2);
 
-	function scrollMain(event: UIEvent): any {
+	function scrollMain() {
 		scrollYPos = cmpContent.scrollTop;
 		scrollXPos = cmpContent.scrollLeft;
 
@@ -162,10 +163,10 @@
 		return { x: Math.floor(xpos / cellWidth + 0.5), y: Math.floor(ypos / cellHeight + 0.5) };
 	}
 
-	function handleMouseDown(event: MouseEvent): any {
+	function handleMouseDown() {
 		dragScrolling = true;
 	}
-	function handleMouseUp(event: MouseEvent): any {
+	function handleMouseUp() {
 		dragScrolling = false;
 		debouncedSnap();
 	}

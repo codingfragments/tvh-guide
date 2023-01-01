@@ -5,30 +5,20 @@
 
 	import { getMediaContext } from '$lib/client/state/layoutContext';
 	import EpgEventSummary, { type Action } from '$lib/components/epg/EPGEventSummary.svelte';
+	import DateTimeControl, {
+		type DateSelectedEventData
+	} from '$lib/components/layout/topnav/DateTimeControl.svelte';
+	import TopNavbar from '$lib/components/layout/TopNavbar.svelte';
+
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
 	import { goto, invalidate } from '$app/navigation';
-	import Icon from '$lib/components/Icon.svelte';
-	import { dateformat } from '$lib/format';
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { apiGetEvent } from '$lib/client/apiWrapper';
 	import { extractTime } from '$lib/tools';
-	import DateTimePicker from '$lib/components/calendar/DateTimePicker.svelte';
 
 	export let data: PageData;
-	let epgDateFirst: Date;
-	let epgDateLast: Date;
-
-	// Convert Date Format from server Response
-	$: {
-		if (typeof data.serverHealth.cache.firstDate !== 'undefined') {
-			epgDateFirst = new Date(data.serverHealth.cache.firstDate);
-		}
-		if (typeof data.serverHealth.cache.lastDate !== 'undefined') {
-			epgDateLast = new Date(data.serverHealth.cache.lastDate);
-		}
-	}
 
 	let epgEvents: ITVHEpgEvent[];
 	$: epgEvents = data.events;
@@ -99,11 +89,18 @@
 		});
 	}
 
-	let showDateDlg = false;
-
-	function dateSelected(e: CustomEvent<Date>): void {
-		const mergedDate = e.detail;
-
+	function dateSelected(e: CustomEvent<DateSelectedEventData>): void {
+		if (e.detail?.reset) {
+			gotoNow();
+			return;
+		}
+		// Normal Date Selected
+		if (typeof e.detail.date == 'undefined') {
+			throw new Error(
+				'Data missmatch, date Selected should be either reset=True or include a date property'
+			);
+		}
+		const mergedDate = e.detail.date;
 		LOG.debug({
 			msg: 'New Date Selected',
 			date: e.detail,
@@ -131,20 +128,6 @@
 		url.search = '';
 		goto(url, { invalidateAll: true, replaceState: true });
 	}
-
-	function toggleDatePicker() {
-		if (showDateDlg) {
-			showDateDlg = false;
-			return;
-		}
-
-		// fetch('/api/v1/health').then((resp) => {
-		// 	resp.json().then((result: ServerStatus) => {
-		// 		LOG.debug({ msg: 'Status', stats: result, epgDateFirst, epgDateLast });
-		// 	});
-		// });
-		showDateDlg = true;
-	}
 </script>
 
 <div class="flex flex-col h-full w-full bg-base-200">
@@ -152,58 +135,31 @@
 		Top bar Nav and Filter
 	    ----------------------
 	-->
-
 	<div class="flex-none px-2 py-2">
-		<div class="navbar bg-base-100 min-h-8 rounded-lg pr-4 shadow-lg relative">
-			<span class="absolute badge badge-ghost top-[-5px] left-[-2px]" class:hidden={!data.modeNow}>
-				live
-			</span>
-			<div class="flex-1">
-				<div class="relative">
-					<button
-						class="lg:ml-8 pl-2 btn btn-sm btn-ghost px-0"
-						on:click={() => toggleDatePicker()}
-					>
-						{dateformat(data.searchDate, bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort)}
-						{dateformat(data.searchDate, bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort)}
-						<Icon icon="expand_more" size="sm" />
-					</button>
-					<div
-						class="p-1 lg:p-3 rounded-md shadow-lg absolute top-full left-0 z-front bg-base-100 mt-4 lg:ml-4 flex flex-col"
-						class:hidden={!showDateDlg}
-					>
-						<DateTimePicker
-							date={data.searchDate}
-							on:dateTimeSelected={dateSelected}
-							dateStart={epgDateFirst}
-							dateEnd={epgDateLast}
-							rangeMode="underlined"
-						/>
-						<div class="flex flex-row ">
-							<div class="flex-grow" />
-							<button
-								class="btn btn-primary"
-								on:click={() => {
-									showDateDlg = false;
-									gotoNow();
-								}}>reset</button
-							>
-							<button
-								class="btn btn-primary ml-4"
-								on:click={() => {
-									showDateDlg = false;
-								}}>close</button
-							>
-						</div>
-					</div>
+		<TopNavbar>
+			<div slot="nav">
+				<span
+					class="absolute badge badge-ghost top-[-5px] left-[-2px]"
+					class:hidden={!data.modeNow}
+				>
+					live
+				</span>
+				<div class="flex-1">
+					<DateTimeControl
+						showReset
+						dateFormat={bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort}
+						timeFormat={bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort}
+						dateFirst={data.epgDateRange.epgDateFirst}
+						dateLast={data.epgDateRange.epgDateLast}
+						searchDate={data.searchDate}
+						on:dateSelected={dateSelected}
+					/>
 				</div>
 			</div>
-
-			<div class="flex-none">
-				<!-- Adde Channel Filter by Category-->
+			<div slot="rightNav">
 				<button class="btn btn-square btn-ghost btn-sm"> NOPE </button>
 			</div>
-		</div>
+		</TopNavbar>
 	</div>
 
 	<!--

@@ -9,7 +9,7 @@ import type { ApiResultStats } from '$lib/types/api';
 const LOG = anylogger('Page:/epgNow:LOAD');
 
 export const load: PageLoad = async ({ fetch, url, depends }) => {
-	depends('app:epgNow');
+	depends('app:epgSearch');
 
 	let searchString = '';
 	if (!url.searchParams.has('q')) {
