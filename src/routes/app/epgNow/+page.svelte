@@ -19,6 +19,7 @@
 	import { extractTime } from '$lib/tools';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
+	import MainLayout from '$lib/components/layout/MainLayout.svelte';
 
 	export let data: PageData;
 
@@ -137,66 +138,66 @@
 	}
 </script>
 
-<div
-	class="bg-base-200 grid grid-cols-[1fr_minmax(0,min-content)] grid-rows-[min-content_1fr] h-full "
->
+<MainLayout>
 	<!--
 		Top bar Nav and Filter
 	    ---------------------- -->
-	<div class="flex-none px-2 py-2 col-start-1 row-start-1">
-		<TopNavbar>
-			<div slot="nav">
-				<span
-					class="absolute badge badge-ghost top-[-5px] left-[-2px]"
-					class:hidden={!data.modeNow}
+	<svelte:fragment slot="head">
+		<div class="px-2 py-2 ">
+			<TopNavbar>
+				<div slot="nav">
+					<span
+						class="absolute badge badge-ghost top-[-5px] left-[-2px]"
+						class:hidden={!data.modeNow}
+					>
+						live
+					</span>
+					<div class="flex-1">
+						<DateTimeControl
+							showReset
+							dateFormat={bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort}
+							timeFormat={bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort}
+							dateFirst={data.epgDateRange.epgDateFirst}
+							dateLast={data.epgDateRange.epgDateLast}
+							searchDate={data.searchDate}
+							on:dateSelected={dateSelected}
+						/>
+					</div>
+				</div>
+				<div slot="rightNav">
+					<button class="btn btn-square btn-ghost btn-sm"> NOPE </button>
+				</div>
+			</TopNavbar>
+		</div>
+	</svelte:fragment>
+	<svelte:fragment slot="main">
+		<div
+			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-scroll"
+		>
+			{#each epgEvents as event (event.uuid)}
+				<div
+					class="rounded-lg p-4 shadow-md bg-base-100
+			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid
+						? 'border-l-8 border-primary'
+						: ''}"
 				>
-					live
-				</span>
-				<div class="flex-1">
-					<DateTimeControl
-						showReset
-						dateFormat={bigMode ? data.uiCfg.dateLong : data.uiCfg.dateShort}
-						timeFormat={bigMode ? data.uiCfg.timeLong : data.uiCfg.timeShort}
-						dateFirst={data.epgDateRange.epgDateFirst}
-						dateLast={data.epgDateRange.epgDateLast}
+					<EpgEventSummary
+						epgEvent={event}
 						searchDate={data.searchDate}
-						on:dateSelected={dateSelected}
+						expanded={isExpanded(event)}
+						actions={getActions(event)}
+						on:click={() => toggleChannel(event)}
+						on:action={(ev) => handleAction(ev.detail, event)}
+						on:epgSelected={(epgEvent) => {
+							handleEPGSelected(epgEvent.detail);
+						}}
 					/>
 				</div>
-			</div>
-			<div slot="rightNav">
-				<button class="btn btn-square btn-ghost btn-sm"> NOPE </button>
-			</div>
-		</TopNavbar>
-	</div>
-
-	<div
-		class="col-start-1 row-start-2 overflow-y-scroll  grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 "
-	>
-		{#each epgEvents as event (event.uuid)}
-			<div
-				class="rounded-lg p-4 shadow-md bg-base-100
-			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid
-					? 'border-l-8 border-primary'
-					: ''}"
-			>
-				<EpgEventSummary
-					epgEvent={event}
-					searchDate={data.searchDate}
-					expanded={isExpanded(event)}
-					actions={getActions(event)}
-					on:click={() => toggleChannel(event)}
-					on:action={(ev) => handleAction(ev.detail, event)}
-					on:epgSelected={(epgEvent) => {
-						handleEPGSelected(epgEvent.detail);
-					}}
-				/>
-			</div>
-		{/each}
-	</div>
-
-	{#if bigMode && selectedEpgEvent}
-		<div class="row-start-1 col-start-2 row-span-2 ">
+			{/each}
+		</div>
+	</svelte:fragment>
+	<svelte:fragment slot="side">
+		{#if bigMode && selectedEpgEvent}
 			<Sidebar
 				on:closed={() => {
 					selectedEpgEvent = undefined;
@@ -233,6 +234,6 @@
 					</div>
 				{/key}
 			</Sidebar>
-		</div>
-	{/if}
-</div>
+		{/if}
+	</svelte:fragment>
+</MainLayout>

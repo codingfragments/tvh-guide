@@ -14,6 +14,7 @@
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
+	import MainLayout from '$lib/components/layout/MainLayout.svelte';
 
 	export let data: PageData;
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
@@ -110,83 +111,82 @@
 	}
 </script>
 
-<div
-	class="bg-base-200 grid grid-cols-[1fr_minmax(0,min-content)] grid-rows-[min-content_1fr] h-full "
->
-	<div class="flex flex-col  px-4  xl:px-10 xl:pb-8 col-start-1 row-start-1">
-		<!--
+<MainLayout>
+	<svelte:fragment slot="head">
+		<div class="flex flex-col  px-4  xl:px-10 xl:pb-8 ">
+			<!--
 		EPG Display and scroll
 	    ----------------------
 	    -->
-		<div class="flex flex-row w-full pt-2 pb-4">
-			<form method="get" class="flex-grow">
-				<div class="form-control   ">
-					<div class="relative input-group  ml-auto rounded-lg  ">
-						<input
-							type="text"
-							name="q"
-							placeholder="Search…"
-							class="input  input-bordered w-full  "
-							value={data.searchString}
-						/>
-						<button class="btn btn-square">
-							<Icon icon="search" />
-						</button>
+			<div class="flex flex-row w-full pt-2 pb-4">
+				<form method="get" class="flex-grow">
+					<div class="form-control   ">
+						<div class="relative input-group  ml-auto rounded-lg  ">
+							<input
+								type="text"
+								name="q"
+								placeholder="Search…"
+								class="input  input-bordered w-full  "
+								value={data.searchString}
+							/>
+							<button class="btn btn-square">
+								<Icon icon="search" />
+							</button>
+						</div>
 					</div>
+					<input type="hidden" value="50" name="range" />
+				</form>
+
+				<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
+
+				<button class="btn my-auto ml-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button>
+			</div>
+			<div class="flex flex-row">
+				<div class="flex-1" />
+				<div class="btn-group mb-2">
+					{#each pages as p}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="btn btn-sm"
+							class:btn-active={'' + (curPage + 1) === p}
+							on:click={() => {
+								switchPage(p);
+							}}
+						>
+							{p}
+						</div>
+					{/each}
 				</div>
-				<input type="hidden" value="50" name="range" />
-			</form>
-
-			<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
-
-			<button class="btn my-auto ml-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button>
-		</div>
-		<div class="flex flex-row">
-			<div class="flex-1" />
-			<div class="btn-group mb-2">
-				{#each pages as p}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div
-						class="btn btn-sm"
-						class:btn-active={'' + (curPage + 1) === p}
-						on:click={() => {
-							switchPage(p);
-						}}
-					>
-						{p}
-					</div>
-				{/each}
 			</div>
 		</div>
-	</div>
-	<div
-		class="overflow-y-scroll flex-1 flex flex-col relative shadow-lg  col-start-1 row-start-2 px-4"
-	>
-		{#each epgEvents as event (event.uuid)}
-			<div
-				class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer
+	</svelte:fragment>
+	<svelte:fragment slot="main">
+		<div class="flex flex-col relative shadow-lg px-4 pb-4 overflow-y-scroll h-full">
+			{#each epgEvents as event (event.uuid)}
+				<div
+					class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer
 			 {selectedEpgEvent && isLarge && selectedEpgEvent.uuid == event.uuid
-					? 'border-l-8 border-primary'
-					: ''}"
-			>
-				<EpgEventSummary
-					epgEvent={event}
-					searchDate={new Date()}
-					expanded={isExpanded(event)}
-					actions={getActions(event)}
-					showNavigationButtons={false}
-					showFullDate
-					on:click={() => onClick_EPGEvent(event)}
-					on:action={(ev) => handleAction(ev.detail, event)}
-				/>
-			</div>
-		{/each}
-		<!-- Replace result table with Nav Spinner while waiting for server response-->
-		<NavigationSpinner />
-	</div>
-
-	{#if isLarge && selectedEpgEvent}
-		<div class="row-start-1 col-start-2 row-span-2 ">
+						? 'border-l-8 border-primary'
+						: ''}"
+				>
+					<EpgEventSummary
+						epgEvent={event}
+						searchDate={new Date()}
+						expanded={isExpanded(event)}
+						actions={getActions(event)}
+						showNavigationButtons={false}
+						showFullDate
+						on:click={() => onClick_EPGEvent(event)}
+						on:action={(ev) => handleAction(ev.detail, event)}
+					/>
+				</div>
+			{/each}
+			<!-- Replace result table with Nav Spinner while waiting for server response-->
+			<NavigationSpinner />
+		</div>
+	</svelte:fragment>
+	<svelte:fragment slot="side">
+		{#if isLarge && selectedEpgEvent}
 			<Sidebar
 				on:closed={() => {
 					selectedEpgEvent = undefined;
@@ -207,7 +207,10 @@
 							/>
 						</div>
 					{/if}
-					<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1">
+					<div
+						class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1"
+						class:mt-4={!selectedEpgEvent.image}
+					>
 						<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
 					</div>
 					<div class="my-4  ml-auto ">
@@ -220,6 +223,7 @@
 					</div>
 				{/key}
 			</Sidebar>
-		</div>
-	{/if}
-</div>
+		{/if}
+	</svelte:fragment>
+	<!-- <div class="col-start-1 col-span-2 row-start-3">FOOTER</div> -->
+</MainLayout>

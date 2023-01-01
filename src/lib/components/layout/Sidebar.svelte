@@ -12,7 +12,8 @@
 	transition:fly={{ x: 200, duration: 500 }}
 >
 	<slot />
-	<button class="btn btn-circle btn-sm absolute -left-3" on:click={() => dispatch('closed')}
-		>X</button
+	<button
+		class="btn btn-circle btn-sm absolute -left-3 z-overlay"
+		on:click={() => dispatch('closed')}>X</button
 	>
 </div>
