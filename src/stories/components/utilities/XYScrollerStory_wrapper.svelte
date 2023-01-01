@@ -49,7 +49,8 @@
 	function delay(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
-	async function columnSpecs(columnData: GridData<any>, loffset: number): any {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async function columnSpecs(columnData: GridData<any>, loffset: number) {
 		const cdata = Array.from(Array(maxRows).keys()).map(
 			(x) => columnData.data + '::' + (x + 1 + loffset)
 		);

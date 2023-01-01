@@ -7,15 +7,13 @@
 	import EpgEventSummary, { type Action } from '$lib/components/epg/EPGEventSummary.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
-	import { goto, invalidateAll } from '$app/navigation';
-
-	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-
 	import Icon from '$lib/components/Icon.svelte';
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
 
 	export let data: PageData;
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
@@ -119,14 +117,7 @@
 	    ----------------------
 	    -->
 		<div class="flex flex-row w-full pt-2 pb-4">
-			<form
-				method="get"
-				on:submit={() => {
-					invalidateAll();
-					showLoading = true;
-				}}
-				class="flex-grow"
-			>
+			<form method="get" class="flex-grow">
 				<div class="form-control   ">
 					<div class="relative input-group  ml-auto rounded-lg  ">
 						<input
@@ -181,14 +172,8 @@
 					/>
 				</div>
 			{/each}
-			{#if showLoading}
-				<div class="bg-base-200 bg-opacity-75 absolute inset-0 " transition:fade>
-					<div class="flex flex-col">
-						<div class="mx-auto pt-32 text-2xl">Loading</div>
-						<progress class="progress w-56 mx-auto" />
-					</div>
-				</div>
-			{/if}
+			<!-- Replace result table with Nav Spinner while waiting for server response-->
+			<NavigationSpinner />
 		</div>
 	</div>
 
