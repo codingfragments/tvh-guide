@@ -111,7 +111,7 @@
 </script>
 
 <div class="h-full bg-base-200 flex flex-row">
-	<div class="flex flex-col h-full w-full px-4  xl:px-10 xl:pb-8 flex-1">
+	<div class="flex flex-col h-full w-full px-4  xl:px-10 xl:pb-8 flex-grow">
 		<!--
 		EPG Display and scroll
 	    ----------------------

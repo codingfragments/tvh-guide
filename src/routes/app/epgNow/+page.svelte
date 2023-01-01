@@ -17,6 +17,8 @@
 	import { page } from '$app/stores';
 	import { apiGetEvent } from '$lib/client/apiWrapper';
 	import { extractTime } from '$lib/tools';
+	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 
 	export let data: PageData;
 
@@ -31,9 +33,14 @@
 	}
 
 	let channelsExpanded: string[] = [];
+	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
+
 	function toggleChannel(epg: ITVHEpgEvent) {
 		// NOOP if media is lg or bigger
-		if (bigMode) return true;
+		if (bigMode) {
+			selectedEpgEvent = epg;
+			return true;
+		}
 
 		const index = channelsExpanded.indexOf(epg.channel.uuid, 0);
 		if (index > -1) {
@@ -45,7 +52,7 @@
 		}
 	}
 	function isExpanded(epg: ITVHEpgEvent): boolean {
-		if (bigMode) return true;
+		if (bigMode) return false;
 		return channelsExpanded.includes(epg.channel.uuid);
 	}
 
@@ -130,12 +137,13 @@
 	}
 </script>
 
-<div class="flex flex-col h-full w-full bg-base-200">
+<div
+	class="bg-base-200 grid grid-cols-[1fr_minmax(0,min-content)] grid-rows-[min-content_1fr] h-full "
+>
 	<!--
 		Top bar Nav and Filter
-	    ----------------------
-	-->
-	<div class="flex-none px-2 py-2">
+	    ---------------------- -->
+	<div class="flex-none px-2 py-2 col-start-1 row-start-1">
 		<TopNavbar>
 			<div slot="nav">
 				<span
@@ -162,13 +170,16 @@
 		</TopNavbar>
 	</div>
 
-	<!--
-		EPG Display and scroll
-	    ----------------------
-	-->
-	<div class="overflow-y-scroll flex-1 grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 ">
+	<div
+		class="col-start-1 row-start-2 overflow-y-scroll flex-1 grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 "
+	>
 		{#each epgEvents as event (event.uuid)}
-			<div class="rounded-lg p-4 shadow-md bg-base-100">
+			<div
+				class="rounded-lg p-4 shadow-md bg-base-100
+			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid
+					? 'border-l-8 border-primary'
+					: ''}"
+			>
 				<EpgEventSummary
 					epgEvent={event}
 					searchDate={data.searchDate}
@@ -183,4 +194,45 @@
 			</div>
 		{/each}
 	</div>
+
+	{#if bigMode && selectedEpgEvent}
+		<div class="row-start-1 col-start-2 row-span-2 ">
+			<Sidebar
+				on:closed={() => {
+					selectedEpgEvent = undefined;
+				}}
+				class="h-full xl:w-[500px]"
+			>
+				{#key selectedEpgEvent}
+					<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
+						<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
+					</div>
+					{#if selectedEpgEvent.image}
+						<div class="p-4">
+							<img
+								src={selectedEpgEvent.image}
+								alt="Programm Images"
+								width="100%"
+								class="rounded-lg object-scale-down shadow-md  "
+							/>
+						</div>
+					{/if}
+					<div
+						class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1"
+						class:mt-4={!selectedEpgEvent.image}
+					>
+						<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
+					</div>
+					<div class="my-4  ml-auto ">
+						<button
+							class="btn btn-primary"
+							on:click|stopPropagation={() => {
+								if (selectedEpgEvent) handleAction('details', selectedEpgEvent);
+							}}>details</button
+						>
+					</div>
+				{/key}
+			</Sidebar>
+		</div>
+	{/if}
 </div>
