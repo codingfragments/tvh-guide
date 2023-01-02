@@ -35,7 +35,7 @@
 	let channelsExpanded: string[] = [];
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
 
-	function toggleChannel(epg: ITVHEpgEvent) {
+	function handleEventClick(epg: ITVHEpgEvent) {
 		// NOOP if media is lg or bigger
 		if (bigMode) {
 			selectedEpgEvent = epg;
@@ -185,7 +185,7 @@
 						searchDate={data.searchDate}
 						expanded={isExpanded(event)}
 						actions={getActions(event)}
-						on:click={() => toggleChannel(event)}
+						on:click={() => handleEventClick(event)}
 						on:action={(ev) => handleAction(ev.detail, event)}
 						on:epgSelected={(epgEvent) => {
 							handleEPGSelected(epgEvent.detail);
