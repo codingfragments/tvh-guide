@@ -10,6 +10,7 @@
 		type GridPos,
 		type GridRect
 	} from '$lib/components/utilities/XYScroller.svelte';
+	import XyCol from './XYCol.svelte';
 
 	const data = Array.from(Array(20).keys()).map((x) => {
 		return <GridData<number>>{ uuid: 'uu' + x, data: x + 1 };
@@ -85,14 +86,7 @@
 			style:height="{cellHeight * maxRows}px"
 			let:columnData
 		>
-			{#await columnSpecs(columnData, offset)}
-				<div class="absolute inset-0 bg-base-200 bg-opacity-50" />
-				<!-- <div style:height="{cellHeight * maxRows}px">&nbsp;</div> -->
-			{:then cols}
-				{#each cols as h}
-					<div style="height:{cellHeight}px">{columnData.data}::{h}</div>
-				{/each}
-			{/await}
+			<XyCol colData={columnSpecs(columnData, offset)} {cellHeight} colHeader={columnData.data} />
 		</div>
 	</XYScroller>
 </div>
