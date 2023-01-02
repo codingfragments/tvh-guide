@@ -11,10 +11,9 @@
 
 	import { page } from '$app/stores';
 	import Icon from '$lib/components/Icon.svelte';
-	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
-	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
-	import MainLayout from '$lib/components/layout/MainLayout.svelte';
+	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
+	import EpgSidebar from '$lib/components/app/epg/EPGSidebar.svelte';
 
 	export let data: PageData;
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
@@ -111,7 +110,7 @@
 	}
 </script>
 
-<MainLayout>
+<MainLayoutWithSidebar showSidebar={selectedEpgEvent !== undefined}>
 	<svelte:fragment slot="head">
 		<div class="flex flex-col  px-4  xl:px-10 xl:pb-8 ">
 			<!--
@@ -161,10 +160,10 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="main">
-		<div class="flex flex-col relative shadow-lg px-4 pb-4 overflow-y-scroll h-full">
+		<div class="flex flex-col relative shadow-lg mr-2 ml-4 mt-4 pb-4 overflow-y-auto h-full">
 			{#each epgEvents as event (event.uuid)}
 				<div
-					class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mt-2 cursor-pointer
+					class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mb-2 mr-2 cursor-pointer
 			 {selectedEpgEvent && isLarge && selectedEpgEvent.uuid == event.uuid
 						? 'border-l-8 border-primary'
 						: ''}"
@@ -186,44 +185,17 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="side">
-		{#if isLarge && selectedEpgEvent}
-			<Sidebar
+		{#if selectedEpgEvent}
+			<EpgSidebar
+				epgEvent={selectedEpgEvent}
 				on:closed={() => {
 					selectedEpgEvent = undefined;
 				}}
-				class="h-full xl:w-[500px]"
-			>
-				{#key selectedEpgEvent}
-					<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
-						<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
-					</div>
-					{#if selectedEpgEvent.image}
-						<div class="p-4">
-							<img
-								src={selectedEpgEvent.image}
-								alt="Programm Images"
-								width="100%"
-								class="rounded-lg object-scale-down shadow-md  "
-							/>
-						</div>
-					{/if}
-					<div
-						class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1"
-						class:mt-4={!selectedEpgEvent.image}
-					>
-						<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
-					</div>
-					<div class="my-4  ml-auto ">
-						<button
-							class="btn btn-primary"
-							on:click={() => {
-								handleAction('details', selectedEpgEvent);
-							}}>details</button
-						>
-					</div>
-				{/key}
-			</Sidebar>
+				on:showDetails={(ev) => {
+					handleAction('details', ev.detail);
+				}}
+			/>
 		{/if}
 	</svelte:fragment>
 	<!-- <div class="col-start-1 col-span-2 row-start-3">FOOTER</div> -->
-</MainLayout>
+</MainLayoutWithSidebar>

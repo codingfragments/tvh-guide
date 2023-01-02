@@ -72,7 +72,7 @@
 			/>
 		{/if}
 		<div class=" lg:w-2/3 max-md:mt-2 overflow-hidden flex flex-col">
-			<div class="overflow-y-scroll flex-grow px-4 max-md:my-4 lg:mb-4">
+			<div class="overflow-y-auto flex-grow px-4 max-md:my-4 lg:mb-4">
 				<EpgDescription {epgEvent} mode="description" />
 			</div>
 			<!-- TODO add action buttons based on config (record, edit, cancel, switch ...)-->

@@ -1,9 +1,22 @@
+<script lang="ts">
+	import { getMediaContext } from '$lib/client/state/layoutContext';
+	import { createEventDispatcher } from 'svelte';
+
+	const media = getMediaContext();
+	let bigMode = false;
+	$: {
+		bigMode = $media.lg == true;
+	}
+	export let showSidebar = false;
+</script>
+
 <div class="layoutContainer bg-base-200 h-full">
 	<div class="LCTop"><slot name="head" /></div>
-	<!-- TODO maybe handle the display part here, and make sure the sidebar is similar sized in all Pages -->
-	<div class="LCSide min-h-0 ">
-		<slot name="side" />
-	</div>
+	{#if bigMode && showSidebar}
+		<div class="LCSide min-h-0 w-[300px] xl:w-[500px]">
+			<slot name="side" />
+		</div>
+	{/if}
 	<!-- Main is supposed to handle the full layout, need to add sublayout and overflow as
          needed to ensure not to overflow the space-->
 	<div class="LCMain relative min-h-0 min-w-0 ">

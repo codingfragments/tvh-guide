@@ -17,9 +17,8 @@
 	import { page } from '$app/stores';
 	import { apiGetEvent } from '$lib/client/apiWrapper';
 	import { extractTime } from '$lib/tools';
-	import Sidebar from '$lib/components/layout/Sidebar.svelte';
-	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
-	import MainLayout from '$lib/components/layout/MainLayout.svelte';
+	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
+	import EpgSidebar from '$lib/components/app/epg/EPGSidebar.svelte';
 
 	export let data: PageData;
 
@@ -138,7 +137,7 @@
 	}
 </script>
 
-<MainLayout>
+<MainLayoutWithSidebar showSidebar={selectedEpgEvent !== undefined}>
 	<!--
 		Top bar Nav and Filter
 	    ---------------------- -->
@@ -172,7 +171,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="main">
 		<div
-			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-scroll"
+			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-auto"
 		>
 			{#each epgEvents as event (event.uuid)}
 				<div
@@ -197,43 +196,16 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="side">
-		{#if bigMode && selectedEpgEvent}
-			<Sidebar
+		{#if selectedEpgEvent}
+			<EpgSidebar
+				epgEvent={selectedEpgEvent}
 				on:closed={() => {
 					selectedEpgEvent = undefined;
 				}}
-				class="h-full xl:w-[500px]"
-			>
-				{#key selectedEpgEvent}
-					<div class="shadow-lg px-2 pb-2 rounded-md mt-8 bg-base-100">
-						<EpgEventSummary epgEvent={selectedEpgEvent} showFullDate />
-					</div>
-					{#if selectedEpgEvent.image}
-						<div class="p-4">
-							<img
-								src={selectedEpgEvent.image}
-								alt="Programm Images"
-								width="100%"
-								class="rounded-lg object-scale-down shadow-md  "
-							/>
-						</div>
-					{/if}
-					<div
-						class=" shadow-lg py-2 px-2 rounded-md overflow-y-scroll bg-base-100 flex-1"
-						class:mt-4={!selectedEpgEvent.image}
-					>
-						<EpgDescription epgEvent={selectedEpgEvent} mode="description" />
-					</div>
-					<div class="my-4  ml-auto ">
-						<button
-							class="btn btn-primary"
-							on:click|stopPropagation={() => {
-								if (selectedEpgEvent) handleAction('details', selectedEpgEvent);
-							}}>details</button
-						>
-					</div>
-				{/key}
-			</Sidebar>
+				on:showDetails={(ev) => {
+					handleAction('details', ev.detail);
+				}}
+			/>
 		{/if}
 	</svelte:fragment>
-</MainLayout>
+</MainLayoutWithSidebar>
