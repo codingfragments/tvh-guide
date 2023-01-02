@@ -24,7 +24,6 @@
 				current: false
 			});
 		}
-		LOG.debug({ msg: 'Dates  Created', dateList });
 		return dateList;
 	}
 
