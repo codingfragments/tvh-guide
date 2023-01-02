@@ -147,7 +147,7 @@
 		{#if expanded}
 			<div
 				class="relative h-[8rem]   row-start-3 mr-2 overflow-hidden h-full"
-				class:overflow-y-scroll={scrollableSummary}
+				class:overflow-y-auto={scrollableSummary}
 			>
 				<EpgDescription {epgEvent} mode="description" />
 			</div>

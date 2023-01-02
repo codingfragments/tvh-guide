@@ -70,7 +70,7 @@
 	}
 </script>
 
-<div class="overflow-y-scroll h-full px-2 pr-4  " bind:this={listContainerElement}>
+<div class="overflow-y-auto h-full px-2 pr-4  " bind:this={listContainerElement}>
 	{#each dateList as d}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
