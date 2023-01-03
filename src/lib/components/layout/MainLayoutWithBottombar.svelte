@@ -11,7 +11,8 @@
 </script>
 
 <div
-	class=" bg-base-200 h-full relative {showBottom ? 'layoutContainerActive' : 'layoutContainer'}"
+	class=" bg-base-200 h-full relative
+			{showBottom && bigMode ? 'layoutContainerActive' : 'layoutContainer'}"
 >
 	<div class="LCTop"><slot name="head" /></div>
 	<!-- Main is supposed to handle the full layout, need to add sublayout and overflow as

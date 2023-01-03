@@ -2,6 +2,7 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export interface GridData<T = any> {
 		uuid: string;
+		loading: boolean;
 		data: T;
 	}
 

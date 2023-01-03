@@ -48,7 +48,7 @@
 	$: {
 		// fill depend Data
 		gridData = data.channels.map((channel) => {
-			return { uuid: channel.uuid, data: channel };
+			return { uuid: channel.uuid, data: channel, loading: false };
 		});
 		// .slice(0, 1);
 

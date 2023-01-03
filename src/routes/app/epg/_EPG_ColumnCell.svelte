@@ -30,15 +30,7 @@
     {selected ? 'border-l-4 border-primary-focus' : ''}"
 	>
 		<div class="relative  h-full  ">
-			<div
-				class="h-full w-full flex flex-col "
-				on:mouseenter={() => {
-					debugWindow = true;
-				}}
-				on:mouseleave={() => {
-					debugWindow = false;
-				}}
-			>
+			<div class="h-full w-full flex flex-col ">
 				{#if layout === 'sm'}
 					<div>
 						{dateformat(epg.startDate, 'HH:MM')}
