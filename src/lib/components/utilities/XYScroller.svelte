@@ -31,7 +31,7 @@
 	export let cellWidth = 100;
 	export let cellHeight = 50;
 	export let gridData: GridData[];
-	export let gridDebug = true;
+	export let gridDebug: boolean = true;
 	export let scrollDebounceTime = 500;
 	export let gridPos: GridPos = { x: 0, y: 0 };
 	export let gridLastPos: GridPos = { x: 0, y: 0 };
@@ -87,7 +87,10 @@
 		duration: scrollDebounceTime / 2,
 		easing: cubicOut
 	});
-	$: if (cmpContent) cmpContent.scrollTo($scrollX, cmpContent.scrollTop);
+	$: if (cmpContent) {
+		cmpContent.scrollTo($scrollX, cmpContent.scrollTop);
+		cmpHead.scrollTo($scrollX, cmpHead.scrollTop);
+	}
 
 	// Scrolling Function (enable Soft Scrolling)
 	// ==========================================
@@ -200,7 +203,7 @@
 	       grid-rows-[max-content_minmax(0,1fr)]"
 >
 	<div class="col-start-2 row-start-1 ">
-		<div class="flex flex-row overflow-hidden" bind:this={cmpHead}>
+		<div class="flex flex-row overflow-hidden " bind:this={cmpHead}>
 			{#each gridData as gd (gd.uuid)}
 				<div style="width:{cellWidth}px" class="flex-none">
 					<slot name="header" headerData={gd} />
@@ -217,7 +220,7 @@
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 	<div
 		tabindex="0"
-		class="overflow-scroll row-start-2 col-start-2 flex flex-row outline-none"
+		class="overflow-scroll row-start-2 col-start-2 flex flex-row outline-none "
 		bind:this={cmpContent}
 		bind:clientHeight={scrollHeight}
 		bind:clientWidth={scrollWidth}
