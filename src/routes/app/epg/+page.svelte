@@ -13,9 +13,11 @@
 	import { moduloMinutesDate } from '$lib/tools';
 	import type { PageData } from './$types';
 	import XyScroller, { type GridData } from '$lib/components/utilities/XYScroller.svelte';
-	import type { ITVHChannel } from '$lib/types/epg-interfaces';
+	import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import ChannelLogo from '$lib/components/epg/ChannelLogo.svelte';
 	import { dateformat } from '$lib/format';
+	import MainLayoutWithBottombar from '$lib/components/layout/MainLayoutWithBottombar.svelte';
+	import EpgBottombar from '$lib/components/app/epg/EPGBottombar.svelte';
 
 	const media = getMediaContext();
 
@@ -82,9 +84,11 @@
 			return;
 		}
 	}
+
+	export let selectedEpgEvent: ITVHEpgEvent | undefined;
 </script>
 
-<MainLayoutWithSidebar>
+<MainLayoutWithBottombar showBottom={selectedEpgEvent !== undefined}>
 	<svelte:fragment slot="head">
 		<div class="px-2 py-2  ">
 			<TopNavbar>
@@ -182,6 +186,10 @@
 							{channel}
 							minPerCell={15}
 							maxHeight={cellHeight * maxCells}
+							{selectedEpgEvent}
+							on:epgSelected={(e) => {
+								selectedEpgEvent = e.detail;
+							}}
 						/>
 					</div>
 					<!-- END SLOT: CONTENT -->
@@ -189,4 +197,18 @@
 			</div>
 		</div>
 	</svelte:fragment>
-</MainLayoutWithSidebar>
+
+	<svelte:fragment slot="footer">
+		{#if selectedEpgEvent}
+			<EpgBottombar
+				epgEvent={selectedEpgEvent}
+				on:closed={() => {
+					selectedEpgEvent = undefined;
+				}}
+				on:showDetails={(ev) => {
+					LOG.debug('DETAILS');
+				}}
+			/>
+		{/if}
+	</svelte:fragment>
+</MainLayoutWithBottombar>
