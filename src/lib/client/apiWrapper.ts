@@ -72,6 +72,7 @@ export async function apiGetChannelEvents(
 ) {
 	const url = new URL('/api/v1/epg/channels/' + channel.uuid + '/events', baseUrl);
 	url.search = baseUrl.search;
+	LOG.debug({ msg: 'Load events for Channel', channel: `${channel.number}:${channel.name}` });
 	applyFilter(url, filter);
 
 	LOG.debug({ msg: 'constructing channel Events loader', url: url });
