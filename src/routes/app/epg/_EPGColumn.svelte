@@ -17,7 +17,7 @@
 	export let maxHeight: number;
 	export let channel: ITVHChannel;
 	export let debug = false;
-
+	export let selectedEpgEvent: ITVHEpgEvent | undefined;
 	export let minPerCell: number;
 
 	async function loadEpgData(
@@ -80,6 +80,8 @@
 					height={epgSize.height}
 					{debug}
 					layout={$media.lg ? 'lg' : 'sm'}
+					selected={selectedEpgEvent && epg.uuid === selectedEpgEvent.uuid}
+					on:epgSelected
 				/>
 			{/if}
 		{/each}

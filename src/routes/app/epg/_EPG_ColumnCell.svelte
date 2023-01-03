@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { dateformat } from '$lib/format';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
+	import { createEventDispatcher } from 'svelte';
 
 	export let epg: ITVHEpgEvent;
 	export let height: number;
 	export let top: number;
 	export let selected = false;
+	const dispatch = createEventDispatcher();
+
 	export let layout: 'sm' | 'lg' = 'lg';
 	export let debug = false;
 	let debugWindow = false;
@@ -22,8 +25,11 @@
 </script>
 
 <div class="absolute w-full  px-2" style:top="{top}px" style:height="{height}px">
-	<div class="relative  h-full w-full pl-2 pt-1 pr-1  lg:pt-2 lg:pr-4 shadow-md overflow-hidden ">
-		<div class="relative  xl:border-theme-primary h-full bg-theme-surface">
+	<div
+		class="relative  h-full w-full pl-2 pt-1 pr-1  lg:pt-2 lg:pr-4 shadow-md overflow-hidden
+    {selected ? 'border-l-4 border-primary-focus' : ''}"
+	>
+		<div class="relative  h-full  ">
 			<div
 				class="h-full w-full flex flex-col "
 				on:mouseenter={() => {
@@ -42,7 +48,13 @@
 						{dateformat(epg.startDate, 'HH:MM')} - {dateformat(epg.stopDate, 'HH:MM')}
 					</div>
 				{/if}
-				<div class="font-bold cursor-pointer">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div
+					class="font-bold cursor-pointer "
+					on:click={() => {
+						dispatch('epgSelected', epg);
+					}}
+				>
 					{epg.title}
 				</div>
 				{#if showPic}
