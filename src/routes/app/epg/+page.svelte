@@ -158,7 +158,10 @@
 									class:text-lg={$media.lg}
 								>
 									{#if $media.lg}
-										{dateformat(time, 'HH:MM')}
+										{#if time.getHours() === 0}
+											<div>{dateformat(time, 'ddd dd')}</div>
+										{/if}
+										<div>{dateformat(time, 'HH:MM')}</div>
 									{:else}
 										<div class="border-b">{dateformat(time, 'HH')}</div>
 										<div>{dateformat(time, 'MM')}</div>
@@ -177,7 +180,6 @@
 							{searchEndDate}
 							{cellHeight}
 							{channel}
-							debug={gridDebug}
 							minPerCell={15}
 							maxHeight={cellHeight * maxCells}
 						/>

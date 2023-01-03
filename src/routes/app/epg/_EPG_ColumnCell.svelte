@@ -21,15 +21,11 @@
 	}
 </script>
 
-<div
-	class="absolute w-full shadow-lg overflow-hidden px-4"
-	style:top="{top}px"
-	style:height="{height}px"
->
-	<div class="relative  h-full w-full pt-1 pr-1  lg:pt-2 lg:pr-4 ">
-		<div class="relative elevation-4 xl:border-theme-primary h-full bg-theme-surface">
+<div class="absolute w-full  px-2" style:top="{top}px" style:height="{height}px">
+	<div class="relative  h-full w-full pl-2 pt-1 pr-1  lg:pt-2 lg:pr-4 shadow-md overflow-hidden ">
+		<div class="relative  xl:border-theme-primary h-full bg-theme-surface">
 			<div
-				class="h-full w-full "
+				class="h-full w-full flex flex-col "
 				on:mouseenter={() => {
 					debugWindow = true;
 				}}
@@ -50,10 +46,12 @@
 					{epg.title}
 				</div>
 				{#if showPic}
-					<img src={epg.image} alt="img" class="w-3/4 mx-auto my-4 elevation-5 border" />
+					<img src={epg.image} alt="img" class="w-3/4 mx-auto my-4  rounded-md shadow-md" />
 				{/if}
 				{#if epg.description !== undefined && layout === 'lg'}
-					<div class="font-normal">{epg.description}</div>
+					<div class="font-normal overflow-hidden flex-1 mb-2 text-clip">{epg.description}</div>
+				{:else}
+					<div class="flex-1" />
 				{/if}
 			</div>
 		</div>
