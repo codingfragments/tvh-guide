@@ -1,3 +1,4 @@
+import type { ITVHChannel } from '$lib/types/epg-interfaces';
 import anylogger from 'anylogger';
 
 const LOG = anylogger('APIWrapper');
@@ -51,5 +52,28 @@ export async function apiSearchEvents(
 	url.searchParams.set('q', q);
 	applyFilter(url, filter);
 	LOG.debug({ msg: 'constructing events loader', url: url });
+	return fetch(url);
+}
+
+export async function apiGetChannels(fetch: fetchFun, baseUrl: URL, filter: QueryFilter) {
+	const url = new URL('/api/v1/epg/channels', baseUrl);
+	url.search = baseUrl.search;
+	applyFilter(url, filter);
+
+	LOG.debug({ msg: 'constructing channels loader', url: url });
+	return fetch(url);
+}
+
+export async function apiGetChannelEvents(
+	fetch: fetchFun,
+	baseUrl: URL,
+	channel: ITVHChannel,
+	filter: QueryFilter
+) {
+	const url = new URL('/api/v1/epg/channels/' + channel.uuid + '/events', baseUrl);
+	url.search = baseUrl.search;
+	applyFilter(url, filter);
+
+	LOG.debug({ msg: 'constructing channel Events loader', url: url });
 	return fetch(url);
 }

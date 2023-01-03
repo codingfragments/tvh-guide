@@ -64,8 +64,8 @@ export class EPGFilter {
 			let erg = true;
 			// Date Filter only really works if both dates are given
 			if (event.startDate !== undefined && event.stopDate !== undefined) {
-				erg = this.fromDate ? new Date(event.startDate) >= this.fromDate : erg;
-				erg = this.toDate ? new Date(event.startDate) <= this.toDate : erg;
+				erg = this.fromDate ? new Date(event.stopDate) >= this.fromDate && erg : erg;
+				erg = this.toDate ? new Date(event.startDate) <= this.toDate && erg : erg;
 				erg = this.nowDate
 					? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate
 					: erg;
@@ -75,6 +75,9 @@ export class EPGFilter {
 		return epg;
 	}
 
+	private filterStats() {
+		return { filterNow: this.nowDate, filterTo: this.toDate, filterFrom: this.fromDate };
+	}
 	public fromUrl(url: URL) {
 		const params = url.searchParams;
 
@@ -101,6 +104,7 @@ export class EPGFilter {
 			}
 		}
 
+		LOG.debug({ msg: 'Filter Build', stats: this.filterStats() });
 		// TODO allow Complex filter from URL (Genre,Channel,Channeltag,Channelgroup)
 	}
 }

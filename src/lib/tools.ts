@@ -14,6 +14,15 @@ export function floorDate(d: Date): Date {
 	d2.setMilliseconds(0);
 	return d2;
 }
+
+export function moduloMinutesDate(d: Date, fraction = 10): Date {
+	const minutes = d.getMinutes();
+	const result = new Date(d);
+	result.setSeconds(0);
+	result.setMilliseconds(0);
+	result.setMinutes(Math.floor(minutes / fraction) * fraction);
+	return result;
+}
 export function extractTime(timestamp: Date) {
 	const dateOffset = new Date(timestamp.toDateString()).getTime();
 	return new Date(timestamp.getTime() - dateOffset);
