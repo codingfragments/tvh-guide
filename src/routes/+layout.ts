@@ -12,7 +12,7 @@ import type { LayoutLoad } from './$types';
 
 // You need to run the dev server or `svelte-kit sync` to generate them.
 export const load: LayoutLoad = async ({ fetch }) => {
-	// TODO Settings probably needs to go to session data, maybe
+	// FUTURE Settings probably needs to go to session data, maybe
 	const settings = <UISettings>await (await fetch('/api/v1/settings/ui')).json();
 	const health = <ApiResultHealth>await (await fetch('/api/v1/health')).json();
 	const epgDateRange = {

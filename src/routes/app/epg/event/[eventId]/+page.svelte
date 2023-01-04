@@ -73,10 +73,7 @@
 			<div class="overflow-y-auto flex-grow px-4 max-md:my-4 lg:mb-4">
 				<EpgDescription {epgEvent} mode="description" />
 			</div>
-			<!-- TODO add action buttons based on config (record, edit, cancel, switch ...)-->
-			<div class="card-actions justify-center ">
-				<!-- <button class="btn btn-sm">NOPE</button> -->
-			</div>
+			<div class="card-actions justify-center " />
 		</div>
 	</div>
 

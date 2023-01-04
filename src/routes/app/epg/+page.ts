@@ -51,7 +51,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 		throw error(result.status, result.statusText);
 	}
 
-	// TODO probably i could combine with epg load, and make sure to extract available Channels only.
+	// IDEA probably i could combine with epg load, and make sure to extract available Channels only.
 	// This would make this Flow simpler to read and also will make sure to
 	// only include Channels with at least 1 Event in the time searched
 
@@ -79,7 +79,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	// searchEndDate will be 24 hours from query start
 	// selectedDate will store the requested searchDate for UI Purposes
 
-	// TODO Rework scroll position, the current reloading would scroll the requested time to the top of the window, this leaves less scroll down then up
+	// FUTURE Rework scroll position, the current reloading would scroll the requested time to the top of the window, this leaves less scroll down then up
 
 	returnData.searchDate = moduloMinutesDate(new Date(url.searchParams.get('time') ?? new Date()), 15);
 	returnData.selectedDate = returnData.searchDate;

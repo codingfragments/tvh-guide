@@ -137,6 +137,7 @@
 				</form>
 
 				<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
+				<!-- FUTURE add multiple Layout and allow to switch with small buttongroup -->
 
 				<button class="btn my-auto ml-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button>
 			</div>

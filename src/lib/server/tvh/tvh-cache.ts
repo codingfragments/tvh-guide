@@ -148,7 +148,7 @@ export class TVHCache {
 		}
 		const results = this._searchIndex?.search(query);
 		// just make sure to call cache Cleanup regulary
-		// TODO Move this to a more clever offline scheduler
+		// FUTURE Move this to a more clever offline scheduler
 		this.cacheHousekeeping();
 		this._searchCache.set(query, { timestamp: new Date(), results });
 		return results;
@@ -179,9 +179,9 @@ export class TVHCache {
 		}
 	}
 
-	// Calculate the daterange based on 20/80 rules.
-	// Take the first date where 80% Channels have a minimum of data
-	// Take the last data where 80% of channels have Data
+	// Calculate the daterange based on 50/50 rules.
+	// Take the first date where 50% Channels have a minimum of data
+	// Take the last data where 50% of channels have Data
 	private calcDateRanges() {
 		const startDates: Date[] = [];
 		const endDates: Date[] = [];
@@ -193,7 +193,7 @@ export class TVHCache {
 				endDates.push(new Date(epg[epg.length - 1].stopDate));
 			}
 		}
-		// TODO Check this calculation
+		// IDEA Prio Channels based on tags or groups
 		this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(startDates.length * 0.5)];
 		this._lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(endDates.length * 0.8)];
 	}
@@ -274,7 +274,7 @@ export class TVHCache {
 		const channelTags = await tvhClient.getChannelTags();
 		const contentTypes = await tvhClient.getContentTypes();
 
-		// FUTURE: Create better handling of big data
+		// FUTURE: Create better handling of big data (Loop as in /app/epg/+server.ts)
 		const events = await tvhClient.getEpgGrid(1000000000);
 		const epgs = events.entries.sort((a, b) => a.start - b.start);
 
