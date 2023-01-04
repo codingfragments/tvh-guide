@@ -7,6 +7,7 @@
 	import EPGColumnCell from './_EPG_ColumnCell.svelte';
 	import anylogger from 'anylogger';
 	import { getMediaContext } from '$lib/client/state/layoutContext';
+	import { minutes } from '$lib/timeGlobals';
 	const LOG = anylogger('Page:/epg:col');
 
 	const media = getMediaContext();
@@ -21,11 +22,7 @@
 	export let selectedEpgEvent: ITVHEpgEvent | undefined;
 	export let minPerCell: number;
 
-	async function loadEpgData(
-		channel: ITVHChannel,
-		searchDate: Date,
-		searchEndDate: Date
-	): Promise<ITVHEpgEvent[]> {
+	async function loadEpgData(channel: ITVHChannel, searchDate: Date, searchEndDate: Date): Promise<ITVHEpgEvent[]> {
 		const result = await apiGetChannelEvents(fetch, $page.url, channel, {
 			filterFrom: searchDate,
 			filterTo: searchEndDate,
@@ -45,14 +42,9 @@
 		let height = 0;
 		let visible = false;
 
-		top = Math.floor(
-			((new Date(epg.startDate).getTime() - minDate.getTime()) / (1000 * 60 * minPerCell)) *
-				cellHeight
-		);
+		top = Math.floor(((new Date(epg.startDate).getTime() - minDate.getTime()) / minutes(minPerCell)) * cellHeight);
 		height = Math.floor(
-			((new Date(epg.stopDate).getTime() - new Date(epg.startDate).getTime()) /
-				(1000 * 60 * minPerCell)) *
-				cellHeight
+			((new Date(epg.stopDate).getTime() - new Date(epg.startDate).getTime()) / minutes(minPerCell)) * cellHeight
 		);
 
 		if (top < 0) {

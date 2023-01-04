@@ -5,14 +5,12 @@
 	import { getMediaContext } from '$lib/client/state/layoutContext';
 	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
 	import EPGColumn from './_EPGColumn.svelte';
-	import DateTimeControl, {
-		type DateSelectedEventData
-	} from '$lib/components/layout/topnav/DateTimeControl.svelte';
+	import DateTimeControl, { type DateSelectedEventData } from '$lib/components/layout/topnav/DateTimeControl.svelte';
 
 	import TopNavbar from '$lib/components/layout/TopNavbar.svelte';
 	import { moduloMinutesDate } from '$lib/tools';
 	import type { PageData } from './$types';
-	import XyScroller, { type GridData } from '$lib/components/utilities/XYScroller.svelte';
+	import XyScroller, { type EventScrollXY, type GridData } from '$lib/components/utilities/XYScroller.svelte';
 	import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import ChannelLogo from '$lib/components/epg/ChannelLogo.svelte';
 	import { dateformat } from '$lib/format';
@@ -21,16 +19,21 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { tick } from 'svelte';
+	import { hours, minutes } from '$lib/timeGlobals';
+	import moment from 'moment';
+	import Icon from '$lib/components/Icon.svelte';
 
 	const media = getMediaContext();
 
 	export let searchDate = moduloMinutesDate(new Date(), 15);
+	export let selectedDate = moduloMinutesDate(new Date(), 15);
+
 	export let searchEndDate = moduloMinutesDate(new Date(), 15);
 	export let maxCells = 24 * 4;
 
 	export let data: PageData;
 	export let gridDebug = false;
-
+	export let showLoading = false;
 	export let cellWidth = 100;
 	export let cellHeight = 50;
 	$: {
@@ -56,9 +59,14 @@
 			return { uuid: channel.uuid, data: channel, loading: false };
 		});
 
+		selectedDate = data.selectedDate;
 		searchDate = data.searchDate;
 		searchEndDate = data.searchEndDate;
 		epgGrid = data.epgGrid;
+		showLoading = false;
+	}
+
+	$: if (searchDate) {
 		timeSlices = Array.from(Array(24).keys()).map((idx) => {
 			const slice = new Date(searchDate);
 			slice.setMinutes(idx * 60);
@@ -83,11 +91,7 @@
 		tick().then(() => {
 			// debugger;
 			if (cmpScroller) {
-				const pos = Math.floor(
-					(data.scroll.scrollToDate.getTime() - searchDate.getTime()) / (1000 * 60 * 15)
-				);
-
-				cmpScroller.scrollToGridY(Math.max(0, pos), false);
+				cmpScroller.scrollToGridY(Math.max(0, timeToGridY(data.scroll.scrollToDate, 'floor')), false);
 			}
 		});
 	}
@@ -110,20 +114,70 @@
 		goto(url, { invalidateAll: true, replaceState: true });
 	}
 
+	function timeToGridY(time: Date, mode: 'exact' | 'nearest' | 'floor' = 'exact') {
+		const pos = (time.getTime() - searchDate.getTime()) / minutes(15);
+		switch (mode) {
+			case 'exact':
+				return pos;
+			case 'floor':
+				return Math.floor(pos);
+			case 'nearest':
+				return Math.floor(pos + 0.5);
+		}
+	}
+
+	function gridToTime(gridYPos: number) {
+		return new Date(searchDate.getTime() + minutes(gridYPos * 15));
+	}
+
 	function dateSelected(e: CustomEvent<DateSelectedEventData>): void {
 		if (e.detail.reset) {
-			// searchDate = moduloMinutesDate(new Date(), 15);
 			gotoNow();
 			return;
 		}
 		if (e.detail.date) {
-			// searchDate = moduloMinutesDate(e.detail.date, 15);
 			gotoTime(e.detail.date);
 			return;
 		}
 	}
 
 	export let selectedEpgEvent: ITVHEpgEvent | undefined;
+
+	function handleXYScroll(e: CustomEvent<EventScrollXY>): void {
+		const scrollEndDate = gridToTime(e.detail.bottomGrid);
+		const scrollTopDate = gridToTime(e.detail.topGrid);
+		LOG.debug({
+			msg: 'Scroll ended',
+			scrollEndDate,
+			scrollTopDate,
+			searchDate,
+			searchEndDate,
+			health: data.serverHealth
+		});
+		// TODO Really need to put this and the grid height in minutes into a constant definition
+		// TODO change serverhealth to dates , really get rid of this conversion steps
+		if (
+			scrollEndDate >= new Date(searchEndDate.getTime() - hours(4)) &&
+			data.serverHealth.cache.lastDate &&
+			searchEndDate < new Date(data.serverHealth.cache.lastDate)
+		) {
+			// if (data.serverHealth.cache.lastDate && )
+			LOG.debug({ msg: 'date window moved to the future', scrollTopDate });
+			showLoading = true;
+			gotoTime(scrollTopDate);
+		}
+		if (
+			scrollTopDate <= new Date(searchDate.getTime() + hours(4)) &&
+			data.serverHealth.cache.firstDate &&
+			searchDate > new Date(data.serverHealth.cache.firstDate)
+		) {
+			// if (data.serverHealth.cache.lastDate && )
+			LOG.debug({ msg: 'date window moved to the past', scrollTopDate });
+			showLoading = true;
+
+			gotoTime(scrollTopDate);
+		}
+	}
 </script>
 
 <MainLayoutWithBottombar showBottom={selectedEpgEvent !== undefined}>
@@ -138,10 +192,13 @@
 							timeFormat={$media.lg ? data.uiCfg.timeLong : data.uiCfg.timeShort}
 							dateFirst={data.epgDateRange.epgDateFirst}
 							dateLast={data.epgDateRange.epgDateLast}
-							{searchDate}
+							searchDate={selectedDate}
 							on:dateSelected={dateSelected}
 						/>
 					</div>
+					{#if showLoading}
+						<Icon icon="autorenew" size="lg" class="animate-spin absolute " />
+					{/if}
 				</div>
 				<div slot="rightNav">
 					<button class="btn btn-square btn-ghost btn-sm"> NOPE </button>
@@ -152,7 +209,14 @@
 	<svelte:fragment slot="main">
 		<div class="h-full p-2 ">
 			<div class="h-full bg-base-100 shadow-lg rounded-md p-2">
-				<XyScroller {gridData} {cellWidth} {cellHeight} bind:gridDebug bind:this={cmpScroller}>
+				<XyScroller
+					{gridData}
+					{cellWidth}
+					{cellHeight}
+					bind:gridDebug
+					bind:this={cmpScroller}
+					on:scrolledXY={handleXYScroll}
+				>
 					<!-- SLOT: HEADER -->
 					<div slot="header" let:headerData class="border-b">
 						{@const channel = headerData.data}
