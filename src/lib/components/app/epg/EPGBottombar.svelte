@@ -29,31 +29,16 @@
 				>
 					<EpgDescription {epgEvent} mode="description" />
 				</div>
-				<div class="my-4  ml-auto ">
-					<button
-						class="btn btn-primary"
-						on:click|stopPropagation={() => {
-							if (epgEvent) dispatch('showDetails', epgEvent);
-						}}>details</button
-					>
-				</div>
 			</div>
-			<!--
-			<div
-				class=" shadow-lg py-2 px-2 rounded-md overflow-y-auto bg-base-100 flex-1"
-				class:mt-4={!epgEvent.image}
-			>
-				<EpgDescription {epgEvent} mode="description" />
-			</div>
-			<div class="my-4  ml-auto ">
+			<div class="actions flex flex-col">
+				<div class="flex-1" />
 				<button
-					class="btn btn-primary"
+					class="btn btn-primary w-full"
 					on:click|stopPropagation={() => {
 						if (epgEvent) dispatch('showDetails', epgEvent);
 					}}>details</button
 				>
 			</div>
-			 -->
 		{/key}
 	</div>
 </Bottombar>
@@ -61,14 +46,14 @@
 <style>
 	.layout {
 		display: grid;
-		grid-template-columns: minmax(30%, 30%) 1fr;
-		grid-template-rows: minmax(min-content, min-content) 1fr;
+		grid-template-columns: minmax(30%, 30%) 1fr min-content;
+		grid-template-rows: 1fr minmax(min-content, min-content);
 		grid-auto-columns: 1fr;
 		gap: 1em 1em;
 		grid-auto-flow: row;
 		grid-template-areas:
-			'summary content'
-			'picture content';
+			'picture content actions'
+			'summary content actions';
 	}
 
 	.summary {
@@ -81,5 +66,9 @@
 
 	.content {
 		grid-area: content;
+	}
+
+	.actions {
+		grid-area: actions;
 	}
 </style>
