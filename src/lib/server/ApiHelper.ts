@@ -104,7 +104,7 @@ export class EPGFilter {
 			}
 		}
 
-		LOG.debug({ msg: 'Filter Build', stats: this.filterStats() });
+		// LOG.debug({ msg: 'Filter Build', stats: this.filterStats() });
 		// TODO allow Complex filter from URL (Genre,Channel,Channeltag,Channelgroup)
 	}
 }

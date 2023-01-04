@@ -3,7 +3,10 @@ import anylogger from 'anylogger';
 
 const LOG = anylogger('APIWrapper');
 
-type fetchFun = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
+export type FetchFun = (
+	input: RequestInfo | URL,
+	init?: RequestInit | undefined
+) => Promise<Response>;
 
 interface QueryFilter {
 	page?: number;
@@ -13,7 +16,7 @@ interface QueryFilter {
 	filterAt?: Date;
 }
 
-function applyFilter(url: URL, filter: QueryFilter) {
+export function applyFilter(url: URL, filter: QueryFilter) {
 	if (filter.page) {
 		url.searchParams.set('page', '' + filter.page);
 	}
@@ -30,11 +33,11 @@ function applyFilter(url: URL, filter: QueryFilter) {
 		url.searchParams.set('filterAt', filter.filterAt.toISOString());
 	}
 }
-export async function apiGetEvent(fetch: fetchFun, eventId: string) {
+export async function apiGetEvent(fetch: FetchFun, eventId: string) {
 	return fetch(`/api/v1/epg/events/${eventId}`);
 }
 
-export async function apiGetEvents(fetch: fetchFun, baseUrl: URL, filter: QueryFilter) {
+export async function apiGetEvents(fetch: FetchFun, baseUrl: URL, filter: QueryFilter) {
 	const url = new URL('/api/v1/epg/events', baseUrl);
 	applyFilter(url, filter);
 	LOG.debug({ msg: 'constructing events loader', url: url });
@@ -42,7 +45,7 @@ export async function apiGetEvents(fetch: fetchFun, baseUrl: URL, filter: QueryF
 }
 
 export async function apiSearchEvents(
-	fetch: fetchFun,
+	fetch: FetchFun,
 	baseUrl: URL,
 	q: string,
 	filter: QueryFilter = {}
@@ -55,7 +58,7 @@ export async function apiSearchEvents(
 	return fetch(url);
 }
 
-export async function apiGetChannels(fetch: fetchFun, baseUrl: URL, filter: QueryFilter) {
+export async function apiGetChannels(fetch: FetchFun, baseUrl: URL, filter: QueryFilter) {
 	const url = new URL('/api/v1/epg/channels', baseUrl);
 	url.search = baseUrl.search;
 	applyFilter(url, filter);
@@ -65,7 +68,7 @@ export async function apiGetChannels(fetch: fetchFun, baseUrl: URL, filter: Quer
 }
 
 export async function apiGetChannelEvents(
-	fetch: fetchFun,
+	fetch: FetchFun,
 	baseUrl: URL,
 	channel: ITVHChannel,
 	filter: QueryFilter

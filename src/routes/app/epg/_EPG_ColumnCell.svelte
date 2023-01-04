@@ -35,10 +35,10 @@
 					<div>
 						{dateformat(epg.startDate, 'HH:MM')}
 					</div>
-				{:else}
+					<!-- {:else}
 					<div>
 						{dateformat(epg.startDate, 'HH:MM')} - {dateformat(epg.stopDate, 'HH:MM')}
-					</div>
+					</div> -->
 				{/if}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div

@@ -15,7 +15,8 @@
 	export let searchEndDate: Date;
 	export let cellHeight: number;
 	export let maxHeight: number;
-	export let channel: ITVHChannel;
+	// export let channel: ITVHChannel;
+	export let epgData: ITVHEpgEvent[];
 	export let debug = false;
 	export let selectedEpgEvent: ITVHEpgEvent | undefined;
 	export let minPerCell: number;
@@ -67,23 +68,19 @@
 	}
 </script>
 
-{#await loadEpgData(channel, searchDate, searchEndDate)}
-	<div>NOPE 22</div>
-{:then epgs}
-	<div class="relative w-full h-full overflow-clip ">
-		{#each epgs as epg (epg.uuid)}
-			{@const epgSize = calcEpgSize(epg, searchDate, searchEndDate, cellHeight)}
-			{#if epgSize.visible}
-				<EPGColumnCell
-					{epg}
-					top={epgSize.top}
-					height={epgSize.height}
-					{debug}
-					layout={$media.lg ? 'lg' : 'sm'}
-					selected={selectedEpgEvent && epg.uuid === selectedEpgEvent.uuid}
-					on:epgSelected
-				/>
-			{/if}
-		{/each}
-	</div>
-{/await}
+<div class="relative w-full h-full overflow-clip ">
+	{#each epgData as epg (epg.uuid)}
+		{@const epgSize = calcEpgSize(epg, searchDate, searchEndDate, cellHeight)}
+		{#if epgSize.visible}
+			<EPGColumnCell
+				{epg}
+				top={epgSize.top}
+				height={epgSize.height}
+				{debug}
+				layout={$media.lg ? 'lg' : 'sm'}
+				selected={selectedEpgEvent && epg.uuid === selectedEpgEvent.uuid}
+				on:epgSelected
+			/>
+		{/if}
+	{/each}
+</div>

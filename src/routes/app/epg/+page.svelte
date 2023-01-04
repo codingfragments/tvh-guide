@@ -18,6 +18,9 @@
 	import { dateformat } from '$lib/format';
 	import MainLayoutWithBottombar from '$lib/components/layout/MainLayoutWithBottombar.svelte';
 	import EpgBottombar from '$lib/components/app/epg/EPGBottombar.svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 
 	const media = getMediaContext();
 
@@ -41,6 +44,8 @@
 	}
 
 	export let gridData: GridData<ITVHChannel>[] = [];
+	let epgGrid: Map<string, ITVHEpgEvent[]>;
+
 	// Time Slices for left Sidebar.
 	// Will start with full hours only, reagrdless of the starting time in searchDate
 	let timeSlices: Date[] = [];
@@ -50,11 +55,10 @@
 		gridData = data.channels.map((channel) => {
 			return { uuid: channel.uuid, data: channel, loading: false };
 		});
-		// .slice(0, 1);
 
-		searchEndDate = new Date(searchDate);
-		searchEndDate.setMinutes(60 * 24);
-
+		searchDate = data.searchDate;
+		searchEndDate = data.searchEndDate;
+		epgGrid = data.epgGrid;
 		timeSlices = Array.from(Array(24).keys()).map((idx) => {
 			const slice = new Date(searchDate);
 			slice.setMinutes(idx * 60);
@@ -72,15 +76,49 @@
 		}
 	}
 
+	let cmpScroller: XyScroller;
+
+	$: if (data.scroll.scrollTo) {
+		LOG.debug({ msg: 'Scroll to Date after Tick', data: data.scroll.scrollToDate, cmpScroller });
+		tick().then(() => {
+			// debugger;
+			if (cmpScroller) {
+				const pos = Math.floor(
+					(data.scroll.scrollToDate.getTime() - searchDate.getTime()) / (1000 * 60 * 15)
+				);
+
+				cmpScroller.scrollToGridY(Math.max(0, pos), false);
+			}
+		});
+	}
+
 	$: LOG.debug({ msg: 'init Values', searchDate, searchEndDate, maxCells });
+
+	function gotoTime(gotoDate: string | Date) {
+		if (!(gotoDate instanceof Date)) {
+			gotoDate = new Date(gotoDate);
+		}
+		const url = $page.url;
+		url.searchParams.set('time', gotoDate.toISOString());
+		LOG.debug({ msg: 'Select new Time', startTime: gotoDate, url: url });
+		goto(url, { invalidateAll: true, replaceState: true });
+	}
+	function gotoNow() {
+		const url = $page.url;
+		url.search = '';
+
+		goto(url, { invalidateAll: true, replaceState: true });
+	}
 
 	function dateSelected(e: CustomEvent<DateSelectedEventData>): void {
 		if (e.detail.reset) {
-			searchDate = moduloMinutesDate(new Date(), 15);
+			// searchDate = moduloMinutesDate(new Date(), 15);
+			gotoNow();
 			return;
 		}
 		if (e.detail.date) {
-			searchDate = moduloMinutesDate(e.detail.date, 15);
+			// searchDate = moduloMinutesDate(e.detail.date, 15);
+			gotoTime(e.detail.date);
 			return;
 		}
 	}
@@ -114,12 +152,12 @@
 	<svelte:fragment slot="main">
 		<div class="h-full p-2 ">
 			<div class="h-full bg-base-100 shadow-lg rounded-md p-2">
-				<XyScroller {gridData} {cellWidth} {cellHeight} bind:gridDebug>
+				<XyScroller {gridData} {cellWidth} {cellHeight} bind:gridDebug bind:this={cmpScroller}>
 					<!-- SLOT: HEADER -->
-					<div slot="header" let:headerData>
+					<div slot="header" let:headerData class="border-b">
 						{@const channel = headerData.data}
 						{#if $media.lg}
-							<div class:border={gridDebug}>
+							<div class:border={gridDebug} class="mb-2">
 								<ChannelLogo
 									icon={channel.icon}
 									piconBaseUrl={data.uiCfg.piconsBaseUrl}
@@ -183,7 +221,7 @@
 							{searchDate}
 							{searchEndDate}
 							{cellHeight}
-							{channel}
+							epgData={epgGrid.get(channel.uuid) ?? []}
 							minPerCell={15}
 							maxHeight={cellHeight * maxCells}
 							{selectedEpgEvent}
@@ -206,7 +244,7 @@
 					selectedEpgEvent = undefined;
 				}}
 				on:showDetails={(ev) => {
-					LOG.debug('DETAILS');
+					goto(`/app/epg/event/${selectedEpgEvent?.uuid}`);
 				}}
 			/>
 		{/if}
