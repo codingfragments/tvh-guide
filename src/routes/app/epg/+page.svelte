@@ -3,7 +3,6 @@
 	const LOG = anylogger('Page:/epg');
 
 	import { getMediaContext } from '$lib/client/state/layoutContext';
-	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
 	import EPGColumn from './_EPGColumn.svelte';
 	import DateTimeControl, { type DateSelectedEventData } from '$lib/components/layout/topnav/DateTimeControl.svelte';
 
@@ -20,7 +19,6 @@
 	import { goto } from '$app/navigation';
 	import { tick } from 'svelte';
 	import { hours, minutes } from '$lib/timeGlobals';
-	import moment from 'moment';
 	import Icon from '$lib/components/Icon.svelte';
 
 	const media = getMediaContext();
@@ -307,7 +305,7 @@
 				on:closed={() => {
 					selectedEpgEvent = undefined;
 				}}
-				on:showDetails={(ev) => {
+				on:showDetails={() => {
 					goto(`/app/epg/event/${selectedEpgEvent?.uuid}`);
 				}}
 			/>

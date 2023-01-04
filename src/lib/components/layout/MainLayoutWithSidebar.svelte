@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getMediaContext } from '$lib/client/state/layoutContext';
-	import { createEventDispatcher } from 'svelte';
+	// import { createEventDispatcher } from 'svelte';
+	// const dispatch = createEventDispatcher();
 
 	const media = getMediaContext();
 	let bigMode = false;

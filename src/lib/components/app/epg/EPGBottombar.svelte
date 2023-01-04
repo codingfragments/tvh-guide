@@ -2,7 +2,6 @@
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
 	import EpgEventSummary from '$lib/components/epg/EPGEventSummary.svelte';
 	import Bottombar from '$lib/components/layout/Bottombar.svelte';
-	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import { createEventDispatcher } from 'svelte';
 

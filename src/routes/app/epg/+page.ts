@@ -1,10 +1,10 @@
 import type { APIGetChannelsResults, APIGetEventsResults } from '$lib/client/apiTypes';
 import { apiGetChannels, apiGetEvents, type FetchFun } from '$lib/client/apiWrapper';
 import { moduloMinutesDate } from '$lib/tools';
-import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
+import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { hours, HOURS_FROM_MS } from '$lib/timeGlobals';
+import { hours } from '$lib/timeGlobals';
 
 import anylogger from 'anylogger';
 const LOG = anylogger('Page:/epg:LOAD');
@@ -72,7 +72,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	// date in question towards the middle of the screen.
 	// search date == minimal epg Date || <4 hour distance Query from minimal Date and scroll
 	// to search date
-	// search Date >4 distancee from minimal, query from searchDate-4 hours and scroll to
+	// search Date >4 distance from minimal, query from searchDate-4 hours and scroll to
 	// search date
 
 	// explicit scroll dates will allways takes priority
