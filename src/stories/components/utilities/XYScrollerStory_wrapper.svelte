@@ -5,11 +5,7 @@
 
 	// import { debounce } from 'ts-debounce';
 
-	import XYScroller, {
-		type GridData,
-		type GridPos,
-		type GridRect
-	} from '$lib/components/utilities/XYScroller.svelte';
+	import XYScroller, { type GridData, type GridPos, type GridRect } from '$lib/components/utilities/XYScroller.svelte';
 	import XyCol from './XYCol.svelte';
 
 	const data = Array.from(Array(20).keys()).map((x) => {
@@ -52,9 +48,7 @@
 	}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async function columnSpecs(columnData: GridData<any>, loffset: number) {
-		const cdata = Array.from(Array(maxRows).keys()).map(
-			(x) => columnData.data + '::' + (x + 1 + loffset)
-		);
+		const cdata = Array.from(Array(maxRows).keys()).map((x) => columnData.data + '::' + (x + 1 + loffset));
 		await delay(1000);
 		return cdata;
 	}
@@ -80,12 +74,7 @@
 				<div style="height:{cellHeight}px">{h}</div>
 			{/each}
 		</div>
-		<div
-			slot="column"
-			class="border relative overflow-clip"
-			style:height="{cellHeight * maxRows}px"
-			let:columnData
-		>
+		<div slot="column" class="border relative overflow-clip" style:height="{cellHeight * maxRows}px" let:columnData>
 			<XyCol colData={columnSpecs(columnData, offset)} {cellHeight} colHeader={columnData.data} />
 		</div>
 	</XYScroller>

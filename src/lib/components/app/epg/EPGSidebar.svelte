@@ -17,18 +17,10 @@
 		</div>
 		{#if epgEvent.image}
 			<div class="p-4">
-				<img
-					src={epgEvent.image}
-					alt="Programm Images"
-					width="100%"
-					class="rounded-lg object-scale-down shadow-md  "
-				/>
+				<img src={epgEvent.image} alt="Programm Images" width="100%" class="rounded-lg object-scale-down shadow-md  " />
 			</div>
 		{/if}
-		<div
-			class=" shadow-lg py-2 px-2 rounded-md overflow-y-auto bg-base-100 flex-1"
-			class:mt-4={!epgEvent.image}
-		>
+		<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-auto bg-base-100 flex-1" class:mt-4={!epgEvent.image}>
 			<EpgDescription {epgEvent} mode="description" />
 		</div>
 		<div class="my-4  ml-auto ">

@@ -14,10 +14,7 @@ export const GET: RequestHandler = ({ params, url }) => {
 	// IF non unique Tagnames are used the UUID is the only way to make sure to be consistent
 
 	const tagFilter = tvhCache.genres.filter((tag) => {
-		return (
-			tag.tvhIds.includes(parseInt(params['tag'])) ||
-			tag.name === (params['tag'] as string).toLowerCase()
-		);
+		return tag.tvhIds.includes(parseInt(params['tag'])) || tag.name === (params['tag'] as string).toLowerCase();
 	});
 
 	if (tagFilter.length == 0) {

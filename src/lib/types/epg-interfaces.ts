@@ -10,12 +10,7 @@ export class ITVHNumberSearch implements ITVHSearchBase {
 	public type = 'numeric';
 	public intsplit: string;
 	public value: string;
-	public constructor(
-		public field: string,
-		public comparison: 'lt' | 'gt' | 'eq',
-		val: number,
-		split = 1000000
-	) {
+	public constructor(public field: string, public comparison: 'lt' | 'gt' | 'eq', val: number, split = 1000000) {
 		// this.value;
 		this.intsplit = String(Math.floor(split));
 		this.value = String(Math.floor(val) * Math.floor(split));

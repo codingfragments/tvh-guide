@@ -5,9 +5,7 @@
 
 	import { getMediaContext } from '$lib/client/state/layoutContext';
 	import EpgEventSummary, { type Action } from '$lib/components/epg/EPGEventSummary.svelte';
-	import DateTimeControl, {
-		type DateSelectedEventData
-	} from '$lib/components/layout/topnav/DateTimeControl.svelte';
+	import DateTimeControl, { type DateSelectedEventData } from '$lib/components/layout/topnav/DateTimeControl.svelte';
 	import TopNavbar from '$lib/components/layout/TopNavbar.svelte';
 
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
@@ -103,9 +101,7 @@
 		}
 		// Normal Date Selected
 		if (typeof e.detail.date == 'undefined') {
-			throw new Error(
-				'Data missmatch, date Selected should be either reset=True or include a date property'
-			);
+			throw new Error('Data missmatch, date Selected should be either reset=True or include a date property');
 		}
 		const mergedDate = e.detail.date;
 		LOG.debug({
@@ -145,12 +141,7 @@
 		<div class="px-2 py-2  " class:mr-8={bigMode && selectedEpgEvent}>
 			<TopNavbar>
 				<div slot="nav">
-					<span
-						class="absolute badge badge-ghost top-[-5px] left-[-2px]"
-						class:hidden={!data.modeNow}
-					>
-						live
-					</span>
+					<span class="absolute badge badge-ghost top-[-5px] left-[-2px]" class:hidden={!data.modeNow}> live </span>
 					<div class="flex-1">
 						<DateTimeControl
 							showReset
@@ -177,9 +168,7 @@
 			{#each epgEvents as event (event.uuid)}
 				<div
 					class="rounded-lg p-4 shadow-md bg-base-100
-			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid
-						? 'border-l-8 border-primary'
-						: ''}"
+			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid ? 'border-l-8 border-primary' : ''}"
 				>
 					<EpgEventSummary
 						epgEvent={event}
