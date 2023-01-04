@@ -1,7 +1,8 @@
+import { goto } from '$app/navigation';
 import { v4 as uuidv4 } from 'uuid';
 
 type NavEvent = {
-	url?: URL;
+	url?: string | URL;
 	navigateHistoryBack?: boolean;
 	showLoadSpinner: boolean;
 };
@@ -23,6 +24,26 @@ export function registerNavigationCallback(cb: NavigationCallback) {
 }
 
 export function navigateBack(showLoadSpinner = false) {
-	callEachCallback({ navigateHistoryBack: true, showLoadSpinner });
-	history.back();
+	callEachCallback({ navigateHistoryBack: true, showLoadSpinner }).then(() => {
+		history.back();
+	});
+}
+
+export async function gotoWithCallbacks(
+	url: string | URL,
+	showLoadSpinner = false,
+	opts?:
+		| {
+				replaceState?: boolean | undefined;
+				noScroll?: boolean | undefined;
+				keepFocus?: boolean | undefined;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				state?: any;
+				invalidateAll?: boolean | undefined;
+		  }
+		| undefined
+) {
+	callEachCallback({ url, navigateHistoryBack: false, showLoadSpinner }).then(() => {
+		goto(url, opts);
+	});
 }

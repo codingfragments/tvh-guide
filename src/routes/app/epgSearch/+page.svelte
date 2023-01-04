@@ -14,6 +14,7 @@
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
 	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
 	import EpgSidebar from '$lib/components/app/epg/EPGSidebar.svelte';
+	import { gotoWithCallbacks } from '$lib/client/navigation';
 
 	export let data: PageData;
 	let selectedEpgEvent: ITVHEpgEvent | undefined = undefined;
@@ -89,7 +90,7 @@
 		if (!event) return;
 		LOG.debug({ action: action, epgEvent: event });
 		if (action == 'details') {
-			goto(`/app/epg/event/${event.uuid}`);
+			gotoWithCallbacks(`/app/epg/event/${event.uuid}`, true);
 		}
 	}
 

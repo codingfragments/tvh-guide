@@ -19,8 +19,9 @@
 	import { goto } from '$app/navigation';
 	import { tick } from 'svelte';
 	import { hours, minutes } from '$lib/timeGlobals';
-	import Icon from '$lib/components/Icon.svelte';
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
+
+	import { gotoWithCallbacks } from '$lib/client/navigation';
 
 	const media = getMediaContext();
 
@@ -212,7 +213,8 @@
 					showAutomatic={false}
 					show={showLoading}
 					delayMs={0}
-					class="absolute left-0 top-14 right-0 h-32"
+					translucent={false}
+					class="absolute  right-4 lg:right-8 left-4 lg:left-24 top-14 lg:top-20  h-32 rounded-xl bg-opacity-80"
 				/>
 
 				<XyScroller
@@ -318,7 +320,7 @@
 					selectedEpgEvent = undefined;
 				}}
 				on:showDetails={() => {
-					goto(`/app/epg/event/${selectedEpgEvent?.uuid}`);
+					gotoWithCallbacks(`/app/epg/event/${selectedEpgEvent?.uuid}`, true);
 				}}
 			/>
 		{/if}

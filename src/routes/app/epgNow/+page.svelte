@@ -17,6 +17,7 @@
 	import { extractTime } from '$lib/tools';
 	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
 	import EpgSidebar from '$lib/components/app/epg/EPGSidebar.svelte';
+	import { gotoWithCallbacks } from '$lib/client/navigation';
 
 	export let data: PageData;
 
@@ -63,7 +64,7 @@
 	function handleAction(action: string, event: ITVHEpgEvent) {
 		LOG.debug({ action: action, epgEvent: event });
 		if (action == 'details') {
-			goto(`/app/epg/event/${event.uuid}`);
+			gotoWithCallbacks(`/app/epg/event/${event.uuid}`, true);
 		}
 	}
 
