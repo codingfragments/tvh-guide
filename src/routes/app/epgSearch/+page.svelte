@@ -164,9 +164,7 @@
 			{#each epgEvents as event (event.uuid)}
 				<div
 					class="rounded-lg p-4 shadow-md bg-base-100 flex-grow-0 mb-2 mr-2 cursor-pointer
-			 {selectedEpgEvent && isLarge && selectedEpgEvent.uuid == event.uuid
-						? 'border-l-8 border-primary'
-						: ''}"
+			 {selectedEpgEvent && isLarge && selectedEpgEvent.uuid == event.uuid ? 'border-l-8 border-primary' : ''}"
 				>
 					<EpgEventSummary
 						epgEvent={event}

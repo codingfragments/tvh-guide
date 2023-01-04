@@ -42,14 +42,8 @@
 		</ul>
 		<div class="h-full" />
 		<div class="flex   pr-4 self-end  ">
-			<div
-				class="tooltip tooltip-right"
-				data-tip={$isDark ? 'Switch to light mode.' : 'Switch to dark mode.'}
-			>
-				<button
-					class="btn btn-circle btn-outline btn-sm"
-					on:click={() => dispatch('toggleTheme', { dark: !$isDark })}
-				>
+			<div class="tooltip tooltip-right" data-tip={$isDark ? 'Switch to light mode.' : 'Switch to dark mode.'}>
+				<button class="btn btn-circle btn-outline btn-sm" on:click={() => dispatch('toggleTheme', { dark: !$isDark })}>
 					<Icon icon={$isDark ? 'dark_mode' : 'light_mode'} size="md" class=" self-center " />
 				</button>
 			</div>

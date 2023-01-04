@@ -66,9 +66,7 @@ export class EPGFilter {
 			if (event.startDate !== undefined && event.stopDate !== undefined) {
 				erg = this.fromDate ? new Date(event.stopDate) >= this.fromDate && erg : erg;
 				erg = this.toDate ? new Date(event.startDate) <= this.toDate && erg : erg;
-				erg = this.nowDate
-					? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate
-					: erg;
+				erg = this.nowDate ? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate : erg;
 			}
 			return erg;
 		});
@@ -163,12 +161,7 @@ export function httpErr404(msg = 'Not found', request = {}) {
 	return error(404, eBody as unknown as Error);
 }
 
-export function epgEventsQuery(
-	filter: EPGFilter,
-	url: URL,
-	body: Record<string, unknown>,
-	epgs: ITVHEpgEvent[]
-) {
+export function epgEventsQuery(filter: EPGFilter, url: URL, body: Record<string, unknown>, epgs: ITVHEpgEvent[]) {
 	const range = new SearchRange<ITVHEpgEvent>();
 
 	filter.fromUrl(url);

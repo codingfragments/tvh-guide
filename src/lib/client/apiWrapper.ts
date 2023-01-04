@@ -3,10 +3,7 @@ import anylogger from 'anylogger';
 
 const LOG = anylogger('APIWrapper');
 
-export type FetchFun = (
-	input: RequestInfo | URL,
-	init?: RequestInit | undefined
-) => Promise<Response>;
+export type FetchFun = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
 
 interface QueryFilter {
 	page?: number;
@@ -44,12 +41,7 @@ export async function apiGetEvents(fetch: FetchFun, baseUrl: URL, filter: QueryF
 	return fetch(url);
 }
 
-export async function apiSearchEvents(
-	fetch: FetchFun,
-	baseUrl: URL,
-	q: string,
-	filter: QueryFilter = {}
-) {
+export async function apiSearchEvents(fetch: FetchFun, baseUrl: URL, q: string, filter: QueryFilter = {}) {
 	const url = new URL('/api/v1/epg/events/search', baseUrl);
 	url.search = baseUrl.search;
 	url.searchParams.set('q', q);
@@ -67,12 +59,7 @@ export async function apiGetChannels(fetch: FetchFun, baseUrl: URL, filter: Quer
 	return fetch(url);
 }
 
-export async function apiGetChannelEvents(
-	fetch: FetchFun,
-	baseUrl: URL,
-	channel: ITVHChannel,
-	filter: QueryFilter
-) {
+export async function apiGetChannelEvents(fetch: FetchFun, baseUrl: URL, channel: ITVHChannel, filter: QueryFilter) {
 	const url = new URL('/api/v1/epg/channels/' + channel.uuid + '/events', baseUrl);
 	url.search = baseUrl.search;
 	LOG.debug({ msg: 'Load events for Channel', channel: `${channel.number}:${channel.name}` });

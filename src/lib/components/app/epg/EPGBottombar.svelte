@@ -23,10 +23,7 @@
 				</div>
 			{/if}
 			<div class="content flex flex-col">
-				<div
-					class=" shadow-lg py-2 px-2 rounded-md overflow-y-auto bg-base-100 flex-1"
-					class:mt-4={!epgEvent.image}
-				>
+				<div class=" shadow-lg py-2 px-2 rounded-md overflow-y-auto bg-base-100 flex-1" class:mt-4={!epgEvent.image}>
 					<EpgDescription {epgEvent} mode="description" />
 				</div>
 			</div>

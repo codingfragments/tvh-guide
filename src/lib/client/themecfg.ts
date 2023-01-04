@@ -4,18 +4,7 @@ const themecfg = {
 		themeDark: 'halloween'
 	},
 	themes: {
-		dark: [
-			'dark',
-			'synthwave',
-			'halloween',
-			'black',
-			'luxury',
-			'dracula',
-			'business',
-			'night',
-			'forest',
-			'coffee'
-		],
+		dark: ['dark', 'synthwave', 'halloween', 'black', 'luxury', 'dracula', 'business', 'night', 'forest', 'coffee'],
 		light: [
 			'light',
 			'cupcake',

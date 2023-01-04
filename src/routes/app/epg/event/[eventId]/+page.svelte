@@ -26,9 +26,7 @@
 	let showFullPic = false;
 </script>
 
-<div
-	class="relative grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4 xl:w-2/3 2xl:w-1/2 mx-auto "
->
+<div class="relative grid grid-rows-[max-content_1fr] overflow-hidden h-full px-4 xl:w-2/3 2xl:w-1/2 mx-auto ">
 	<!-- HEADER and NAV-->
 	<div class="shadow-md py-2   flex flex-row  bg-base-100 z-front rounded-xl">
 		<span class="my-auto w-10">
@@ -104,10 +102,6 @@
 	}}
 >
 	<div class="flex-1" />
-	<img
-		src={epgEvent.image}
-		alt="Programm Images"
-		class="rounded-lg p-4 object-contain  max-w-full max-h-full"
-	/>
+	<img src={epgEvent.image} alt="Programm Images" class="rounded-lg p-4 object-contain  max-w-full max-h-full" />
 	<div class="flex-1" />
 </div>
