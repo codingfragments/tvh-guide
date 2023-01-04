@@ -9,7 +9,12 @@
 	import TopNavbar from '$lib/components/layout/TopNavbar.svelte';
 	import { moduloMinutesDate } from '$lib/tools';
 	import type { PageData } from './$types';
-	import XyScroller, { type EventScrollXY, type GridData } from '$lib/components/utilities/XYScroller.svelte';
+	import XyScroller, {
+		type EventScrollXY,
+		type GridData,
+		type GridPos,
+		type GridRect
+	} from '$lib/components/utilities/XYScroller.svelte';
 	import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import ChannelLogo from '$lib/components/epg/ChannelLogo.svelte';
 	import { dateformat } from '$lib/format';
@@ -66,6 +71,8 @@
 		showLoading = false;
 	}
 
+	// $: LOG.debug({ msg: 'Current Grid', gridDimensions });
+
 	$: if (searchDate) {
 		timeSlices = Array.from(Array(24).keys()).map((idx) => {
 			const slice = new Date(searchDate);
@@ -85,6 +92,8 @@
 	}
 
 	let cmpScroller: XyScroller;
+	let gridPos: GridPos = { x: 0, y: 0 };
+	let gridDimensions: GridRect = { w: 0, h: 0 };
 
 	$: if (data.scroll.scrollTo) {
 		LOG.debug({ msg: 'Scroll to Date after Tick', data: data.scroll.scrollToDate, cmpScroller });
@@ -105,7 +114,7 @@
 		const url = $page.url;
 		url.searchParams.set('time', gotoDate.toISOString());
 		LOG.debug({ msg: 'Select new Time', startTime: gotoDate, url: url });
-		goto(url, { invalidateAll: true, replaceState: true });
+		return goto(url, { invalidateAll: true, replaceState: true });
 	}
 	function gotoNow() {
 		const url = $page.url;
@@ -224,6 +233,8 @@
 					bind:gridDebug
 					bind:this={cmpScroller}
 					on:scrolledXY={handleXYScroll}
+					bind:gridPos
+					bind:gridDimensions
 				>
 					<!-- SLOT: HEADER -->
 					<div slot="header" let:headerData class="border-b relative">
@@ -320,7 +331,14 @@
 					selectedEpgEvent = undefined;
 				}}
 				on:showDetails={() => {
-					gotoWithCallbacks(`/app/epg/event/${selectedEpgEvent?.uuid}`, true);
+					// Push new state, which allows a propper back navigation
+					// FUTURE Not sure if this is the best Way to solve this
+					//        The code below will make sure a state is pushed BUT will
+					//        retrigger a full backend cycle.
+
+					gotoTime(gridToTime(gridPos.y).toISOString()).then(() => {
+						gotoWithCallbacks(`/app/epg/event/${selectedEpgEvent?.uuid}`, true);
+					});
 				}}
 			/>
 		{/if}

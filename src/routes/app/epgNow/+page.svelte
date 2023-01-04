@@ -137,7 +137,7 @@
 		Top bar Nav and Filter
 	    ---------------------- -->
 	<svelte:fragment slot="head">
-		<div class="px-2 py-2  " class:mr-8={bigMode && selectedEpgEvent}>
+		<div class="px-2 py-2  " class:mr-4={bigMode && selectedEpgEvent}>
 			<TopNavbar>
 				<div slot="nav">
 					<span class="absolute badge badge-ghost top-[-5px] left-[-2px]" class:hidden={!data.modeNow}> live </span>
@@ -162,7 +162,7 @@
 	<svelte:fragment slot="main">
 		<div
 			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-auto"
-			class:mr-8={bigMode && selectedEpgEvent}
+			class:mr-4={bigMode && selectedEpgEvent}
 		>
 			{#each epgEvents as event (event.uuid)}
 				<div
