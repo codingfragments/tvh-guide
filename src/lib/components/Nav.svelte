@@ -15,6 +15,7 @@
 	export let routes: NavRoute[] = [];
 	export let vertical = false;
 	export let collapsed = false;
+	export let showHorizontalLabels = true;
 	const isDark = getUIDarkContext();
 </script>
 
@@ -58,16 +59,6 @@
 	</nav>
 {:else}
 	<nav class="flex ">
-		<!-- <div class="flex-1 flex flex-row justify-evenly self-center  ">
-			{#each routes as route}
-				<div on:click={() => dispatch('navigate', { path: route.path })} class="cursor-pointer">
-					<div class="flex flex-col {segment == route.segment ? cssItemSelected : cssItem} h-12">
-						<div class="material-icons md-24 self-center">{route.icon}</div>
-						<div class="text-sm  self-center">{route.label}</div>
-					</div>
-				</div>
-			{/each}
-		</div> -->
 		<ul class="menu menu-compact flex-1 grid grid-rows-1 grid-cols-5  ">
 			{#each routes as route}
 				<li class="">
@@ -76,8 +67,10 @@
 						class:active={segment == route.segment}
 						on:click={() => dispatch('navigate', { path: route.path })}
 					>
-						<div class="material-icons text-[28px] self-center">{route.icon}</div>
-						<div class="text-sm  self-center">{route.label}</div>
+						<div class="material-icons text-[28px] self-center" class:my-1={!showHorizontalLabels}>{route.icon}</div>
+						{#if showHorizontalLabels}
+							<div class="text-sm  self-center">{route.label}</div>
+						{/if}
 					</div>
 				</li>
 			{/each}

@@ -79,6 +79,7 @@
 			on:toggleTheme={(ev) => {
 				$uiThemeDark = ev.detail.dark;
 			}}
+			showHorizontalLabels={false}
 		/>
 	</div>
 	<main class="relative grdMain bg-base-100 overflow-hidden max-h-full h-full">
@@ -91,7 +92,7 @@
 	.grid-container {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: minmax(0, 1fr) 75px;
+		grid-template-rows: minmax(0, 1fr) min-content;
 		gap: 0px 0px;
 		padding-bottom: max(0px, env(safe-area-inset-bottom));
 

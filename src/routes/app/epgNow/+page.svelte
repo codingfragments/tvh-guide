@@ -75,8 +75,6 @@
 			if (data.modeNow) {
 				LOG.debug({ msg: 'refresh', url: $page.url });
 				invalidate('app:epgNow');
-
-				// goto($page.url);
 			}
 		}, 30000);
 	});
