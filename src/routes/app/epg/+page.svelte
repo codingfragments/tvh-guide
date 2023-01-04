@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODO Cleanup source, structure and order
 	import anylogger from 'anylogger';
 	const LOG = anylogger('Page:/epg');
 
