@@ -1,12 +1,16 @@
 <script lang="ts">
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	export let colData: Promise<any[]>;
 	export let cellHeight = 0;
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	export let colHeader: any;
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	export let colsOld: any[] = [];
 
 	// this will be used to double buffer the promise results for delayed rendering of old list while waiting for the new one.
 	// Need to check within boundaries and render only what's working based on start and stop rate.
 	// More to Come on the EPG Column Renderer
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	function setCols(cols: any[]): any {
 		colsOld = cols;
 		return cols;

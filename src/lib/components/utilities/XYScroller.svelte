@@ -43,7 +43,7 @@
 	export let cellWidth = 100;
 	export let cellHeight = 50;
 	export let gridData: GridData[];
-	export let gridDebug: boolean = true;
+	export let gridDebug = true;
 	export let scrollDebounceTime = 500;
 	export let gridPos: GridPos = { x: 0, y: 0 };
 	export let gridLastPos: GridPos = { x: 0, y: 0 };

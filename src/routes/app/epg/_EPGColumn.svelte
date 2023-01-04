@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import type { APIGetChannelEventsResults } from '$lib/client/apiTypes';
-	import { apiGetChannelEvents } from '$lib/client/apiWrapper';
-	import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
-	import { error } from '@sveltejs/kit';
+	// import anylogger from 'anylogger';
+	// const LOG = anylogger('Page:/epg:Column');
+
+	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import EPGColumnCell from './_EPG_ColumnCell.svelte';
-	import anylogger from 'anylogger';
 	import { getMediaContext } from '$lib/client/state/layoutContext';
 	import { minutes } from '$lib/timeGlobals';
-	const LOG = anylogger('Page:/epg:col');
 
 	const media = getMediaContext();
 
@@ -22,21 +19,7 @@
 	export let selectedEpgEvent: ITVHEpgEvent | undefined;
 	export let minPerCell: number;
 
-	async function loadEpgData(channel: ITVHChannel, searchDate: Date, searchEndDate: Date): Promise<ITVHEpgEvent[]> {
-		const result = await apiGetChannelEvents(fetch, $page.url, channel, {
-			filterFrom: searchDate,
-			filterTo: searchEndDate,
-			range: 300
-		});
-		if (result.status >= 300) {
-			throw error(result.status, result.statusText);
-		}
-		const data: APIGetChannelEventsResults = await result.json();
-		if (data.query.results > 0) {
-			return data.events;
-		} else return [];
-	}
-
+	// eslint-disable-next-line  @typescript-eslint/no-unused-vars
 	function calcEpgSize(epg: ITVHEpgEvent, minDate: Date, maxDateDate: Date, segmentHeight: number) {
 		let top = 0;
 		let height = 0;
