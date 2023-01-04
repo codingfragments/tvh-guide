@@ -27,10 +27,8 @@
 	$: {
 		if (typeof data.events !== 'undefined') {
 			epgEvents = data.events;
-			showLoading = false;
 		}
 	}
-	let showLoading = false;
 	let maxPage = 0;
 	let curPage = 0;
 	let pages: string[] = [];
@@ -96,8 +94,6 @@
 	}
 
 	function switchPage(p: string) {
-		showLoading = true;
-
 		if (p === '...') return;
 
 		const url = $page.url;
