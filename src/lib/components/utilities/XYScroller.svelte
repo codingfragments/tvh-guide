@@ -245,9 +245,13 @@
 		on:mouseup={handleMouseUp}
 		on:keydown={handleShortcut}
 	>
-		{#each gridData as gd (gd.uuid)}
+		{#each gridData as gd, idx (gd.uuid)}
 			<div style="width:{cellWidth}px" class="flex-none snap-start">
-				<slot name="column" columnData={gd} />
+				<!-- Make sure to render only columns that are currently visible.
+				-->
+				{#if idx >= gridPos.x && idx <= gridLastPos.x + 1}
+					<slot name="column" columnData={gd} />
+				{/if}
 			</div>
 		{/each}
 	</div>

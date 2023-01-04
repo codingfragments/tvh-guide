@@ -221,7 +221,7 @@
 				<NavigationSpinner
 					showAutomatic={false}
 					show={showLoading}
-					delayMs={0}
+					delayMs={200}
 					translucent={false}
 					class="absolute  right-4 lg:right-8 left-4 lg:left-24 top-14 lg:top-20  h-32 rounded-xl bg-opacity-80"
 				/>
