@@ -8,18 +8,31 @@
 
 	import Nav from '$lib/components/Nav.svelte';
 
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import anylogger from 'anylogger';
 	import { NavRoute } from '$lib/components/NavRoute';
 	import { getMediaContext, getUIDarkContext } from '$lib/client/state/layoutContext';
+	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
+	import { registerNavigationCallback } from '$lib/client/navigation';
 
 	const media = getMediaContext();
 	const uiThemeDark = getUIDarkContext();
+	let showSpinner = false;
 
 	const LOG = anylogger('App-Layout');
+	let removeNavigationFeedback: () => void;
 	onMount(() => {
 		LOG.debug('Inner Mount');
 		LOG.debug('Navigate :' + segment);
+		removeNavigationFeedback = registerNavigationCallback(async (ev) => {
+			if (ev.showLoadSpinner) showSpinner = true;
+			await tick();
+		});
+	});
+
+	onDestroy(() => {
+		LOG.debug('Destroy Layout');
+		if (removeNavigationFeedback) removeNavigationFeedback();
 	});
 
 	const routes = [
@@ -43,6 +56,7 @@
 		if ($page.url.pathname.startsWith(pathPrefix)) {
 			segment = $page.url.pathname.substring(pathPrefix.length).split('/')[0];
 		}
+		showSpinner = false;
 	}
 </script>
 
@@ -58,6 +72,7 @@
 			{routes}
 			vertical={$media.lg == true}
 			on:navigate={(ev) => {
+				showSpinner = true;
 				LOG.debug('Navigate to ' + ev.detail.path);
 				goto(ev.detail.path);
 			}}
@@ -67,6 +82,7 @@
 		/>
 	</div>
 	<main class="relative grdMain bg-base-100 overflow-hidden max-h-full h-full">
+		<NavigationSpinner vCenter showAutomatic={false} show={showSpinner} delayMs={0} />
 		<slot />
 	</main>
 </div>

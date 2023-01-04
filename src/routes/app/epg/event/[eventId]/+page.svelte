@@ -8,6 +8,7 @@
 	import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 	import type { PageData } from './$types';
 	import EpgDescription from '$lib/components/epg/EPGDescription.svelte';
+	import { navigateBack } from '$lib/client/navigation';
 
 	export let data: PageData;
 	let epgEvent: ITVHEpgEvent;
@@ -83,7 +84,7 @@
 			class="btn btn-circle btn-primary"
 			class:hidden={!showBackButton}
 			on:click={() => {
-				history.back();
+				navigateBack(true);
 			}}
 		>
 			<Icon icon="undo" />

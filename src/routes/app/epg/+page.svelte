@@ -20,6 +20,7 @@
 	import { tick } from 'svelte';
 	import { hours, minutes } from '$lib/timeGlobals';
 	import Icon from '$lib/components/Icon.svelte';
+	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
 
 	const media = getMediaContext();
 
@@ -194,9 +195,9 @@
 							on:dateSelected={dateSelected}
 						/>
 					</div>
-					{#if showLoading}
+					<!-- {#if showLoading}
 						<Icon icon="autorenew" size="lg" class="animate-spin absolute " />
-					{/if}
+					{/if} -->
 				</div>
 				<div slot="rightNav">
 					<button class="btn btn-square btn-ghost btn-sm"> NOPE </button>
@@ -207,6 +208,13 @@
 	<svelte:fragment slot="main">
 		<div class="h-full p-2 ">
 			<div class="h-full bg-base-100 shadow-lg rounded-md p-2">
+				<NavigationSpinner
+					showAutomatic={false}
+					show={showLoading}
+					delayMs={0}
+					class="absolute left-0 top-14 right-0 h-32"
+				/>
+
 				<XyScroller
 					{gridData}
 					{cellWidth}
@@ -216,7 +224,7 @@
 					on:scrolledXY={handleXYScroll}
 				>
 					<!-- SLOT: HEADER -->
-					<div slot="header" let:headerData class="border-b">
+					<div slot="header" let:headerData class="border-b relative">
 						{@const channel = headerData.data}
 						{#if $media.lg}
 							<div class:border={gridDebug} class="mb-2">
@@ -288,6 +296,10 @@
 							maxHeight={cellHeight * maxCells}
 							{selectedEpgEvent}
 							on:epgSelected={(e) => {
+								if (selectedEpgEvent && selectedEpgEvent.uuid === e.detail.uuid) {
+									selectedEpgEvent = undefined;
+									return;
+								}
 								selectedEpgEvent = e.detail;
 							}}
 						/>
