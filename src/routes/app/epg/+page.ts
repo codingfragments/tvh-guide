@@ -68,7 +68,6 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 			scrollToDate: new Date()
 		}
 	};
-	// TODO Better handling of Dates
 	// When endless Scrolling is enabled the Date handling should be Focus on rendering the
 	// date in question towards the middle of the screen.
 	// search date == minimal epg Date || <4 hour distance Query from minimal Date and scroll
@@ -79,6 +78,8 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	// explicit scroll dates will allways takes priority
 	// searchEndDate will be 24 hours from query start
 	// selectedDate will store the requested searchDate for UI Purposes
+
+	// TODO Rework scroll position, the current reloading would scroll the requested time to the top of the window, this leaves less scroll down then up
 
 	returnData.searchDate = moduloMinutesDate(new Date(url.searchParams.get('time') ?? new Date()), 15);
 	returnData.selectedDate = returnData.searchDate;
@@ -97,7 +98,6 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	returnData.searchEndDate = new Date(returnData.searchDate);
 	returnData.searchEndDate.setMinutes(60 * 24);
 
-	// TODO Load Channel and Events
 	returnData.epgGrid = await loadEpgGrid(fetch, url, returnData.searchDate, returnData.searchEndDate);
 
 	LOG.debug({
