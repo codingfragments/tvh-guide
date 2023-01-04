@@ -1,9 +1,4 @@
-import type {
-	ITVHChannel,
-	ITVHChannelTag,
-	ITVHEpgEvent,
-	ITVHGenre
-} from '$lib/types/epg-interfaces';
+import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre } from '$lib/types/epg-interfaces';
 import { createTVHClient } from './tvheadend-client';
 import { v4 as uuidv4 } from 'uuid';
 import type { ServerStatus } from '$lib/types/api';
@@ -12,6 +7,7 @@ import { toBool } from '$lib/tools';
 import * as fs from 'fs';
 import anylogger from 'anylogger';
 import Fuse from 'fuse.js';
+import { minutes } from '$lib/timeGlobals';
 const LOG = anylogger('CACHE');
 
 export class TVHCache {
@@ -25,10 +21,7 @@ export class TVHCache {
 	private _firstDate?: Date;
 	private _lastDate?: Date;
 	private _lastUpdate?: Date;
-	private _searchCache = new Map<
-		string,
-		{ timestamp: Date; results: Fuse.FuseResult<ITVHEpgEvent>[] }
-	>();
+	private _searchCache = new Map<string, { timestamp: Date; results: Fuse.FuseResult<ITVHEpgEvent>[] }>();
 
 	private _searchIndex: Fuse<ITVHEpgEvent> = new Fuse(this._epgSorted, {
 		includeScore: true,
@@ -201,12 +194,8 @@ export class TVHCache {
 			}
 		}
 		// TODO Check this calculation
-		this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[
-			Math.round(startDates.length * 0.5)
-		];
-		this._lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[
-			Math.round(endDates.length * 0.8)
-		];
+		this._firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(startDates.length * 0.5)];
+		this._lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(endDates.length * 0.8)];
 	}
 
 	private convertEPG(epg: ITVHEpgEvent) {
@@ -218,9 +207,7 @@ export class TVHCache {
 		if (typeof channel !== 'undefined') {
 			epg.channel = channel;
 		} else {
-			throw new Error(
-				'EPG Transform failed, EPG-Channel not found :\n' + JSON.stringify(epg, null, 2)
-			);
+			throw new Error('EPG Transform failed, EPG-Channel not found :\n' + JSON.stringify(epg, null, 2));
 		}
 		epg.uuid = '' + epg.eventId;
 
@@ -355,7 +342,7 @@ export class TVHCache {
 		} catch (error) {
 			LOG.error(error); // from creation or business logic
 			LOG.info('Retry !!');
-			setTimeout(() => this.reloadAll(retryTime), 1000 * 60 * retryTime);
+			setTimeout(() => this.reloadAll(retryTime), minutes(retryTime));
 		}
 	}
 
@@ -391,17 +378,14 @@ export function initCache(cache: TVHCache, reloadTime = 30, retryTime = 1, retri
 	loading
 		.then(() => {
 			LOG.info(`Preload Finished `);
-			setInterval(() => cache.reloadAll(retryTime), 1000 * 60 * reloadTime);
+			setInterval(() => cache.reloadAll(retryTime), minutes(reloadTime));
 		})
 		.catch((error) => {
 			LOG.error(error);
 			LOG.info('Initial load failed.');
 			if (retries > 0) {
 				LOG.info('Retry scheduled in ' + retryTime + '  minutes!');
-				setTimeout(
-					() => initCache(cache, reloadTime, retryTime, retries - 1),
-					1000 * 60 * retryTime
-				);
+				setTimeout(() => initCache(cache, reloadTime, retryTime, retries - 1), minutes(retryTime));
 			}
 		});
 }

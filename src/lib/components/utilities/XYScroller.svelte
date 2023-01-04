@@ -14,6 +14,17 @@
 		w: number;
 		h: number;
 	}
+
+	export interface EventScrollXY {
+		left: number;
+		right: number;
+		top: number;
+		bottom: number;
+		leftGrid: number;
+		rightGrid: number;
+		topGrid: number;
+		bottomGrid: number;
+	}
 </script>
 
 <script lang="ts">
@@ -66,7 +77,11 @@
 			left: cmpContent.scrollLeft,
 			right: cmpContent.scrollLeft + cmpContent.clientWidth,
 			top: cmpContent.scrollTop,
-			bottom: cmpContent.scrollTop + cmpContent.clientHeight
+			bottom: cmpContent.scrollTop + cmpContent.clientHeight,
+			leftGrid: gridPos.x,
+			rightGrid: gridPos.x + gridDimensions.w,
+			topGrid: gridPos.y,
+			bottomGrid: gridPos.y + gridDimensions.h
 		});
 	}
 	const debouncedScrollEnd = debounce(scrollEnd, scrollDebounceTime);

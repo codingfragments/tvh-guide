@@ -4,16 +4,12 @@ import { moduloMinutesDate } from '$lib/tools';
 import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
+import { hours, HOURS_FROM_MS } from '$lib/timeGlobals';
 
 import anylogger from 'anylogger';
 const LOG = anylogger('Page:/epg:LOAD');
 
-async function loadEpgGrid(
-	fetch: FetchFun,
-	url: URL,
-	from: Date,
-	to: Date
-): Promise<Map<string, ITVHEpgEvent[]>> {
+async function loadEpgGrid(fetch: FetchFun, url: URL, from: Date, to: Date): Promise<Map<string, ITVHEpgEvent[]>> {
 	let loadFinished = false;
 	let page = 0;
 	const grid = new Map<string, ITVHEpgEvent[]>();
@@ -49,29 +45,24 @@ async function loadEpgGrid(
 	return grid;
 }
 
-interface EpgGridScrollData {
-	scrollTo: boolean;
-	scrollToDate: Date;
-}
-interface EpgGridData {
-	channels: ITVHChannel[];
-	searchDate: Date;
-	searchEndDate: Date;
-	epgGrid: Map<string, ITVHEpgEvent>;
-	scroll: EpgGridScrollData;
-}
-export const load: PageLoad = async ({ fetch, url }): Promise<EpgGridData> => {
+export const load: PageLoad = async ({ fetch, url, parent }) => {
 	const result = await apiGetChannels(fetch, url, { range: 1000 });
 	if (result.status >= 300) {
 		throw error(result.status, result.statusText);
 	}
+
+	// TODO probably i could combine with epg load, and make sure to extract available Channels only.
+	// This would make this Flow simpler to read and also will make sure to
+	// only include Channels with at least 1 Event in the time searched
+
 	const data: APIGetChannelsResults = await result.json();
 
 	const returnData = {
 		channels: data.channels,
 		searchDate: new Date(),
 		searchEndDate: new Date(),
-		epgGrid: new Map(),
+		selectedDate: new Date(),
+		epgGrid: new Map<string, ITVHEpgEvent[]>(),
 		scroll: {
 			scrollTo: false,
 			scrollToDate: new Date()
@@ -82,26 +73,32 @@ export const load: PageLoad = async ({ fetch, url }): Promise<EpgGridData> => {
 	// date in question towards the middle of the screen.
 	// search date == minimal epg Date || <4 hour distance Query from minimal Date and scroll
 	// to search date
-	// search Date >4 distancee from minimal, query from searchDate-5 hours and scroll to
+	// search Date >4 distancee from minimal, query from searchDate-4 hours and scroll to
 	// search date
 
 	// explicit scroll dates will allways takes priority
 	// searchEndDate will be 24 hours from query start
+	// selectedDate will store the requested searchDate for UI Purposes
 
-	returnData.searchDate = moduloMinutesDate(
-		new Date(url.searchParams.get('time') ?? new Date()),
-		15
-	);
+	returnData.searchDate = moduloMinutesDate(new Date(url.searchParams.get('time') ?? new Date()), 15);
+	returnData.selectedDate = returnData.searchDate;
+	const layoutData = await parent();
+
+	const distanceToMinimum = returnData.searchDate.getTime() - layoutData.epgDateRange.epgDateFirst.getTime();
+	if (distanceToMinimum <= hours(12)) {
+		returnData.scroll.scrollTo = true;
+		returnData.scroll.scrollToDate = returnData.searchDate;
+		returnData.searchDate = layoutData.epgDateRange.epgDateFirst;
+	} else {
+		returnData.scroll.scrollTo = true;
+		returnData.scroll.scrollToDate = returnData.searchDate;
+		returnData.searchDate = new Date(returnData.searchDate.getTime() - hours(12));
+	}
 	returnData.searchEndDate = new Date(returnData.searchDate);
 	returnData.searchEndDate.setMinutes(60 * 24);
 
 	// TODO Load Channel and Events
-	returnData.epgGrid = await loadEpgGrid(
-		fetch,
-		url,
-		returnData.searchDate,
-		returnData.searchEndDate
-	);
+	returnData.epgGrid = await loadEpgGrid(fetch, url, returnData.searchDate, returnData.searchEndDate);
 
 	LOG.debug({
 		msg: 'EPGGrid Loaded',

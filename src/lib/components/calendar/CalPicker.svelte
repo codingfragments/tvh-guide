@@ -5,6 +5,7 @@
 	import Icon from '../Icon.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { floorDate } from '$lib/tools';
+	import { days, hours } from '$lib/timeGlobals';
 
 	export let date: Date;
 	export let dateStart: Date | undefined = undefined;
@@ -27,14 +28,14 @@
 
 	$: {
 		let offset = (displayMonth.getDay() + 6) % 7;
-		displayStart = new Date(displayMonth.getTime() - 1000 * 60 * 60 * 24 * offset);
+		displayStart = new Date(displayMonth.getTime() - days(1) * offset);
 		LOG.debug({ msg: 'DateStart', date, ds: dateformat(displayStart, 'dddd dd.mm.yyyy') });
 	}
 
 	function dateList(start: Date, days: number): Date[] {
 		const results = Array<Date>(days)
 			.fill(start)
-			.map((_, i) => new Date(start.getTime() + 1000 * 60 * 60 * (12 + 24 * i)));
+			.map((_, i) => new Date(start.getTime() + hours(12 + 24 * i)));
 		return results;
 	}
 
@@ -61,10 +62,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div
-	class="flex flex-col items-stretch justify-items-stretch font-normal "
-	on:click|stopPropagation
->
+<div class="flex flex-col items-stretch justify-items-stretch font-normal " on:click|stopPropagation>
 	<div class="flex flex-row bg-primary-focus text-primary-content py-2">
 		<button
 			on:click={() => {
@@ -84,15 +82,11 @@
 			<Icon icon="navigate_next" class="my-auto flex-grow-0" />
 		</button>
 	</div>
-	<div
-		class=" bg-primary text-primary-content grid grid-cols-[repeat(7,35px)] justify-items-center"
-	>
+	<div class=" bg-primary text-primary-content grid grid-cols-[repeat(7,35px)] justify-items-center">
 		{#each dateList(displayStart, 7) as day}
 			<div>{dateformat(day, 'ddd')}</div>{/each}
 	</div>
-	<div
-		class="bg-base-100 grid grid-cols-[repeat(7,35px)] grid-rows-[repeat(6,30px)] pt-2 justify-items-center"
-	>
+	<div class="bg-base-100 grid grid-cols-[repeat(7,35px)] grid-rows-[repeat(6,30px)] pt-2 justify-items-center">
 		{#each dateList(displayStart, 7 * 6) as day (day.getTime())}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<button
