@@ -8,9 +8,10 @@ import * as fs from 'fs';
 import anylogger from 'anylogger';
 import Fuse from 'fuse.js';
 import { minutes } from '$lib/timeGlobals';
+import type { DataStore } from '../types/database';
 const LOG = anylogger('CACHE');
 
-export class TVHCache {
+class TVHCache {
 	private _channelTags = new Map<string, string>();
 	private _contentTypes = new Map<string, string>();
 	private _channels = new Map<string, ITVHChannel>();
@@ -368,8 +369,8 @@ export class TVHCache {
 	}
 }
 
-export const tvhCache = new TVHCache();
-tvhCache.loadFromCache();
+// const tvhCache = new TVHCache();
+// tvhCache.loadFromCache();
 
 export function initCache(cache: TVHCache, reloadTime = 30, retryTime = 1, retries = 5) {
 	LOG.info('preload Started');
@@ -389,3 +390,64 @@ export function initCache(cache: TVHCache, reloadTime = 30, retryTime = 1, retri
 			}
 		});
 }
+
+class TVHCacheDB implements DataStore {
+	private db = new TVHCache();
+	constructor() {
+		// Empty for a reason
+		this.db.loadFromCache();
+	}
+
+	public init() {
+		initCache(this.db);
+	}
+
+	public get status() {
+		return this.db.status;
+	}
+
+	//
+	// CHANNEL Management
+	// ==================
+	public get channels() {
+		return Array.from(this.db.channels.values());
+	}
+	public hasChannel(channelId: string): boolean {
+		return this.db.channels.has(channelId);
+	}
+	getChannel(channelId: string): ITVHChannel | undefined {
+		return this.db.channels.get(channelId);
+	}
+	public findChannelsByTag(tag: ITVHChannelTag): ITVHChannel[] {
+		return Array.from(this.channels).filter((channel) => {
+			return channel.tags.includes(tag.name);
+		});
+	}
+
+	get channelTags() {
+		return this.db.channelTags;
+	}
+	//
+	// EPG Management
+	//
+	get epgSorted(): ITVHEpgEvent[] {
+		return this.db.epgSorted;
+	}
+	public hasEvent(epgEventId: string): boolean {
+		return this.db.epg.has(epgEventId);
+	}
+
+	public getEvent(epgEventId: string): ITVHEpgEvent | undefined {
+		return this.db.epg.get(epgEventId);
+	}
+
+	public search(query: string): ITVHEpgEvent[] {
+		return this.db.search(query);
+	}
+
+	get genres() {
+		return this.db.genres;
+	}
+}
+
+export const defaultDb = new TVHCacheDB();
