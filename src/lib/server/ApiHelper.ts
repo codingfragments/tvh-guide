@@ -11,8 +11,6 @@ export function GET() {
 	});
 }
 
-import type { TVHCache } from '$lib/server/tvh/tvh-cache';
-
 import anylogger from 'anylogger';
 import type { ApiResultStats } from '$lib/types/api';
 const LOG = anylogger('apiHelper');
@@ -25,7 +23,6 @@ export class EPGFilter {
 		this.channels.push(channel);
 	}
 	public constructor(
-		private tvh: TVHCache,
 		private channels: ITVHChannel[] = [],
 		private genres: string[] = [],
 		private fromDate: Date | undefined = undefined,
@@ -33,10 +30,7 @@ export class EPGFilter {
 		private nowDate: Date | undefined = undefined
 	) {}
 
-	public filter(epg: ITVHEpgEvent[] | undefined = undefined) {
-		if (epg == undefined) {
-			epg = this.tvh.epgSorted;
-		}
+	public filter(epg: ITVHEpgEvent[]) {
 		if (this.channels.length > 0) {
 			epg = epg.filter((event) => {
 				const cid = event.channel.uuid;

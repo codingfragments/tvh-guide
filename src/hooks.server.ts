@@ -1,6 +1,10 @@
 import { env } from '$env/dynamic/private';
 import pino, { levels } from 'pino';
 
+//
+// Define LOGGER and global Logging Config
+// ========================================
+//
 const ROOT_LOG = pino({
 	name: 'ROOT_APP',
 	base: {},
@@ -12,7 +16,11 @@ const ROOT_LOG = pino({
 
 ROOT_LOG.level = env.SERVER_LOG_LEVEL;
 console.log('LOG LEVEL', ROOT_LOG.level);
+
+//
 // Simple anylogger adapter
+// ========================
+//
 import anylogger from 'anylogger';
 import type { Logger, BaseLevels } from 'anylogger';
 anylogger.ext = (logger) => {
@@ -20,13 +28,28 @@ anylogger.ext = (logger) => {
 	return ROOT_LOG.child({ chld: logger.name }) as any as Logger<BaseLevels>;
 };
 
-import { browser } from '$app/environment';
-import { tvhCache, initCache } from '$lib/server/tvh/tvh-cache';
+ROOT_LOG.info('Server Startup');
 
-initCache(tvhCache);
+//
+// Init Datastore
+// ==============
+//
+ROOT_LOG.info('Init TVH and EPG Cache');
 
-if (!browser) {
-	ROOT_LOG.info('Server Startup');
-}
+import { defaultDb } from '$lib/server/tvh/tvh-cache';
+const root_db = defaultDb;
+root_db.init();
 
-export {};
+//
+// HANDLE
+// ======
+//
+import type { Handle } from '@sveltejs/kit';
+
+export const handle = (async ({ event, resolve }) => {
+	event.locals.db = root_db;
+	const response = await resolve(event);
+	response.headers.set('x-custom-header', 'potato');
+
+	return response;
+}) satisfies Handle;
