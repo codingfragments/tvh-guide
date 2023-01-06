@@ -7,12 +7,12 @@ import { epgEventsQuery, EPGFilter } from '$lib/server/ApiHelper';
 // const LOG = anylogger('search');
 
 import type { RequestHandler } from './$types';
-export const GET: RequestHandler = ({ locals, url }) => {
+export const GET: RequestHandler = async ({ locals, url }) => {
 	const body = {};
 	const filter = new EPGFilter();
 	const query = url.searchParams.get('q');
 	if (query) {
-		const results = locals.db.search(query);
+		const results = await locals.db.search(query);
 		epgEventsQuery(filter, url, body, results);
 	}
 	return json(body);

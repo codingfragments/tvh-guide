@@ -14,3 +14,4 @@ epgcache/cache.json
 build-storybook.log
 *timestamp-*.mjs
 storybook-static
+epgcache/db.pouch

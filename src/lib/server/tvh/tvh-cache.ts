@@ -402,50 +402,50 @@ class TVHCacheDB implements DataStore {
 		initCache(this.db);
 	}
 
-	public get status() {
+	public async getStatus() {
 		return this.db.status;
 	}
 
 	//
 	// CHANNEL Management
 	// ==================
-	public get channels() {
+	public async getChannels() {
 		return Array.from(this.db.channels.values());
 	}
-	public hasChannel(channelId: string): boolean {
+	public async hasChannel(channelId: string) {
 		return this.db.channels.has(channelId);
 	}
-	getChannel(channelId: string): ITVHChannel | undefined {
+	public async getChannel(channelId: string) {
 		return this.db.channels.get(channelId);
 	}
-	public findChannelsByTag(tag: ITVHChannelTag): ITVHChannel[] {
-		return Array.from(this.channels).filter((channel) => {
+	public async findChannelsByTag(tag: ITVHChannelTag) {
+		return Array.from(await this.getChannels()).filter((channel) => {
 			return channel.tags.includes(tag.name);
 		});
 	}
 
-	get channelTags() {
+	public async getChannelTags() {
 		return this.db.channelTags;
 	}
 	//
 	// EPG Management
 	//
-	get epgSorted(): ITVHEpgEvent[] {
+	public async getEpgSorted() {
 		return this.db.epgSorted;
 	}
-	public hasEvent(epgEventId: string): boolean {
+	public async hasEvent(epgEventId: string) {
 		return this.db.epg.has(epgEventId);
 	}
 
-	public getEvent(epgEventId: string): ITVHEpgEvent | undefined {
+	public async getEvent(epgEventId: string) {
 		return this.db.epg.get(epgEventId);
 	}
 
-	public search(query: string): ITVHEpgEvent[] {
+	public async search(query: string) {
 		return this.db.search(query);
 	}
 
-	get genres() {
+	public async getGenres() {
 		return this.db.genres;
 	}
 }
