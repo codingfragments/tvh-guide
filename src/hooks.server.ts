@@ -14,7 +14,7 @@ const ROOT_LOG = pino({
 	timestamp: pino.stdTimeFunctions.isoTime
 });
 
-ROOT_LOG.level = env.SERVER_LOG_LEVEL;
+ROOT_LOG.level = env.SERVER_LOG_LEVEL ?? 'debug';
 console.log('LOG LEVEL', ROOT_LOG.level);
 
 //
