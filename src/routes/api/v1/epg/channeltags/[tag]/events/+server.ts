@@ -32,6 +32,6 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
 	for (const channel of channels) {
 		filter.addChannel(channel);
 	}
-	epgEventsQuery(filter, url, body, locals.db.epgSorted);
+	epgEventsQuery(filter, url, body, await locals.db.getEpgSorted());
 	return json(body);
 };
