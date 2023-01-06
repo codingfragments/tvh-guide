@@ -40,6 +40,15 @@ import { defaultDb } from '$lib/server/tvh/tvh-cache';
 const root_db = defaultDb;
 root_db.init();
 
+// Init pouchDB
+// ============
+import PouchDB from 'pouchdb';
+
+const db = new PouchDB('./epgcache/db.pouch');
+db.info().then((info) => {
+	ROOT_LOG.debug({ msg: 'PDB', info });
+});
+
 //
 // HANDLE
 // ======

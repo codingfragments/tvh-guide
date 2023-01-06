@@ -7,19 +7,19 @@ import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre } from '$lib/
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DataStore {
-	get status(): ServerStatus;
+	getStatus(): Promise<ServerStatus>;
 
-	get channels(): ITVHChannel[];
-	hasChannel(channelId: string): boolean;
-	getChannel(channelId: string): ITVHChannel | undefined;
-	get channelTags(): ITVHChannelTag[];
-	findChannelsByTag(tag: ITVHChannelTag): ITVHChannel[];
+	getChannels(): Promise<ITVHChannel[]>;
+	hasChannel(channelId: string): Promise<boolean>;
+	getChannel(channelId: string): Promise<ITVHChannel | undefined>;
+	getChannelTags(): Promise<ITVHChannelTag[]>;
+	findChannelsByTag(tag: ITVHChannelTag): Promise<ITVHChannel[]>;
 
-	get epgSorted(): ITVHEpgEvent[];
-	hasEvent(epgEventId: string): boolean;
-	getEvent(epgEventId: string): ITVHEpgEvent | undefined;
+	getEpgSorted(): Promise<ITVHEpgEvent[]>;
+	hasEvent(epgEventId: string): Promise<boolean>;
+	getEvent(epgEventId: string): Promise<ITVHEpgEvent | undefined>;
 
-	get genres(): ITVHGenre[];
+	getGenres(): Promise<ITVHGenre[]>;
 
-	search(query: string): ITVHEpgEvent[];
+	search(query: string): Promise<ITVHEpgEvent[]>;
 }

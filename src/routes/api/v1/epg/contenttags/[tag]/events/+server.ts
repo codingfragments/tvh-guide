@@ -5,14 +5,14 @@ import { SearchRange } from '$lib/server/ApiHelper';
 import type { ITVHChannel } from '$lib/types/epg-interfaces';
 
 import type { RequestHandler } from './$types';
-export const GET: RequestHandler = ({ locals, params, url }) => {
+export const GET: RequestHandler = async ({ locals, params, url }) => {
 	const body: Record<string, unknown> = {};
 
 	// check for tags Either a clear type or UUID.
 	// If a clear text tag is given it will return the first positive match.
 	// IF non unique Tagnames are used the UUID is the only way to make sure to be consistent
 
-	const tagFilter = locals.db.genres.filter((tag) => {
+	const tagFilter = (await locals.db.getGenres()).filter((tag) => {
 		return tag.tvhIds.includes(parseInt(params['tag'])) || tag.name === (params['tag'] as string).toLowerCase();
 	});
 
@@ -29,6 +29,6 @@ export const GET: RequestHandler = ({ locals, params, url }) => {
 	for (const tag of tagFilter) {
 		filter.addGenreTag(tag.name);
 	}
-	epgEventsQuery(filter, url, body, locals.db.epgSorted);
+	epgEventsQuery(filter, url, body, await locals.db.getEpgSorted());
 	return json(body);
 };

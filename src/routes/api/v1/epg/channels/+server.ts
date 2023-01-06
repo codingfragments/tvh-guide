@@ -5,12 +5,12 @@ import { SearchRange } from '$lib/server/ApiHelper';
 import type { ITVHChannel } from '$lib/types/epg-interfaces';
 
 import type { RequestHandler } from './$types';
-export const GET: RequestHandler = ({ locals, url }) => {
+export const GET: RequestHandler = async ({ locals, url }) => {
 	const range = new SearchRange<ITVHChannel>();
 
 	range.fromUrl(url);
 
-	let channels = Array.from(locals.db.channels);
+	let channels = Array.from(await locals.db.getChannels());
 	channels = channels.sort((c1, c2) => {
 		return c1.number - c2.number;
 	});
