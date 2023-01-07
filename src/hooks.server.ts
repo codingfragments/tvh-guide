@@ -42,9 +42,9 @@ const root_db = defaultDb;
 
 // Init pouchDB
 // ============
-import { PouchStore } from '$lib/server/tvh/datastorePouchdb';
-const pouchStore = new PouchStore('./epgcache/DBTest1');
-await pouchStore.init();
+import { pouchStore } from '$lib/server/tvh/datastorePouchdb';
+// const pouchStore = new PouchStore('./epgcache/DBTest1');
+// await pouchStore.init();
 ROOT_LOG.info('POUCHDB Initialized');
 //
 // HANDLE
