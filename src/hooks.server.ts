@@ -38,12 +38,12 @@ ROOT_LOG.info('Init TVH and EPG Cache2');
 
 import { defaultDb } from '$lib/server/tvh/tvh-cache';
 const root_db = defaultDb;
-// root_db.init();
+root_db.init();
 
 // Init pouchDB
 // ============
-import { pouchStore } from '$lib/server/tvh/datastorePouchdb';
-// const pouchStore = new PouchStore('./epgcache/DBTest1');
+// import { PouchStore } from '$lib/server/tvh/datastorePouchdb';
+// const pouchStore = new PouchStore('/tmp/epgcache');
 // await pouchStore.init();
 ROOT_LOG.info('POUCHDB Initialized');
 //
