@@ -481,5 +481,5 @@ export class PouchStore implements DataStore {
 }
 
 // //TODO move path  to environment settings
-export const pouchStore = new PouchStore('/tmp/epgdb');
-pouchStore.init();
+// export const pouchStore = new PouchStore('/tmp/epgdb');
+// pouchStore.init();
