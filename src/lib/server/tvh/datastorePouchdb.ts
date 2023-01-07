@@ -368,12 +368,14 @@ export class PouchStore implements DataStore {
 		});
 	}
 	async getEpgSorted(): Promise<ITVHEpgEvent[]> {
+		LOG.debug('Collect all events');
 		const result = await this.datastore.allDocs({
 			startkey: 'epgevent:',
 			endkey: 'epgevent:\uffff',
 			include_docs: true
 		});
 
+		LOG.debug('Reorder events');
 		let erg: ITVHEpgEvent[] = [];
 		result.rows.forEach((row) => {
 			if (row.doc?.epg) {
@@ -383,6 +385,8 @@ export class PouchStore implements DataStore {
 		erg = Array.from(erg).sort((a, b) => {
 			return a.start - b.start;
 		});
+		LOG.debug({ msg: 'returning events', s: erg.length });
+
 		return erg;
 	}
 	async hasEvent(epgEventId: string): Promise<boolean> {
@@ -477,4 +481,5 @@ export class PouchStore implements DataStore {
 }
 
 // //TODO move path  to environment settings
-// export const pouchStore = new PouchStore('./epgcache/DBTest');
+export const pouchStore = new PouchStore('/tmp/epgdb');
+pouchStore.init();
