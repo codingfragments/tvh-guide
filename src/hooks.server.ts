@@ -60,6 +60,7 @@ export const handle = (async ({ event, resolve }) => {
 	event.locals.db = db;
 	const response = await resolve(event);
 	response.headers.set('x-custom-header', 'potato');
-
+	const used = process.memoryUsage().heapUsed / 1024 / 1024;
+	ROOT_LOG.debug({ msg: 'MEMORY', used, stats: process.memoryUsage() });
 	return response;
 }) satisfies Handle;
