@@ -9,7 +9,7 @@ const LOG = anylogger('srv:MemoryStore');
 
 import { Low } from 'lowdb';
 
-// eslint-disable-next-line
+// @ts-expect-error missleading import, it's verified
 import { JSONFile } from 'lowdb/node';
 
 import { minutes } from '$lib/timeGlobals';
