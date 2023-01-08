@@ -2,7 +2,6 @@ import type { ServerStatus } from '$lib/types/api';
 import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre, ITVHTag } from '$lib/types/epg-interfaces';
 import type { DataStore } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
-import { toBool } from '$lib/tools';
 
 import anylogger from 'anylogger';
 
@@ -14,8 +13,8 @@ import PouchQuickSearch from 'pouchdb-quick-search';
 PouchDB.plugin(PouchQuickSearch);
 PouchDB.plugin(PouchFind);
 
-import { createTVHClient } from './tvheadend-client';
-import { days, minutes } from '$lib/timeGlobals';
+import { minutes } from '$lib/timeGlobals';
+import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
 
 export interface DataObj {
 	_id: string;
@@ -61,110 +60,11 @@ export class PouchStore implements DataStore {
 		});
 	}
 
-	/** Convert EPG to data form, change some files and calculate Dates and
-	 *  Link to DTOs
-	 */
-	private convertEPG(epg: ITVHEpgEvent, _channels: Map<string, ITVHChannel>, _contentTypes: Map<string, string>) {
-		epg.startDate = new Date(epg.start * 1000).toISOString();
-		epg.stopDate = new Date(epg.stop * 1000).toISOString();
-		epg.widescreen = toBool(epg.widescreen);
-		epg.subtitled = toBool(epg.subtitled);
-		const channel = _channels.get(epg.channelUuid);
-		if (typeof channel !== 'undefined') {
-			epg.channel = channel;
-		} else {
-			throw new Error('EPG Transform failed, EPG-Channel not found :\n' + JSON.stringify(epg, null, 2));
-		}
-		epg.uuid = '' + epg.eventId;
-
-		epg.nextEventUuid = '' + epg.nextEventId;
-		const newGenre = new Array<string>();
-		if (epg.genre) {
-			for (const g1 of epg.genre) {
-				const g2 = _contentTypes.get(g1);
-				if (g2) {
-					if (g2.includes('/')) {
-						for (const g3 of g2.split('/')) {
-							newGenre.push(g3.trim());
-						}
-					} else {
-						newGenre.push(g2.trim());
-					}
-				}
-			}
-			epg.genre = newGenre.filter((v, i, a) => a.indexOf(v) === i);
-		}
-	}
-
-	private async loadStateFromTVH() {
-		const tvhClient = createTVHClient();
-		const channels = await tvhClient.getChannelGrid();
-		const channelTags = await tvhClient.getChannelTags();
-		const contentTypes = await tvhClient.getContentTypes();
-
-		// FUTURE: Create better handling of big data (Loop as in /app/epg/+server.ts)
-		const epgs = (await tvhClient.getEpgGrid(1000000000)).entries;
-
-		const _channelTags = new Map<string, string>();
-		for (const tag of channelTags.entries) {
-			_channelTags.set(tag.key, tag.val);
-		}
-		const _contentTypes = new Map<string, string>();
-		for (const genre of contentTypes.entries) {
-			_contentTypes.set(genre.key, genre.val);
-		}
-		// Convert Channel
-		// ===============
-		const _channels = new Map<string, ITVHChannel>();
-		for (const channel of channels.entries) {
-			const tags: string[] = [];
-			for (const tag of channel.tags) {
-				const ctag = _channelTags.get(tag);
-				if (typeof ctag !== 'undefined') {
-					tags.push(ctag);
-				}
-			}
-			// Convert to DTO and store
-			channel.tags = tags;
-			_channels.set(channel.uuid, channel);
-		}
-
-		const _epg = new Map<string, ITVHEpgEvent>();
-		// Convert EPGs
-		// ============
-		for (const epg of epgs) {
-			try {
-				this.convertEPG(epg, _channels, _contentTypes);
-				_epg.set(epg.uuid, epg);
-			} catch (err) {
-				LOG.error('Failed to convert, skipping element', err);
-			}
-		}
-
-		// second Pass, relink EPGs
-		for (const epg of epgs) {
-			if (typeof epg.nextEventUuid !== 'undefined') {
-				const targetEpg = _epg.get(epg.nextEventUuid);
-				if (typeof targetEpg !== 'undefined') {
-					targetEpg.prevEventUuid = epg.uuid;
-				}
-			}
-		}
-
-		this.lastUpdate = new Date();
-
-		return {
-			channels: Array.from(_channels.values()),
-			channelTags: channelTags.entries,
-			contentTypes: contentTypes.entries,
-			epgs
-		};
-	}
-
 	private async load(retries: number) {
 		LOG.info(`Load Data from TVH `);
-		this.loadStateFromTVH()
+		loadStateFromTVH()
 			.then((data) => {
+				this.lastUpdate = new Date();
 				this.storeStateToDatastore(data).then(() => {
 					setInterval(() => this.load(this.retries), minutes(this.reloadTime));
 				});
@@ -224,42 +124,9 @@ export class PouchStore implements DataStore {
 			'contenttype:'
 		);
 
-		await this.updateDateRange();
-	}
-
-	// Calculate the daterange based on 50/50 rules.
-	// Take the first date where 50% Channels have a minimum of data
-	// Take the last data where 50% of channels have Data
-	async updateDateRange() {
-		const startDates: Date[] = [];
-		const endDates: Date[] = [];
-		const epgs = await this.getEpgSorted();
-		const epgMap = new Map<string, ITVHEpgEvent[]>();
-		epgs.forEach((e) => {
-			if (new Date(e.stopDate) <= new Date(Date.now() - days(1))) {
-				// skip old epg entries
-				return;
-			}
-			const cid = e.channel.uuid;
-			if (!epgMap.has(cid)) {
-				epgMap.set(cid, []);
-			}
-			const l = epgMap.get(cid) ?? [];
-			l.push(e);
-		});
-
-		for (const ch of epgMap.keys()) {
-			const epg = epgMap.get(ch);
-
-			if (typeof epg !== 'undefined') {
-				startDates.push(new Date(epg[0].startDate));
-				endDates.push(new Date(epg[epg.length - 1].stopDate));
-			}
-		}
-		// IDEA Prio Channels based on tags or groups
-		this.firstDate = startDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(startDates.length * 0.5)];
-		this.lastDate = endDates.sort((a, b) => a.getTime() - b.getTime())[Math.round(endDates.length * 0.8)];
-		return this.dateRange;
+		const dateRange = calcDateRange(data.epgs);
+		this.firstDate = dateRange.start;
+		this.lastDate = dateRange.stop;
 	}
 
 	/**
@@ -289,14 +156,15 @@ export class PouchStore implements DataStore {
 		// TODO Init indexes needed
 	}
 
-	get dateRange() {
-		return { start: this.firstDate, stop: this.lastDate };
-	}
-
 	//
 	// Interface Methods
 	// =================
 	//
+
+	get dateRange() {
+		return { start: this.firstDate, stop: this.lastDate };
+	}
+
 	async getStatus(): Promise<ServerStatus> {
 		const status: ServerStatus = {
 			firstDate: this.firstDate,
