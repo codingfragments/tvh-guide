@@ -36,16 +36,20 @@ ROOT_LOG.info('Server Startup');
 //
 ROOT_LOG.info('Init TVH and EPG Cache2');
 
-import { defaultDb } from '$lib/server/tvh/tvh-cache';
-const root_db = defaultDb;
-root_db.init();
+// import { defaultDb } from '$lib/server/tvh/tvh-cache';
+// const root_db = defaultDb;
+// root_db.init();
+
+import { MemoryStore } from '$lib/server/tvh/datastoreMemory';
+const db = new MemoryStore();
+db.init();
 
 // Init pouchDB
 // ============
 // import { PouchStore } from '$lib/server/tvh/datastorePouchdb';
 // const pouchStore = new PouchStore('/tmp/epgcache');
 // await pouchStore.init();
-ROOT_LOG.info('POUCHDB Initialized');
+ROOT_LOG.info('DB Initialized');
 //
 // HANDLE
 // ======
@@ -53,7 +57,7 @@ ROOT_LOG.info('POUCHDB Initialized');
 import type { Handle } from '@sveltejs/kit';
 
 export const handle = (async ({ event, resolve }) => {
-	event.locals.db = pouchStore;
+	event.locals.db = db;
 	const response = await resolve(event);
 	response.headers.set('x-custom-header', 'potato');
 
