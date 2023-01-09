@@ -96,12 +96,14 @@
 	let gridPos: GridPos = { x: 0, y: 0 };
 	let gridDimensions: GridRect = { w: 0, h: 0 };
 
+	let lastScrollToDate = new Date('1.1.1990');
 	$: if (data.scroll.scrollTo) {
 		LOG.debug({ msg: 'Scroll to Date after Tick', data: data.scroll.scrollToDate, cmpScroller });
 		tick().then(() => {
 			// debugger;
 			if (cmpScroller) {
 				cmpScroller.scrollToGridY(Math.max(0, timeToGridY(data.scroll.scrollToDate, 'floor')), false);
+				lastScrollToDate = data.scroll.scrollToDate;
 			}
 		});
 	}

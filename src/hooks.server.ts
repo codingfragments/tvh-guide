@@ -1,33 +1,5 @@
-import { env } from '$env/dynamic/private';
-import pino, { levels } from 'pino';
-
-//
-// Define LOGGER and global Logging Config
-// ========================================
-//
-const ROOT_LOG = pino({
-	name: 'ROOT_APP',
-	base: {},
-	mixin(_context, level) {
-		return { 'level-label': levels.labels[level] };
-	},
-	timestamp: pino.stdTimeFunctions.isoTime
-});
-
-ROOT_LOG.level = env.SERVER_LOG_LEVEL ?? 'debug';
-console.log('LOG LEVEL', ROOT_LOG.level);
-
-//
-// Simple anylogger adapter
-// ========================
-//
-import anylogger from 'anylogger';
-import type { Logger, BaseLevels } from 'anylogger';
-anylogger.ext = (logger) => {
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	return ROOT_LOG.child({ chld: logger.name }) as any as Logger<BaseLevels>;
-};
-
+import anylogger from '$lib/server/logger';
+const ROOT_LOG = anylogger('SRV:Hook');
 ROOT_LOG.info('Server Startup');
 
 //
@@ -41,8 +13,9 @@ ROOT_LOG.info('Init TVH and EPG Cache2');
 // root_db.init();
 
 import { MemoryStore } from '$lib/server/tvh/datastoreMemory';
+// TODO add pth config and use in constructor
 const db = new MemoryStore();
-db.init();
+await db.init();
 
 // Init pouchDB
 // ============
@@ -60,7 +33,6 @@ export const handle = (async ({ event, resolve }) => {
 	event.locals.db = db;
 	const response = await resolve(event);
 	response.headers.set('x-custom-header', 'potato');
-	const used = process.memoryUsage().heapUsed / 1024 / 1024;
-	ROOT_LOG.debug({ msg: 'MEMORY', used, stats: process.memoryUsage() });
+
 	return response;
 }) satisfies Handle;

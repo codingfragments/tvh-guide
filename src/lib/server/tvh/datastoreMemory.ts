@@ -4,6 +4,7 @@ import type { DataStore } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
 
 import anylogger from 'anylogger';
+// import anylogger from '$lib/server/logger';
 
 const LOG = anylogger('srv:MemoryStore');
 
@@ -56,24 +57,32 @@ export class MemoryStore implements DataStore {
 	}
 
 	private async load(retries: number) {
-		LOG.info(`Load Data from TVH `);
-		loadStateFromTVH()
-			.then((data) => {
-				this.lastUpdate = new Date();
-				this.storeStateToDatastore(data).then(() => {
-					setInterval(() => this.load(this.retries), minutes(this.reloadTime));
+		const erg = new Promise<boolean>((resolve) => {
+			LOG.info(`Load Data from TVH `);
+			loadStateFromTVH()
+				.then((data) => {
+					this.lastUpdate = new Date();
+					this.storeStateToDatastore(data)
+						.then(() => {
+							setInterval(() => this.load(this.retries), minutes(this.reloadTime));
+						})
+						.finally(() => {
+							resolve(true);
+						});
+					// TODO check if the FUSE search
+					// Init search Index
+				})
+				.catch((error) => {
+					LOG.error(error);
+					LOG.info('Initial load failed.');
+					if (this.retries > 0) {
+						LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
+						setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
+					}
+					resolve(false);
 				});
-				// TODO check if the FUSE search
-				// Init search Index
-			})
-			.catch((error) => {
-				LOG.error(error);
-				LOG.info('Initial load failed.');
-				if (this.retries > 0) {
-					LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
-					setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
-				}
-			});
+		});
+		return erg;
 	}
 	async storeStateToDatastore(data: {
 		channels: ITVHChannel[];
@@ -88,20 +97,22 @@ export class MemoryStore implements DataStore {
 		if (this.datastore.data) {
 			const db = this.datastore.data;
 			db.epgs = data.epgs;
-			this.idxEpgs.clear();
-			db.epgs.forEach((e) => {
-				this.idxEpgs.set(e.uuid, e);
-			});
 
 			db.channelTags = data.channelTags;
 			db.contentTypes = data.contentTypes;
 			db.channels = data.channels;
 
+			this.idxEpgs.clear();
+			db.epgs.forEach((e) => {
+				this.idxEpgs.set(e.uuid, e);
+			});
 			this.idxChannel.clear();
 			db.channels.forEach((c) => {
 				this.idxChannel.set(c.uuid, c);
 			});
-			this.prepSearchIndex();
+			await this.prepSearchIndex();
+			const used = process.memoryUsage().heapUsed / 1024 / 1024;
+			LOG.debug({ msg: 'MEMORY Reloaded', used, stats: process.memoryUsage() });
 		} else {
 			LOG.error('Memory Datastore seems to have failed on initialization');
 		}
@@ -138,6 +149,19 @@ export class MemoryStore implements DataStore {
 			epgs: [],
 			contentTypes: []
 		};
+
+		this.idxEpgs.clear();
+		this.datastore.data.epgs.forEach((e) => {
+			this.idxEpgs.set(e.uuid, e);
+		});
+		this.idxChannel.clear();
+		this.datastore.data.channels.forEach((c) => {
+			this.idxChannel.set(c.uuid, c);
+		});
+
+		const dateRange = calcDateRange(this.datastore.data.epgs);
+		this.firstDate = dateRange.start;
+		this.lastDate = dateRange.stop;
 
 		// restore Search
 		await this.prepSearchIndex();
@@ -194,11 +218,9 @@ export class MemoryStore implements DataStore {
 	async getEpgSorted(): Promise<ITVHEpgEvent[]> {
 		if (!this.datastore.data) return [];
 
-		LOG.debug('Collect all events');
 		const erg = Array.from(this.datastore.data.epgs).sort((a, b) => {
 			return a.start - b.start;
 		});
-		LOG.debug({ msg: 'returning events', s: erg.length });
 
 		return erg;
 	}
@@ -271,7 +293,7 @@ export class MemoryStore implements DataStore {
 	public async search(query: string): Promise<ITVHEpgEvent[]> {
 		// TODO Move this to config/env
 		const scoreFilter = 0.75;
-
+		LOG.debug('EVENT');
 		let result = this.cachedSearch(query);
 		result = result.filter((e) => {
 			return e.score && e.score <= scoreFilter;
@@ -288,7 +310,3 @@ export class MemoryStore implements DataStore {
 		}
 	}
 }
-
-// //TODO move path  to environment settings
-// export const pouchStore = new PouchStore('/tmp/epgdb');
-// pouchStore.init();

@@ -7,6 +7,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	return json({
 		serviceHealth: 'OK',
 		serviceUp: true,
-		cache: await locals.db.getStatus()
+		cache: await locals.db.getStatus(),
+		memory: process.memoryUsage()
 	});
 };

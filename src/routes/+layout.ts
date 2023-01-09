@@ -11,7 +11,8 @@ import type { LayoutLoad } from './$types';
 // and change the callback to LayoutLoad<DataOutput>
 
 // You need to run the dev server or `svelte-kit sync` to generate them.
-export const load: LayoutLoad = async ({ fetch }) => {
+export const load: LayoutLoad = async ({ fetch, depends }) => {
+	depends('SERVER:health', 'SERVER:cfg');
 	// FUTURE Settings probably needs to go to session data, maybe
 	const settings = <UISettings>await (await fetch('/api/v1/settings/ui')).json();
 	const health = <ApiResultHealth>await (await fetch('/api/v1/health')).json();

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { uiCfg } from '$lib/globals';
 	import { browser } from '$app/environment';
 
@@ -14,6 +14,7 @@
 	import { getMediaContext, getUIDarkContext } from '$lib/client/state/layoutContext';
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
 	import { registerNavigationCallback } from '$lib/client/navigation';
+	import { minutes, seconds } from '$lib/timeGlobals';
 
 	const media = getMediaContext();
 	const uiThemeDark = getUIDarkContext();
@@ -21,6 +22,7 @@
 
 	const LOG = anylogger('App-Layout');
 	let removeNavigationFeedback: () => void;
+
 	onMount(() => {
 		LOG.debug('Inner Mount');
 		LOG.debug('Navigate :' + segment);
