@@ -219,8 +219,8 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="main">
-		<div class="h-full p-2 ">
-			<div class="h-full bg-base-100 shadow-lg rounded-md p-2">
+		<div class="h-full px-2 ">
+			<div class="h-full bg-base-100 shadow-lg rounded-md px-2">
 				<NavigationSpinner
 					showAutomatic={false}
 					show={showLoading}

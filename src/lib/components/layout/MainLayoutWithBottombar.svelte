@@ -21,8 +21,10 @@
 	<div class="LCMain relative min-h-0 min-w-0 ">
 		<slot name="main" />
 	</div>
+
 	{#if bigMode && showBottom}
-		<div class="LCFooter min-h-1/2">
+		<div class="LCFooter min-h-0  relative">
+			<div class="absolute -top-4 h-4 left-0 right-0  bg-gradient-to-t from-base-200 to-transparent ">&nbsp;</div>
 			<slot name="footer" />
 		</div>
 	{/if}
