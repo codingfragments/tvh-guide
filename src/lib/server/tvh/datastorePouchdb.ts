@@ -32,6 +32,8 @@ export class PouchStore implements DataStore {
 	private lastUpdate: Date = new Date('1990-01-01');
 	lastDate: Date = new Date();
 	firstDate: Date = new Date();
+	eventCount = 0;
+	channelCount = 0;
 
 	private searchIndex: Fuse<ITVHEpgEvent> = new Fuse([], {
 		includeScore: true,
@@ -47,7 +49,7 @@ export class PouchStore implements DataStore {
 	//
 	public constructor(
 		private path = './epgcache/DB',
-		private reloadTime = 30,
+		private reloadTime = 60,
 		private retryTime = 1,
 		private retries = 5
 	) {
@@ -58,16 +60,20 @@ export class PouchStore implements DataStore {
 
 	private async prepSearchIndex() {
 		this.searchCache.clear();
-		const filteredEPG = (await this.getEpgSorted()).filter((e) => {
+		const epgs = await this.getEpgSorted();
+		const filteredEPG = epgs.filter((e) => {
 			return e.description && e.description.length > 10;
 		});
 		LOG.debug({
 			msg: 'Filter and prep search Index',
 			count: filteredEPG.length,
-			all: (await this.getEpgSorted()).length
+			all: epgs.length
 		});
 		this.searchIndex.setCollection(filteredEPG);
-		LOG.debug('DONE');
+
+		this.eventCount = epgs.length;
+		this.channelCount = (await this.getChannels()).length;
+		LOG.debug({ msg: 'DONE', func: 'prepSearchIndex' });
 	}
 
 	private cachedSearch(query: string): Fuse.FuseResult<ITVHEpgEvent>[] {
@@ -95,25 +101,28 @@ export class PouchStore implements DataStore {
 
 	private async load(retries: number) {
 		LOG.info(`Load Data from TVH `);
-		loadStateFromTVH()
-			.then((data) => {
-				this.lastUpdate = new Date();
-				this.storeStateToDatastore(data).then(() => {
-					setInterval(() => this.load(this.retries), minutes(this.reloadTime));
-					this.prepSearchIndex();
-				});
-				// TODO check if the FUSE search
-				// Init search Index
-				// this.prepSearchIndex();
-			})
-			.catch((error) => {
-				LOG.error(error);
-				LOG.info('Initial load failed.');
-				if (this.retries > 0) {
-					LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
-					setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
-				}
-			});
+
+		try {
+			const data = await loadStateFromTVH();
+			this.lastUpdate = new Date();
+			await this.storeStateToDatastore(data);
+			this.prepSearchIndex();
+			const dateRange = calcDateRange(data.epgs);
+			this.firstDate = dateRange.start;
+			this.lastDate = dateRange.stop;
+
+			setTimeout(() => this.load(this.retries), minutes(this.reloadTime));
+			LOG.info(`Load Data from TVH - finished `);
+		} catch (error) {
+			LOG.error(error);
+			LOG.info('Initial load failed.');
+			if (this.retries > 0) {
+				LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
+				setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
+			} else {
+				throw new Error('Fatal, retry failed TVH collection impossible');
+			}
+		}
 	}
 	async storeStateToDatastore(data: {
 		channels: ITVHChannel[];
@@ -157,10 +166,6 @@ export class PouchStore implements DataStore {
 			}),
 			'contenttype:'
 		);
-
-		const dateRange = calcDateRange(data.epgs);
-		this.firstDate = dateRange.start;
-		this.lastDate = dateRange.stop;
 	}
 
 	/**
@@ -208,8 +213,8 @@ export class PouchStore implements DataStore {
 			firstDate: this.firstDate,
 			lastDate: this.lastDate,
 			lastUpdate: this.lastUpdate,
-			numEvents: (await this.getChannels()).length,
-			numChannels: (await this.getChannels()).length,
+			numEvents: this.eventCount,
+			numChannels: this.channelCount,
 			cacheUUID: this.uuid
 		};
 		return status;
@@ -274,14 +279,12 @@ export class PouchStore implements DataStore {
 		});
 	}
 	async getEpgSorted(): Promise<ITVHEpgEvent[]> {
-		LOG.debug('Collect all events');
 		const result = await this.datastore.allDocs({
 			startkey: 'epgevent:',
 			endkey: 'epgevent:\uffff',
 			include_docs: true
 		});
 
-		LOG.debug('Reorder events');
 		let erg: ITVHEpgEvent[] = [];
 		result.rows.forEach((row) => {
 			if (row.doc?.epg) {
@@ -291,7 +294,7 @@ export class PouchStore implements DataStore {
 		erg = Array.from(erg).sort((a, b) => {
 			return a.start - b.start;
 		});
-		LOG.debug({ msg: 'returning events', s: erg.length });
+		LOG.debug({ fun: 'getEpgSorted', msg: 'returning events', s: erg.length });
 
 		return erg;
 	}
