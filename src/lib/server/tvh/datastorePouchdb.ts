@@ -9,9 +9,9 @@ const LOG = anylogger('srv:PouchStore');
 
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
-import PouchQuickSearch from 'pouchdb-quick-search';
-PouchDB.plugin(PouchQuickSearch);
 PouchDB.plugin(PouchFind);
+
+import Fuse from 'fuse.js';
 
 import { minutes } from '$lib/timeGlobals';
 import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
@@ -33,6 +33,14 @@ export class PouchStore implements DataStore {
 	lastDate: Date = new Date();
 	firstDate: Date = new Date();
 
+	private searchIndex: Fuse<ITVHEpgEvent> = new Fuse([], {
+		includeScore: true,
+		useExtendedSearch: false,
+		keys: ['channelName', 'description', 'title', 'genre', 'copyright_year', 'channel.tags']
+	});
+
+	private searchCache = new Map<string, { timestamp: Date; results: Fuse.FuseResult<ITVHEpgEvent>[] }>();
+
 	//
 	// Initialization
 	// ==============
@@ -46,18 +54,43 @@ export class PouchStore implements DataStore {
 		this.datastore = new PouchDB<DataObj>(path, { revs_limit: 1, auto_compaction: true });
 
 		this.datastore.createIndex({ index: { fields: ['type', '_id', 'epg.start', 'epg.stop'] } });
+	}
 
-		this.datastore.search({
-			fields: [
-				'epg.channelName',
-				'epg.description',
-				'epg.title',
-				'epg.genre',
-				'epg.copyright_year',
-				'epg.channel.tags'
-			],
-			build: true
+	private async prepSearchIndex() {
+		this.searchCache.clear();
+		const filteredEPG = (await this.getEpgSorted()).filter((e) => {
+			return e.description && e.description.length > 10;
 		});
+		LOG.debug({
+			msg: 'Filter and prep search Index',
+			count: filteredEPG.length,
+			all: (await this.getEpgSorted()).length
+		});
+		this.searchIndex.setCollection(filteredEPG);
+		LOG.debug('DONE');
+	}
+
+	private cachedSearch(query: string): Fuse.FuseResult<ITVHEpgEvent>[] {
+		if (this.searchCache.has(query)) {
+			const cachedResult = this.searchCache.get(query);
+			LOG.debug({ msg: 'Cache hit for Query', ts: cachedResult?.timestamp, query });
+			return cachedResult?.results ?? [];
+		}
+		const results = this.searchIndex?.search(query);
+		// just make sure to call cache Cleanup regulary
+		// FUTURE Move this to a more clever offline scheduler
+		this.cacheHousekeeping();
+		this.searchCache.set(query, { timestamp: new Date(), results });
+		return results;
+	}
+	private cacheHousekeeping() {
+		// This is mainly to have some minimum protection against memory leaks. Better, keep 50% of the most recent results
+		// Cache will be completly cleared on every epg reload anyways (as long as this is not done in a merge-update way in the future)
+		//TODO Change this if merge update gets implemented
+		//TODO check for memory and performance impacts and add more logic
+		if (this.searchCache.size > 30) {
+			this.searchCache.clear();
+		}
 	}
 
 	private async load(retries: number) {
@@ -67,6 +100,7 @@ export class PouchStore implements DataStore {
 				this.lastUpdate = new Date();
 				this.storeStateToDatastore(data).then(() => {
 					setInterval(() => this.load(this.retries), minutes(this.reloadTime));
+					this.prepSearchIndex();
 				});
 				// TODO check if the FUSE search
 				// Init search Index
@@ -150,8 +184,12 @@ export class PouchStore implements DataStore {
 
 	public async init() {
 		const info = await this.datastore.info();
+		const dateRange = calcDateRange(await this.getEpgSorted());
+		this.firstDate = dateRange.start;
+		this.lastDate = dateRange.stop;
 		LOG.debug({ msg: 'PDB initialized', info });
 
+		await this.prepSearchIndex();
 		this.load(this.retries);
 		// TODO Init indexes needed
 	}
@@ -325,26 +363,23 @@ export class PouchStore implements DataStore {
 		}
 		return Array.from(genre.values());
 	}
-	async search(query: string): Promise<ITVHEpgEvent[]> {
-		const qq = await this.datastore.search({
-			query: query,
-			fields: [
-				'epg.channelName',
-				'epg.description',
-				'epg.title',
-				'epg.genre',
-				'epg.copyright_year',
-				'epg.channel.tags'
-			],
-			include_docs: true
+	public async search(query: string): Promise<ITVHEpgEvent[]> {
+		// TODO Move this to config/env
+		const scoreFilter = 0.75;
+		let result = this.cachedSearch(query);
+		result = result.filter((e) => {
+			return e.score && e.score <= scoreFilter;
 		});
-		const ergs = new Array<ITVHEpgEvent>();
-		qq.rows.forEach((row) => {
-			if (row.doc.epg) {
-				ergs.push(row.doc.epg);
-			}
-		});
-		return ergs;
+		if (result) {
+			const apiResult = Array.from(result.values(), (e) => {
+				const epg = e.item;
+				epg._searchScore = e.score;
+				return e.item;
+			});
+			return apiResult;
+		} else {
+			return [];
+		}
 	}
 }
 

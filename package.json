@@ -84,6 +84,8 @@
     "moment": "^2.29.4",
     "momentjs": "^2.0.0",
     "pino": "^8.8.0",
+    "pouchdb": "^8.0.0",
+    "pouchdb-find": "^8.0.0",
     "svelte-scrollto-element": "^0.7.0",
     "swagger-ui": "^4.15.5",
     "ts-debounce": "^4.0.0",

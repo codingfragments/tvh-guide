@@ -22,4 +22,5 @@ export interface DataStore {
 	getGenres(): Promise<ITVHGenre[]>;
 
 	search(query: string): Promise<ITVHEpgEvent[]>;
+	init(): Promise<void>;
 }

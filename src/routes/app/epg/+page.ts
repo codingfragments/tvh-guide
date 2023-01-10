@@ -17,7 +17,7 @@ async function loadEpgGrid(fetch: FetchFun, url: URL, from: Date, to: Date): Pro
 		const result = await apiGetEvents(fetch, url, {
 			filterFrom: from,
 			filterTo: to,
-			range: 1000,
+			range: 10000,
 			page: page
 		});
 		if (result.status >= 300) {
