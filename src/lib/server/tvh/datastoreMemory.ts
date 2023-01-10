@@ -57,32 +57,28 @@ export class MemoryStore implements DataStore {
 	}
 
 	private async load(retries: number) {
-		const erg = new Promise<boolean>((resolve) => {
-			LOG.info(`Load Data from TVH `);
-			loadStateFromTVH()
-				.then((data) => {
-					this.lastUpdate = new Date();
-					this.storeStateToDatastore(data)
-						.then(() => {
-							setInterval(() => this.load(this.retries), minutes(this.reloadTime));
-						})
-						.finally(() => {
-							resolve(true);
-						});
-					// TODO check if the FUSE search
-					// Init search Index
-				})
-				.catch((error) => {
-					LOG.error(error);
-					LOG.info('Initial load failed.');
-					if (this.retries > 0) {
-						LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
-						setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
-					}
-					resolve(false);
-				});
-		});
-		return erg;
+		LOG.info(`Load Data from TVH `);
+		try {
+			const data = await loadStateFromTVH();
+			this.lastUpdate = new Date();
+			await this.storeStateToDatastore(data);
+			await this.prepSearchIndex();
+			const dateRange = calcDateRange(data.epgs);
+			this.firstDate = dateRange.start;
+			this.lastDate = dateRange.stop;
+
+			setTimeout(() => this.load(this.retries), minutes(this.reloadTime));
+			LOG.info(`Load Data from TVH - finished `);
+		} catch (error) {
+			LOG.error(error);
+			LOG.info('Initial load failed.');
+			if (this.retries > 0) {
+				LOG.info('Retry scheduled in ' + this.retryTime + '  minutes!');
+				setTimeout(() => this.load(retries - 1), minutes(this.retryTime));
+			} else {
+				throw new Error('Fatal, retry failed TVH collection impossible');
+			}
+		}
 	}
 	async storeStateToDatastore(data: {
 		channels: ITVHChannel[];
@@ -110,7 +106,7 @@ export class MemoryStore implements DataStore {
 			db.channels.forEach((c) => {
 				this.idxChannel.set(c.uuid, c);
 			});
-			await this.prepSearchIndex();
+			// await this.prepSearchIndex();
 			const used = process.memoryUsage().heapUsed / 1024 / 1024;
 			LOG.debug({ msg: 'MEMORY Reloaded', used, stats: process.memoryUsage() });
 		} else {
