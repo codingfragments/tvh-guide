@@ -56,6 +56,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	// only include Channels with at least 1 Event in the time searched
 
 	const data: APIGetChannelsResults = await result.json();
+	const timeWindowHours = 48;
 
 	const returnData = {
 		channels: data.channels,
@@ -63,6 +64,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 		searchEndDate: new Date(),
 		selectedDate: new Date(),
 		epgGrid: new Map<string, ITVHEpgEvent[]>(),
+		timeWindowHours,
 		scroll: {
 			scrollTo: false,
 			scrollToDate: new Date()
@@ -84,19 +86,18 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	returnData.searchDate = moduloMinutesDate(new Date(url.searchParams.get('time') ?? new Date()), 15);
 	returnData.selectedDate = returnData.searchDate;
 	const layoutData = await parent();
-
 	const distanceToMinimum = returnData.searchDate.getTime() - layoutData.epgDateRange.epgDateFirst.getTime();
-	if (distanceToMinimum <= hours(12)) {
+	if (distanceToMinimum <= hours(timeWindowHours / 2)) {
 		returnData.scroll.scrollTo = true;
 		returnData.scroll.scrollToDate = returnData.searchDate;
 		returnData.searchDate = layoutData.epgDateRange.epgDateFirst;
 	} else {
 		returnData.scroll.scrollTo = true;
 		returnData.scroll.scrollToDate = returnData.searchDate;
-		returnData.searchDate = new Date(returnData.searchDate.getTime() - hours(12));
+		returnData.searchDate = new Date(returnData.searchDate.getTime() - hours(timeWindowHours / 2));
 	}
 	returnData.searchEndDate = new Date(returnData.searchDate);
-	returnData.searchEndDate.setMinutes(60 * 24);
+	returnData.searchEndDate.setMinutes(60 * timeWindowHours);
 
 	returnData.epgGrid = await loadEpgGrid(fetch, url, returnData.searchDate, returnData.searchEndDate);
 

@@ -35,6 +35,7 @@
 	export let selectedDate = moduloMinutesDate(new Date(), 15);
 
 	export let searchEndDate = moduloMinutesDate(new Date(), 15);
+	export let scrollAreaHours = 4;
 	export let maxCells = 24 * 4;
 
 	export let data: PageData;
@@ -68,6 +69,7 @@
 		selectedDate = data.selectedDate;
 		searchDate = data.searchDate;
 		searchEndDate = data.searchEndDate;
+		scrollAreaHours = data.timeWindowHours;
 		epgGrid = data.epgGrid;
 		showLoading = false;
 	}
@@ -75,7 +77,7 @@
 	// $: LOG.debug({ msg: 'Current Grid', gridDimensions });
 
 	$: if (searchDate) {
-		timeSlices = Array.from(Array(24).keys()).map((idx) => {
+		timeSlices = Array.from(Array(scrollAreaHours).keys()).map((idx) => {
 			const slice = new Date(searchDate);
 			slice.setMinutes(idx * 60);
 			return slice;
@@ -169,7 +171,7 @@
 		// TODO Really need to put this and the grid height in minutes into a constant definition
 		// TODO change serverhealth to dates , really get rid of this conversion steps
 		if (
-			scrollEndDate >= new Date(searchEndDate.getTime() - hours(4)) &&
+			scrollEndDate >= new Date(searchEndDate.getTime() - hours(scrollAreaHours / 6)) &&
 			data.serverHealth.cache.lastDate &&
 			searchEndDate < new Date(data.serverHealth.cache.lastDate)
 		) {
@@ -179,7 +181,7 @@
 			gotoTime(scrollTopDate);
 		}
 		if (
-			scrollTopDate <= new Date(searchDate.getTime() + hours(4)) &&
+			scrollTopDate <= new Date(searchDate.getTime() + hours(scrollAreaHours / 6)) &&
 			data.serverHealth.cache.firstDate &&
 			searchDate > new Date(data.serverHealth.cache.firstDate)
 		) {
