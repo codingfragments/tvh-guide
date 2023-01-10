@@ -18,6 +18,8 @@
 	import MainLayoutWithSidebar from '$lib/components/layout/MainLayoutWithSidebar.svelte';
 	import EpgSidebar from '$lib/components/app/epg/EPGSidebar.svelte';
 	import { gotoWithCallbacks } from '$lib/client/navigation';
+	import MainLayoutWithBottombar from '$lib/components/layout/MainLayoutWithBottombar.svelte';
+	import EpgBottombar from '$lib/components/app/epg/EPGBottombar.svelte';
 
 	export let data: PageData;
 
@@ -132,7 +134,7 @@
 	}
 </script>
 
-<MainLayoutWithSidebar showSidebar={selectedEpgEvent !== undefined}>
+<MainLayoutWithBottombar showBottom={selectedEpgEvent !== undefined}>
 	<!--
 		Top bar Nav and Filter
 	    ---------------------- -->
@@ -161,12 +163,12 @@
 	</svelte:fragment>
 	<svelte:fragment slot="main">
 		<div
-			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-auto"
+			class=" grid grid-cols-1 px-2 py-2 lg:grid-cols-2  xl:grid-cols-3 gap-x-2 gap-y-2 pb-4 h-full  overflow-y-auto"
 			class:mr-4={bigMode && selectedEpgEvent}
 		>
 			{#each epgEvents as event (event.uuid)}
 				<div
-					class="rounded-lg p-4 shadow-md bg-base-100
+					class="rounded-lg p-4 shadow-md bg-base-100 cursor-pointer
 			  {selectedEpgEvent && bigMode && selectedEpgEvent.uuid == event.uuid ? 'border-l-8 border-primary' : ''}"
 				>
 					<EpgEventSummary
@@ -184,17 +186,18 @@
 			{/each}
 		</div>
 	</svelte:fragment>
-	<svelte:fragment slot="side">
+
+	<svelte:fragment slot="footer">
 		{#if selectedEpgEvent}
-			<EpgSidebar
+			<EpgBottombar
 				epgEvent={selectedEpgEvent}
 				on:closed={() => {
 					selectedEpgEvent = undefined;
 				}}
-				on:showDetails={(ev) => {
-					handleAction('details', ev.detail);
+				on:showDetails={() => {
+					gotoWithCallbacks(`/app/epg/event/${selectedEpgEvent?.uuid}`, true);
 				}}
 			/>
 		{/if}
 	</svelte:fragment>
-</MainLayoutWithSidebar>
+</MainLayoutWithBottombar>
