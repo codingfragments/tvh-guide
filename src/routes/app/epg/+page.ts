@@ -5,6 +5,7 @@ import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { hours } from '$lib/timeGlobals';
+import { env } from '$env/dynamic/public';
 
 import anylogger from 'anylogger';
 const LOG = anylogger('Page:/epg:LOAD');
@@ -56,7 +57,7 @@ export const load: PageLoad = async ({ fetch, url, parent }) => {
 	// only include Channels with at least 1 Event in the time searched
 
 	const data: APIGetChannelsResults = await result.json();
-	const timeWindowHours = 48;
+	const timeWindowHours = Number(env.PUBLIC_GRID_PRELOAD_WINDOW ?? '24');
 
 	const returnData = {
 		channels: data.channels,
