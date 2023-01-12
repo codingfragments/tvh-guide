@@ -2,6 +2,7 @@ import type { ServerStatus } from '$lib/types/api';
 import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre, ITVHTag } from '$lib/types/epg-interfaces';
 import type { DataStore } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
+import { env } from '$env/dynamic/private';
 
 import anylogger from 'anylogger';
 // import anylogger from '$lib/server/logger';
@@ -16,6 +17,7 @@ import { JSONFile } from 'lowdb/node';
 import { minutes } from '$lib/timeGlobals';
 import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
 import Fuse from 'fuse.js';
+import { isTrueish } from '$lib/tools';
 
 export interface DataObj {
 	epgs: ITVHEpgEvent[];
@@ -57,6 +59,10 @@ export class MemoryStore implements DataStore {
 	}
 
 	private async load(retries: number) {
+		if (isTrueish(env.SERVER_DB_CACHE_ONLY)) {
+			LOG.warn({ msg: `LOADING DATA bypassed, test mode`, dbPath: this.path });
+			return;
+		}
 		LOG.info(`Load Data from TVH `);
 		try {
 			const data = await loadStateFromTVH();
@@ -145,16 +151,18 @@ export class MemoryStore implements DataStore {
 			epgs: [],
 			contentTypes: []
 		};
-
 		this.idxEpgs.clear();
-		this.datastore.data.epgs.forEach((e) => {
-			this.idxEpgs.set(e.uuid, e);
-		});
+		if (this.datastore.data.epgs) {
+			this.datastore.data.epgs.forEach((e) => {
+				this.idxEpgs.set(e.uuid, e);
+			});
+		}
 		this.idxChannel.clear();
-		this.datastore.data.channels.forEach((c) => {
-			this.idxChannel.set(c.uuid, c);
-		});
-
+		if (this.datastore.data.channels) {
+			this.datastore.data.channels.forEach((c) => {
+				this.idxChannel.set(c.uuid, c);
+			});
+		}
 		const dateRange = calcDateRange(this.datastore.data.epgs);
 		this.firstDate = dateRange.start;
 		this.lastDate = dateRange.stop;

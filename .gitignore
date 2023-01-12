@@ -15,4 +15,4 @@ build-storybook.log
 *timestamp-*.mjs
 storybook-static
 epgcache/DBTest1*
-epgcache/db.*
+epgcache/db/epgdb-*

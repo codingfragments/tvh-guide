@@ -2,6 +2,12 @@ import anylogger from '$lib/server/logger';
 import { env } from '$env/dynamic/private';
 import type { Handle } from '@sveltejs/kit';
 import { debounce } from 'ts-debounce';
+
+import { MemoryStore } from '$lib/server/tvh/datastoreMemory';
+import { PouchStore } from '$lib/server/tvh/datastorePouchdb';
+import type { DataStore } from '$lib/server/types/database';
+import { isTrueish } from '$lib/tools';
+
 const ROOT_LOG = anylogger('SRV:Hook');
 ROOT_LOG.info('Server Startup');
 
@@ -9,7 +15,7 @@ ROOT_LOG.info('Server Startup');
 // ==============================
 import GCStats from 'gc-stats';
 
-if ('true' == env.SERVER_LOG_MEM?.toLowerCase()) {
+if (isTrueish(env.SERVER_LOG_MEM)) {
 	const gc = GCStats();
 
 	gc.on(
@@ -34,16 +40,17 @@ ROOT_LOG.info('Init TVH and EPG Cache2');
 // const root_db = defaultDb;
 // root_db.init();
 
-import { MemoryStore } from '$lib/server/tvh/datastoreMemory';
-import { PouchStore } from '$lib/server/tvh/datastorePouchdb';
-import type { DataStore } from '$lib/server/types/database';
-
 // TODO add pth config and use in constructor
 let db: DataStore | undefined = undefined;
 switch (env.SERVER_DB_TYPE ?? 'memory') {
 	case 'memory':
 		ROOT_LOG.info('Init MemoryDB');
-		db = new MemoryStore();
+		db = new MemoryStore(
+			env.SERVER_DB_MEMORY_PATH,
+			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
+			Number(env.SERVER_TVH_RETRY_TIME ?? '1'),
+			Number(env.SERVER_TVH_MAX_RETRIES ?? '5')
+		);
 		break;
 	case 'pouchdb':
 		ROOT_LOG.info({ msg: 'Init PouchDB', path: env.SERVER_DB_POUCHDB_PATH });
