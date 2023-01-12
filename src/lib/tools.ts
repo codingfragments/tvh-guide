@@ -45,3 +45,16 @@ export function toBool(prop: any) {
 	if (prop) return true;
 	else return false;
 }
+
+export function isTrueish(val: string | number | object | undefined) {
+	if (typeof val === 'undefined') return false;
+	if (typeof val === 'number') return Number(val) !== 0;
+	if (typeof val === 'object') return val;
+	if (typeof val === 'string') {
+		const _val = val.toLowerCase();
+		for (const f of ['true', 'yes', '1', 'y', 't']) {
+			if (f === _val) return true;
+		}
+	}
+	return false;
+}

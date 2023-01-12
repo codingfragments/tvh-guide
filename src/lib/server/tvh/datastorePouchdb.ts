@@ -15,6 +15,8 @@ import Fuse from 'fuse.js';
 
 import { minutes } from '$lib/timeGlobals';
 import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
+import { isTrueish } from '$lib/tools';
+import { env } from '$env/dynamic/private';
 
 export interface DataObj {
 	_id: string;
@@ -100,6 +102,11 @@ export class PouchStore implements DataStore {
 	}
 
 	private async load(retries: number) {
+		if (isTrueish(env.SERVER_DB_CACHE_ONLY)) {
+			LOG.warn({ msg: `LOADING DATA bypassed, test mode`, dbPath: this.path });
+			return;
+		}
+
 		LOG.info(`Load Data from TVH `);
 
 		try {
