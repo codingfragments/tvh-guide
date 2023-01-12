@@ -30,7 +30,7 @@
 		/>
 	</div>
 	<div class="ml-3 flex flex-col " style="height:{innerHeight}px">
-		<div class="m-auto text-primary-focus"><Icon icon="schedule" size="xl" /></div>
+		<div class="m-auto"><Icon icon="schedule" size="xl" /></div>
 		<div>&nbsp;</div>
 		<TimePicker
 			{date}

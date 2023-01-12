@@ -3,6 +3,11 @@ import type { ITVHChannel, ITVHEpgEvent, ITVHResponse, ITVHTag } from '$lib/type
 import { HttpClient } from './http-client';
 import { serverCfg } from '../globals';
 
+//
+// See here for all api entry points
+// https://github.com/tvheadend/tvheadend/blob/cc602833684953fc3e6f1c89d4f08f6dfef179e3/src/api/api_dvr.c
+// =======================================================================================================
+//
 export class TVHeadendClient extends HttpClient {
 	// private auth: AxiosBasicCredentials;
 
