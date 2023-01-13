@@ -4,7 +4,7 @@ export interface ApiResultHealth {
 	serviceHealth: string;
 	serviceUp: boolean;
 	cache: ServerStatus;
-	memory: NodeJS.MemoryUsage;
+	memory: object;
 }
 export interface ServerStatus {
 	firstDate?: Date;

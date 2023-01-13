@@ -2,7 +2,6 @@ import type { ServerStatus } from '$lib/types/api';
 import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre, ITVHTag } from '$lib/types/epg-interfaces';
 import type { DataStore } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
-import { env } from '$env/dynamic/private';
 
 import anylogger from 'anylogger';
 // import anylogger from '$lib/server/logger';
@@ -52,14 +51,15 @@ export class MemoryStore implements DataStore {
 		private path = './epgcache/DB.json',
 		private reloadTime = 30,
 		private retryTime = 1,
-		private retries = 5
+		private retries = 5,
+		private skipLoad = false
 	) {
 		const adapter = new JSONFile<DataObj>(path);
 		this.datastore = new Low(adapter);
 	}
 
 	private async load(retries: number) {
-		if (isTrueish(env.SERVER_DB_CACHE_ONLY)) {
+		if (this.skipLoad) {
 			LOG.warn({ msg: `LOADING DATA bypassed, test mode`, dbPath: this.path });
 			return;
 		}

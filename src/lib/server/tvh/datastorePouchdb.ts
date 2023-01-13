@@ -16,7 +16,6 @@ import Fuse from 'fuse.js';
 import { minutes } from '$lib/timeGlobals';
 import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
 import { isTrueish } from '$lib/tools';
-import { env } from '$env/dynamic/private';
 
 export interface DataObj {
 	_id: string;
@@ -53,7 +52,8 @@ export class PouchStore implements DataStore {
 		private path = './epgcache/DB',
 		private reloadTime = 60,
 		private retryTime = 1,
-		private retries = 5
+		private retries = 5,
+		private skipLoad = false
 	) {
 		this.datastore = new PouchDB<DataObj>(path, { revs_limit: 1, auto_compaction: true });
 
@@ -102,7 +102,7 @@ export class PouchStore implements DataStore {
 	}
 
 	private async load(retries: number) {
-		if (isTrueish(env.SERVER_DB_CACHE_ONLY)) {
+		if (this.skipLoad) {
 			LOG.warn({ msg: `LOADING DATA bypassed, test mode`, dbPath: this.path });
 			return;
 		}

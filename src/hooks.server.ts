@@ -49,7 +49,8 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			env.SERVER_DB_MEMORY_PATH,
 			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
 			Number(env.SERVER_TVH_RETRY_TIME ?? '1'),
-			Number(env.SERVER_TVH_MAX_RETRIES ?? '5')
+			Number(env.SERVER_TVH_MAX_RETRIES ?? '5'),
+			isTrueish(env.SERVER_DB_CACHE_ONLY)
 		);
 		break;
 	case 'pouchdb':
@@ -58,7 +59,8 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			env.SERVER_DB_POUCHDB_PATH,
 			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
 			Number(env.SERVER_TVH_RETRY_TIME ?? '1'),
-			Number(env.SERVER_TVH_MAX_RETRIES ?? '5')
+			Number(env.SERVER_TVH_MAX_RETRIES ?? '5'),
+			isTrueish(env.SERVER_DB_CACHE_ONLY)
 		);
 		break;
 }
