@@ -76,6 +76,7 @@
   "type": "module",
   "dependencies": {
     "@storybook/addon-actions": "^7.0.0-beta.16",
+    "@zerodevx/svelte-json-view": "^1.0.1",
     "anylogger": "^1.0.11",
     "axios": "^1.2.1",
     "daisyui": "^2.46.0",
