@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
 
-import { epgEventsQuery, EPGFilter, SearchRange } from '$lib/server/ApiHelper';
+import { SearchRange } from '$lib/server/ApiHelper';
 
 import type { RequestHandler } from './$types';
 import type { ITVHEpgEvent } from '$lib/types/epg-interfaces';
 import type { EPGDatastoreFilter } from '$lib/server/types/database';
-import { convertFilter, EPGDatastoreUrlFilter, filterEPGs, URLFilter } from '$lib/server/tvh/datastoreGlobals';
+import { convertFilter, EPGDatastoreUrlFilter, filterEPGs } from '$lib/server/tvh/datastoreGlobals';
 import type { ApiResultStats } from '$lib/types/api';
 
 import anylogger from 'anylogger';
