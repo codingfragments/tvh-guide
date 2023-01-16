@@ -148,6 +148,7 @@ export function convertFilter(jsonObj: object): EPGDatastoreFilter {
 	return filter;
 }
 
+// provide item base default filter. usefull for memory DB and caches as well as derrived filter (like in api/event/search)
 export function filterEPGs(epgs: ITVHEpgEvent[], filter: EPGDatastoreFilter = {}): ITVHEpgEvent[] {
 	let filteredEPGs = epgs;
 	if (filter.channel) {
