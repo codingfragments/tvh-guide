@@ -54,7 +54,11 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 		);
 		break;
 	case 'pouchdb':
-		ROOT_LOG.info({ msg: 'Init PouchDB', path: env.SERVER_DB_POUCHDB_PATH });
+		ROOT_LOG.info({
+			msg: 'Init PouchDB ',
+			path: env.SERVER_DB_POUCHDB_PATH,
+			memoryQueries: isTrueish(env.SERVER_DB_POUCHDB_MEMQUERY)
+		});
 		db = new PouchStore(
 			env.SERVER_DB_POUCHDB_PATH,
 			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
