@@ -53,16 +53,74 @@ export class PouchStore implements DataStore {
 		private reloadTime = 60,
 		private retryTime = 1,
 		private retries = 5,
-		private skipLoad = false
+		private skipLoad = false,
+		private useMemoryQueries = true
 	) {
 		this.datastore = new PouchDB<DataObj>(path, { revs_limit: 1, auto_compaction: true });
 
 		this.datastore.createIndex({ index: { fields: ['type', '_id', 'epg.start', 'epg.stop'] } });
 	}
 
+	buildSelector(filter: EPGDatastoreFilter) {
+		// list of selectors
+		const selectors: PouchDB.Find.Selector[] = [];
+		// list of fields touched. Important to ensure matching idx
+		const fields: string[] = [];
+
+		if (filter.channel) {
+			const cids = filter.channel;
+			selectors.push({
+				$or: [{ 'epg.channelNumber': { $in: cids } }, { 'epg.channelUuid': { $in: cids } }]
+			});
+			fields.push('epg.channelNumber');
+			fields.push('epg.channelUuid');
+		}
+
+		if (filter.epgGenre) {
+			selectors.push({ 'epg.genre': { $in: filter.epgGenre } });
+			fields.push('epg.genre');
+		}
+
+		if (filter.dateRange) {
+			const range = filter.dateRange;
+			const fromUnix = new Date(range.from).getTime() / 1000;
+			const toUnix = new Date(range.to).getTime() / 1000;
+
+			selectors.push({ $and: [{ 'epg.stop': { $gt: fromUnix } }, { 'epg.start': { $lte: toUnix } }] });
+			fields.push('epg.stop');
+			fields.push('epg.start');
+		}
+
+		// return selector;
+		return { selectors, fields };
+	}
 	public async getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]> {
-		const epgs = await this.getSortedEvents();
-		return filterEPGs(epgs, filter);
+		if (this.useMemoryQueries) {
+			const start = performance.now();
+			const epgs = filterEPGs(await this.getSortedEvents(), filter);
+			LOG.debug({ msg: 'Query Filtered Events (Memory)', qTime: performance.now() - start, filter });
+			return epgs;
+		}
+
+		// PouchDB Mango Queries follow here
+		const buildSelectors = this.buildSelector(filter);
+		// ensure IDX
+		const idx = await this.datastore.createIndex({
+			index: {
+				fields: buildSelectors.fields
+			}
+		});
+
+		LOG.debug({ msg: ' Index Build on Demand', idx });
+		const q: PouchDB.Find.FindRequest<DataObj> = {
+			selector: { $and: buildSelectors.selectors }
+		};
+
+		const start = performance.now();
+		const results = await this.datastore.find(q);
+		const epgs: ITVHEpgEvent[] = results.docs.map((d) => <ITVHEpgEvent>d.epg).sort((a, b) => a.start - b.start);
+		LOG.debug({ msg: 'Query Filtered Events', qTime: performance.now() - start, filter });
+		return epgs;
 	}
 
 	private async prepSearchIndex() {

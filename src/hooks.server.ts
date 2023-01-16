@@ -60,7 +60,8 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
 			Number(env.SERVER_TVH_RETRY_TIME ?? '1'),
 			Number(env.SERVER_TVH_MAX_RETRIES ?? '5'),
-			isTrueish(env.SERVER_DB_CACHE_ONLY)
+			isTrueish(env.SERVER_DB_CACHE_ONLY),
+			isTrueish(env.SERVER_DB_POUCHDB_MEMQUERY)
 		);
 		break;
 }
