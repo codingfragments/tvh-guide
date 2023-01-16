@@ -15,7 +15,9 @@ export interface DataStore {
 	getChannelTags(): Promise<ITVHChannelTag[]>;
 	findChannelsByTag(tag: ITVHChannelTag): Promise<ITVHChannel[]>;
 
-	getEpgSorted(): Promise<ITVHEpgEvent[]>;
+	getSortedEvents(): Promise<ITVHEpgEvent[]>;
+	getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]>;
+
 	hasEvent(epgEventId: string): Promise<boolean>;
 	getEvent(epgEventId: string): Promise<ITVHEpgEvent | undefined>;
 

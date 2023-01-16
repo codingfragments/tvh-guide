@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	const range = new SearchRange<ITVHEpgEvent>();
 	range.fromUrl(url);
 
-	const epgs = filterEPGs(await locals.db.getEpgSorted(), body.filter);
+	const epgs = await locals.db.getFilteredEvents(body.filter);
 	range.fillResponseInfo(body, epgs.length);
 	body.events = range.filter(epgs);
 
@@ -42,7 +42,7 @@ export const POST: RequestHandler = async ({ locals, url, request }) => {
 	const range = new SearchRange<ITVHEpgEvent>();
 	range.fromUrl(url);
 
-	const epgs = filterEPGs(await locals.db.getEpgSorted(), returnBody.filter);
+	const epgs = filterEPGs(await locals.db.getSortedEvents(), returnBody.filter);
 	range.fillResponseInfo(returnBody, epgs.length);
 	returnBody.events = range.filter(epgs);
 	return json(returnBody);

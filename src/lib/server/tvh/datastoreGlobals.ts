@@ -170,7 +170,7 @@ export function filterEPGs(epgs: ITVHEpgEvent[], filter: EPGDatastoreFilter = {}
 		const fromUnix = new Date(range.from).getTime() / 1000;
 		const toUnix = new Date(range.to).getTime() / 1000;
 		filteredEPGs = filteredEPGs.filter((epg) => {
-			return epg.stop > fromUnix && epg.start < toUnix;
+			return epg.stop > fromUnix && epg.start <= toUnix;
 		});
 	}
 	return filteredEPGs;

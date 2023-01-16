@@ -15,91 +15,6 @@ import anylogger from 'anylogger';
 import type { ApiResultStats } from '$lib/types/api';
 const LOG = anylogger('apiHelper');
 
-export class EPGFilter {
-	addGenreTag(tag: string) {
-		this.genres.push(tag);
-	}
-	addChannel(channel: ITVHChannel) {
-		this.channels.push(channel);
-	}
-	public constructor(
-		private channels: ITVHChannel[] = [],
-		private genres: string[] = [],
-		private fromDate: Date | undefined = undefined,
-		private toDate: Date | undefined = undefined,
-		private nowDate: Date | undefined = undefined
-	) {}
-
-	public filter(epg: ITVHEpgEvent[]) {
-		if (this.channels.length > 0) {
-			epg = epg.filter((event) => {
-				const cid = event.channel.uuid;
-				return (
-					this.channels.find((ch) => {
-						return ch.uuid == cid;
-					}) != null
-				);
-			});
-		}
-
-		if (this.genres.length > 0) {
-			epg = epg.filter((event) => {
-				if (!event.genre) return false;
-				return (
-					event.genre.find((t) => {
-						if (this.genres.includes(t.toLowerCase())) {
-							return true;
-						}
-					}) != null
-				);
-			});
-		}
-		epg = epg.filter((event) => {
-			let erg = true;
-			// Date Filter only really works if both dates are given
-			if (event.startDate !== undefined && event.stopDate !== undefined) {
-				erg = this.fromDate ? new Date(event.stopDate) >= this.fromDate && erg : erg;
-				erg = this.toDate ? new Date(event.startDate) <= this.toDate && erg : erg;
-				erg = this.nowDate ? new Date(event.stopDate) > this.nowDate && new Date(event.startDate) <= this.nowDate : erg;
-			}
-			return erg;
-		});
-		return epg;
-	}
-
-	private filterStats() {
-		return { filterNow: this.nowDate, filterTo: this.toDate, filterFrom: this.fromDate };
-	}
-	public fromUrl(url: URL) {
-		const params = url.searchParams;
-
-		// DATE Filter
-		if (params.has('filterFrom')) {
-			try {
-				this.fromDate = new Date(<string>params.get('filterFrom'));
-			} catch {
-				LOG.error('Wrong conversion, keep default');
-			}
-		}
-		if (params.has('filterTo')) {
-			try {
-				this.toDate = new Date(<string>params.get('filterTo'));
-			} catch {
-				LOG.error('Wrong conversion, keep default');
-			}
-		}
-		if (params.has('filterAt')) {
-			try {
-				this.nowDate = new Date(<string>params.get('filterAt'));
-			} catch {
-				LOG.error('Wrong conversion, keep default');
-			}
-		}
-
-		// LOG.debug({ msg: 'Filter Build', stats: this.filterStats() });
-		// TODO allow Complex filter from URL (Genre,Channel,Channeltag,Channelgroup)
-	}
-}
 export class SearchRange<T> {
 	filterMap(elements: Map<string, T>) {
 		return this.filter(Array.from(elements.values()));
@@ -153,16 +68,4 @@ export function httpErr404(msg = 'Not found', request = {}) {
 		req: request
 	};
 	return error(404, eBody as unknown as Error);
-}
-
-export function epgEventsQuery(filter: EPGFilter, url: URL, body: Record<string, unknown>, epgs: ITVHEpgEvent[]) {
-	const range = new SearchRange<ITVHEpgEvent>();
-
-	filter.fromUrl(url);
-	range.fromUrl(url);
-
-	const filteredEvents = filter.filter(epgs);
-	const events = range.filter(filteredEvents);
-	range.fillResponseInfo(body, filteredEvents.length);
-	body['events'] = events;
 }

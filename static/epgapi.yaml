@@ -109,6 +109,8 @@ paths:
                 properties:
                   channel:
                     '$ref': '#/components/schemas/Channel'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   query:
                     '$ref': '#/components/schemas/QueryStats'
                   events:
@@ -206,6 +208,10 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
+                  searchString:
+                    type: string
                   events:
                     type: array
                     items:
@@ -310,6 +316,8 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   events:
                     type: array
                     items:
@@ -365,6 +373,8 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   events:
                     type: array
                     items:
