@@ -1,6 +1,6 @@
 import type { ServerStatus } from '$lib/types/api';
 import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre, ITVHTag } from '$lib/types/epg-interfaces';
-import type { DataStore } from '../types/database';
+import type { DataStore, EPGDatastoreFilter } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
 
 import anylogger from 'anylogger';
@@ -14,7 +14,7 @@ import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 
 import { minutes } from '$lib/timeGlobals';
-import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
+import { calcDateRange, filterEPGs, loadStateFromTVH } from './datastoreGlobals';
 import Fuse from 'fuse.js';
 import { isTrueish } from '$lib/tools';
 
@@ -131,13 +131,13 @@ export class MemoryStore implements DataStore {
 
 	private async prepSearchIndex() {
 		this.searchCache.clear();
-		const filteredEPG = (await this.getEpgSorted()).filter((e) => {
+		const filteredEPG = (await this.getSortedEvents()).filter((e) => {
 			return e.description && e.description.length > 10;
 		});
 		LOG.debug({
 			msg: 'Filter and prep search Index',
 			count: filteredEPG.length,
-			all: (await this.getEpgSorted()).length
+			all: (await this.getSortedEvents()).length
 		});
 		this.searchIndex.setCollection(filteredEPG);
 	}
@@ -219,7 +219,7 @@ export class MemoryStore implements DataStore {
 			return channel.tags.includes(tag.name);
 		});
 	}
-	async getEpgSorted(): Promise<ITVHEpgEvent[]> {
+	async getSortedEvents(): Promise<ITVHEpgEvent[]> {
 		if (!this.datastore.data) return [];
 
 		const erg = Array.from(this.datastore.data.epgs).sort((a, b) => {
@@ -228,6 +228,12 @@ export class MemoryStore implements DataStore {
 
 		return erg;
 	}
+
+	public async getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]> {
+		const epgs = await this.getSortedEvents();
+		return filterEPGs(epgs, filter);
+	}
+
 	async hasEvent(epgEventId: string): Promise<boolean> {
 		return this.idxEpgs.has(epgEventId) || false;
 	}
@@ -253,10 +259,10 @@ export class MemoryStore implements DataStore {
 			const tvhGenre = tvhGenreEntry.val;
 			if (tvhGenre.includes('/')) {
 				for (const g3 of tvhGenre.split('/')) {
-					newGenre.push(g3.trim().toLowerCase());
+					newGenre.push(g3.trim());
 				}
 			} else {
-				newGenre.push(tvhGenre.trim().toLowerCase());
+				newGenre.push(tvhGenre.trim());
 			}
 
 			for (const ng of newGenre) {

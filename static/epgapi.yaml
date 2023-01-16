@@ -91,6 +91,8 @@ paths:
         - '$ref': '#/components/parameters/filterFrom'
         - '$ref': '#/components/parameters/filterTo'
         - '$ref': '#/components/parameters/filterAt'
+        - '$ref': '#/components/parameters/channels'
+        - '$ref': '#/components/parameters/genres'
         - in: path
           name: 'channelId'
           schema:
@@ -107,6 +109,8 @@ paths:
                 properties:
                   channel:
                     '$ref': '#/components/schemas/Channel'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   query:
                     '$ref': '#/components/schemas/QueryStats'
                   events:
@@ -125,6 +129,9 @@ paths:
         - '$ref': '#/components/parameters/filterFrom'
         - '$ref': '#/components/parameters/filterTo'
         - '$ref': '#/components/parameters/filterAt'
+        - '$ref': '#/components/parameters/channels'
+        - '$ref': '#/components/parameters/genres'
+
       responses:
         '200':
           description: sucessfull response
@@ -135,10 +142,42 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   events:
                     type: array
                     items:
                       $ref: '#/components/schemas/EPGEvent'
+    post:
+      description: 'Return a list of filtered EPG Events'
+      tags:
+        - 'EPG'
+      parameters: []
+      requestBody:
+        description: EPG Event filter definition
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/EPGFilter'
+
+      responses:
+        '200':
+          description: sucessfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EPGEvent'
+
   /epg/events/search:
     get:
       description: Returns a list of EPG Events
@@ -150,6 +189,8 @@ paths:
         - '$ref': '#/components/parameters/filterFrom'
         - '$ref': '#/components/parameters/filterTo'
         - '$ref': '#/components/parameters/filterAt'
+        - '$ref': '#/components/parameters/channels'
+        - '$ref': '#/components/parameters/genres'
         - in: 'query'
           name: 'q'
           schema:
@@ -167,6 +208,10 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
+                  searchString:
+                    type: string
                   events:
                     type: array
                     items:
@@ -253,7 +298,8 @@ paths:
         - '$ref': '#/components/parameters/filterFrom'
         - '$ref': '#/components/parameters/filterTo'
         - '$ref': '#/components/parameters/filterAt'
-
+        - '$ref': '#/components/parameters/channels'
+        - '$ref': '#/components/parameters/genres'
         - in: path
           name: 'tag'
           schema:
@@ -270,6 +316,8 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   events:
                     type: array
                     items:
@@ -306,7 +354,8 @@ paths:
         - '$ref': '#/components/parameters/filterFrom'
         - '$ref': '#/components/parameters/filterTo'
         - '$ref': '#/components/parameters/filterAt'
-
+        - '$ref': '#/components/parameters/channels'
+        - '$ref': '#/components/parameters/genres'
         - in: path
           name: 'tag'
           schema:
@@ -324,6 +373,8 @@ paths:
                 properties:
                   query:
                     '$ref': '#/components/schemas/QueryStats'
+                  filter:
+                    '$ref': '#/components/schemas/EPGFilter'
                   events:
                     type: array
                     items:
@@ -333,6 +384,27 @@ paths:
 
 components:
   schemas:
+    EPGFilter:
+      type: object
+      properties:
+        dateRange:
+          type: object
+          required:
+            - 'from'
+            - 'to'
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+        epgGenre:
+          type: array
+          items:
+            type: string
+        channel:
+          type: array
+          items:
+            type: string
     Tag:
       type: object
       example:
@@ -563,3 +635,21 @@ components:
         format: date-time
       required: false
       description: Date to start event export, events that are active during the date are included. Date Format (2017-07-21T17:32:28Z)
+    channels:
+      name: 'channel'
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      required: false
+      description: Channel Number or UUID, will filter for events from this channel(s) only
+    genres:
+      name: 'genre'
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      required: false
+      description: Genre, will filter for events with one of these Genres only

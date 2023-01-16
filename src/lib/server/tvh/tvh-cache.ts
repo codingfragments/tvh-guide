@@ -430,7 +430,7 @@ class TVHCacheDB implements DataStore {
 	//
 	// EPG Management
 	//
-	public async getEpgSorted() {
+	public async getSortedEvents() {
 		return this.db.epgSorted;
 	}
 	public async hasEvent(epgEventId: string) {

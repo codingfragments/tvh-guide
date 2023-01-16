@@ -15,7 +15,9 @@ export interface DataStore {
 	getChannelTags(): Promise<ITVHChannelTag[]>;
 	findChannelsByTag(tag: ITVHChannelTag): Promise<ITVHChannel[]>;
 
-	getEpgSorted(): Promise<ITVHEpgEvent[]>;
+	getSortedEvents(): Promise<ITVHEpgEvent[]>;
+	getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]>;
+
 	hasEvent(epgEventId: string): Promise<boolean>;
 	getEvent(epgEventId: string): Promise<ITVHEpgEvent | undefined>;
 
@@ -23,4 +25,15 @@ export interface DataStore {
 
 	search(query: string): Promise<ITVHEpgEvent[]>;
 	init(): Promise<void>;
+}
+
+export interface EPGDatastoreFilter {
+	// Will Filter for events that start before to Date AND end after from Date, which will include partial played events
+	dateRange?: { from: Date; to: Date };
+
+	// this will exclude any event that doesn't have at least on given values in epg.genre[]
+	epgGenre?: string[];
+
+	// This will search for channel Number OR UUID (if multiple inputs are given, at least one needs to fit)
+	channel?: string[];
 }

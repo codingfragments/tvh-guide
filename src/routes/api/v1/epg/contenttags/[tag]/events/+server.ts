@@ -1,34 +1,39 @@
-import { epgEventsQuery, EPGFilter, httpErr404 } from '$lib/server/ApiHelper';
+import { httpErr404 } from '$lib/server/ApiHelper';
 import { json } from '@sveltejs/kit';
 
 import { SearchRange } from '$lib/server/ApiHelper';
-import type { ITVHChannel } from '$lib/types/epg-interfaces';
+import type { ITVHChannel, ITVHEpgEvent } from '$lib/types/epg-interfaces';
 
 import type { RequestHandler } from './$types';
+import type { ApiResultStats } from '$lib/types/api';
+import type { EPGDatastoreFilter } from '$lib/server/types/database';
+import { EPGDatastoreUrlFilter } from '$lib/server/tvh/datastoreGlobals';
 export const GET: RequestHandler = async ({ locals, params, url }) => {
-	const body: Record<string, unknown> = {};
-
-	// check for tags Either a clear type or UUID.
-	// If a clear text tag is given it will return the first positive match.
-	// IF non unique Tagnames are used the UUID is the only way to make sure to be consistent
+	const body: {
+		query?: ApiResultStats;
+		events?: ITVHEpgEvent[];
+		filter?: EPGDatastoreFilter;
+	} = {};
 
 	const tagFilter = (await locals.db.getGenres()).filter((tag) => {
-		return tag.tvhIds.includes(parseInt(params['tag'])) || tag.name === (params['tag'] as string).toLowerCase();
+		return (
+			tag.tvhIds.includes(parseInt(params['tag'])) || tag.name.toLowerCase() === (params['tag'] as string).toLowerCase()
+		);
 	});
 
 	if (tagFilter.length == 0) {
 		throw httpErr404('Tag not found !', params);
 	}
 
-	const range = new SearchRange<ITVHChannel>();
+	body.filter = new EPGDatastoreUrlFilter(url);
+	body.filter.epgGenre = tagFilter.map((tf) => tf.name);
+
+	const range = new SearchRange<ITVHEpgEvent>();
 	range.fromUrl(url);
 
-	body['tag'] = tagFilter;
+	const epgs = await locals.db.getFilteredEvents(body.filter);
+	range.fillResponseInfo(body, epgs.length);
+	body.events = range.filter(epgs);
 
-	const filter = new EPGFilter();
-	for (const tag of tagFilter) {
-		filter.addGenreTag(tag.name);
-	}
-	epgEventsQuery(filter, url, body, await locals.db.getEpgSorted());
 	return json(body);
 };

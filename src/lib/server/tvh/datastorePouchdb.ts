@@ -1,6 +1,6 @@
 import type { ServerStatus } from '$lib/types/api';
 import type { ITVHChannel, ITVHChannelTag, ITVHEpgEvent, ITVHGenre, ITVHTag } from '$lib/types/epg-interfaces';
-import type { DataStore } from '../types/database';
+import type { DataStore, EPGDatastoreFilter } from '../types/database';
 import { v4 as uuidv4 } from 'uuid';
 
 import anylogger from 'anylogger';
@@ -14,7 +14,7 @@ PouchDB.plugin(PouchFind);
 import Fuse from 'fuse.js';
 
 import { minutes } from '$lib/timeGlobals';
-import { calcDateRange, loadStateFromTVH } from './datastoreGlobals';
+import { calcDateRange, filterEPGs, loadStateFromTVH } from './datastoreGlobals';
 import { isTrueish } from '$lib/tools';
 
 export interface DataObj {
@@ -53,16 +53,79 @@ export class PouchStore implements DataStore {
 		private reloadTime = 60,
 		private retryTime = 1,
 		private retries = 5,
-		private skipLoad = false
+		private skipLoad = false,
+		private useMemoryQueries = true
 	) {
 		this.datastore = new PouchDB<DataObj>(path, { revs_limit: 1, auto_compaction: true });
 
 		this.datastore.createIndex({ index: { fields: ['type', '_id', 'epg.start', 'epg.stop'] } });
 	}
 
+	buildSelector(filter: EPGDatastoreFilter) {
+		// list of selectors
+		const selectors: PouchDB.Find.Selector[] = [];
+		// list of fields touched. Important to ensure matching idx
+		const fields: string[] = [];
+
+		if (filter.channel) {
+			const cids = filter.channel;
+			selectors.push({
+				$or: [{ 'epg.channelNumber': { $in: cids } }, { 'epg.channelUuid': { $in: cids } }]
+			});
+			fields.push('epg.channelNumber');
+			fields.push('epg.channelUuid');
+		}
+
+		if (filter.epgGenre) {
+			selectors.push({ 'epg.genre': { $in: filter.epgGenre } });
+			fields.push('epg.genre');
+		}
+
+		if (filter.dateRange) {
+			const range = filter.dateRange;
+			const fromUnix = new Date(range.from).getTime() / 1000;
+			const toUnix = new Date(range.to).getTime() / 1000;
+
+			selectors.push({ $and: [{ 'epg.stop': { $gt: fromUnix } }, { 'epg.start': { $lte: toUnix } }] });
+			fields.push('epg.stop');
+			fields.push('epg.start');
+		}
+
+		// return selector;
+		return { selectors, fields };
+	}
+	public async getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]> {
+		if (this.useMemoryQueries) {
+			const start = performance.now();
+			const epgs = filterEPGs(await this.getSortedEvents(), filter);
+			LOG.debug({ msg: 'Query Filtered Events (Memory)', qTime: performance.now() - start, filter });
+			return epgs;
+		}
+
+		// PouchDB Mango Queries follow here
+		const buildSelectors = this.buildSelector(filter);
+		// ensure IDX
+		const idx = await this.datastore.createIndex({
+			index: {
+				fields: buildSelectors.fields
+			}
+		});
+
+		LOG.debug({ msg: ' Index Build on Demand', idx });
+		const q: PouchDB.Find.FindRequest<DataObj> = {
+			selector: { $and: buildSelectors.selectors }
+		};
+
+		const start = performance.now();
+		const results = await this.datastore.find(q);
+		const epgs: ITVHEpgEvent[] = results.docs.map((d) => <ITVHEpgEvent>d.epg).sort((a, b) => a.start - b.start);
+		LOG.debug({ msg: 'Query Filtered Events', qTime: performance.now() - start, filter });
+		return epgs;
+	}
+
 	private async prepSearchIndex() {
 		this.searchCache.clear();
-		const epgs = await this.getEpgSorted();
+		const epgs = await this.getSortedEvents();
 		const filteredEPG = epgs.filter((e) => {
 			return e.description && e.description.length > 10;
 		});
@@ -196,7 +259,7 @@ export class PouchStore implements DataStore {
 
 	public async init() {
 		const info = await this.datastore.info();
-		const dateRange = calcDateRange(await this.getEpgSorted());
+		const dateRange = calcDateRange(await this.getSortedEvents());
 		this.firstDate = dateRange.start;
 		this.lastDate = dateRange.stop;
 		LOG.debug({ msg: 'PDB initialized', info });
@@ -285,7 +348,7 @@ export class PouchStore implements DataStore {
 			return channel.tags.includes(tag.name);
 		});
 	}
-	async getEpgSorted(): Promise<ITVHEpgEvent[]> {
+	async getSortedEvents(): Promise<ITVHEpgEvent[]> {
 		const result = await this.datastore.allDocs({
 			startkey: 'epgevent:',
 			endkey: 'epgevent:\uffff',
@@ -301,7 +364,7 @@ export class PouchStore implements DataStore {
 		erg = Array.from(erg).sort((a, b) => {
 			return a.start - b.start;
 		});
-		LOG.debug({ fun: 'getEpgSorted', msg: 'returning events', s: erg.length });
+		LOG.debug({ fun: 'getSortedEvents', msg: 'returning events', s: erg.length });
 
 		return erg;
 	}
@@ -356,10 +419,10 @@ export class PouchStore implements DataStore {
 			const tvhGenre = tvhGenreEntry.val;
 			if (tvhGenre.includes('/')) {
 				for (const g3 of tvhGenre.split('/')) {
-					newGenre.push(g3.trim().toLowerCase());
+					newGenre.push(g3.trim());
 				}
 			} else {
-				newGenre.push(tvhGenre.trim().toLowerCase());
+				newGenre.push(tvhGenre.trim());
 			}
 
 			for (const ng of newGenre) {
