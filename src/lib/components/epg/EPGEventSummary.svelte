@@ -138,7 +138,7 @@
                 grid-cols-1
                 grid-rows-[minmax(0,_auto)_minmax(0,_auto)_minmax(0,_min-content)_32px]  "
 	>
-		<div class="relative font-bold h-6 overflow-hidden row-start-1 text-primary">
+		<div class="relative font-bold h-6 overflow-hidden row-start-1">
 			{epgEvent.title}
 		</div>
 		<div class="h-6 text-sm  overflow-hidden row-start-2">
