@@ -43,7 +43,7 @@ ROOT_LOG.info('Init TVH and EPG Cache2');
 // TODO add pth config and use in constructor
 let db: DataStore | undefined = undefined;
 switch (env.SERVER_DB_TYPE ?? 'memory') {
-	case 'memory':
+	case 'memory': {
 		ROOT_LOG.info('Init MemoryDB');
 		db = new MemoryStore(
 			env.SERVER_DB_MEMORY_PATH,
@@ -53,21 +53,32 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			isTrueish(env.SERVER_DB_CACHE_ONLY)
 		);
 		break;
-	case 'pouchdb':
+	}
+	case 'pouchdb': {
 		ROOT_LOG.info({
 			msg: 'Init PouchDB ',
 			path: env.SERVER_DB_POUCHDB_PATH,
 			memoryQueries: isTrueish(env.SERVER_DB_POUCHDB_MEMQUERY)
 		});
+
+		const opts: PouchDB.Configuration.RemoteDatabaseConfiguration = {};
+		if (env.SERVER_DB_POUCHDB_USERNAME && env.SERVER_DB_POUCHDB_PASSWORD) {
+			opts.auth = {
+				username: env.SERVER_DB_POUCHDB_USERNAME,
+				password: env.SERVER_DB_POUCHDB_PASSWORD
+			};
+		}
 		db = new PouchStore(
 			env.SERVER_DB_POUCHDB_PATH,
 			Number(env.SERVER_TVH_RELOAD_TIME ?? '60'),
 			Number(env.SERVER_TVH_RETRY_TIME ?? '1'),
 			Number(env.SERVER_TVH_MAX_RETRIES ?? '5'),
 			isTrueish(env.SERVER_DB_CACHE_ONLY),
-			isTrueish(env.SERVER_DB_POUCHDB_MEMQUERY)
+			isTrueish(env.SERVER_DB_POUCHDB_MEMQUERY),
+			opts
 		);
 		break;
+	}
 }
 if (db) {
 	await db.init();

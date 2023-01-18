@@ -13,10 +13,13 @@ PouchDB.plugin(PouchFind);
 
 import Fuse from 'fuse.js';
 
-import { minutes } from '$lib/timeGlobals';
+import { hours, minutes } from '$lib/timeGlobals';
 import { calcDateRange, filterEPGs, loadStateFromTVH } from './datastoreGlobals';
 import { isTrueish } from '$lib/tools';
 
+interface TimeMeta {
+	timeSlices: number[];
+}
 export interface DataObj {
 	_id: string;
 	_rev?: string;
@@ -25,6 +28,7 @@ export interface DataObj {
 	channel?: ITVHChannel;
 	channelTag?: ITVHTag;
 	contentType?: ITVHTag;
+	meta?: TimeMeta;
 }
 
 export class PouchStore implements DataStore {
@@ -54,11 +58,10 @@ export class PouchStore implements DataStore {
 		private retryTime = 1,
 		private retries = 5,
 		private skipLoad = false,
-		private useMemoryQueries = true
+		private useMemoryQueries = true,
+		opts: PouchDB.Configuration.DatabaseConfiguration = {}
 	) {
-		this.datastore = new PouchDB<DataObj>(path, { revs_limit: 1, auto_compaction: true });
-
-		this.datastore.createIndex({ index: { fields: ['type', '_id', 'epg.start', 'epg.stop'] } });
+		this.datastore = new PouchDB<DataObj>(path, { ...opts, revs_limit: 1, auto_compaction: true });
 	}
 
 	buildSelector(filter: EPGDatastoreFilter) {
@@ -85,10 +88,20 @@ export class PouchStore implements DataStore {
 			const range = filter.dateRange;
 			const fromUnix = new Date(range.from).getTime() / 1000;
 			const toUnix = new Date(range.to).getTime() / 1000;
+			// const slices = this.calcTimeSlices(new Date(range.from), new Date(range.to));
 
-			selectors.push({ $and: [{ 'epg.stop': { $gt: fromUnix } }, { 'epg.start': { $lte: toUnix } }] });
-			fields.push('epg.stop');
+			selectors.push({
+				$and: [
+					// { 'meta.timeSlices': { $in: slices } },
+					{ 'epg.start': { $lte: toUnix } },
+					{ 'epg.stop': { $gt: fromUnix } }
+				]
+			});
+			// Removed slices from serach for now. didn't help
+			// fields.push('meta.timeSlices');
+
 			fields.push('epg.start');
+			fields.push('epg.stop');
 		}
 
 		// return selector;
@@ -111,15 +124,17 @@ export class PouchStore implements DataStore {
 			}
 		});
 
-		LOG.debug({ msg: ' Index Build on Demand', idx });
+		LOG.debug({ msg: ' Index Build on Demand', fields: buildSelectors.fields, idx });
 		const q: PouchDB.Find.FindRequest<DataObj> = {
-			selector: { $and: buildSelectors.selectors }
+			selector: { $and: buildSelectors.selectors },
+			limit: 100000
 		};
 
 		const start = performance.now();
+		LOG.debug({ msg: 'selectors', q });
 		const results = await this.datastore.find(q);
 		const epgs: ITVHEpgEvent[] = results.docs.map((d) => <ITVHEpgEvent>d.epg).sort((a, b) => a.start - b.start);
-		LOG.debug({ msg: 'Query Filtered Events', qTime: performance.now() - start, filter });
+		LOG.debug({ msg: 'Query Filtered Events', qTime: performance.now() - start, size: epgs.length, filter });
 		return epgs;
 	}
 
@@ -194,6 +209,16 @@ export class PouchStore implements DataStore {
 			}
 		}
 	}
+
+	private calcTimeSlices(from: Date, to: Date, sliceMs = hours(4)): number[] {
+		const result: number[] = [];
+		const start = Math.floor(from.getTime() / sliceMs) * sliceMs;
+		const stop = Math.ceil(to.getTime() / sliceMs) * sliceMs;
+		for (let slice = start; slice <= stop; slice += sliceMs) {
+			result.push(slice);
+		}
+		return result;
+	}
 	async storeStateToDatastore(data: {
 		channels: ITVHChannel[];
 		channelTags: ITVHTag[];
@@ -202,12 +227,15 @@ export class PouchStore implements DataStore {
 	}) {
 		LOG.info(`Load Finished `);
 
-		// TODO Push Data to DB
+		// IDEA TODO It might be helpful to store an additional _timeSlice with a 4 hour disect of times covered,
+		// this will make time range searches MUCH Easier to to
 		// this.storeData(data.epgs, data.channels, data.channelTags, data.contentTypes);
+
 		await this.updateAndPush(
 			Array.from(data.epgs).map((e): DataObj => {
 				const obj: DataObj = { _id: 'epgevent:' + e.uuid, type: 'epgevent' };
 				obj.epg = e;
+				obj.meta = { timeSlices: this.calcTimeSlices(new Date(e.startDate), new Date(e.stopDate)) };
 				return obj;
 			}),
 			'epgevent:'
