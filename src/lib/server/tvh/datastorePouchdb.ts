@@ -110,6 +110,11 @@ export class PouchStore implements DataStore {
 	public async getFilteredEvents(filter: EPGDatastoreFilter): Promise<ITVHEpgEvent[]> {
 		if (this.useMemoryQueries) {
 			const start = performance.now();
+
+			// TODO try to detect memory limits and move this to a two stage approch
+			// - collecting and caching all needed for search first
+			// - filter and rehydrate second
+			//
 			const epgs = filterEPGs(await this.getSortedEvents(), filter);
 			LOG.debug({ msg: 'Query Filtered Events (Memory)', qTime: performance.now() - start, filter });
 			return epgs;
@@ -377,6 +382,7 @@ export class PouchStore implements DataStore {
 		});
 	}
 	async getSortedEvents(): Promise<ITVHEpgEvent[]> {
+		// TODO add cache controll that will track and follow dirty state, and return a memcached version if not dirty or old
 		const result = await this.datastore.allDocs({
 			startkey: 'epgevent:',
 			endkey: 'epgevent:\uffff',
