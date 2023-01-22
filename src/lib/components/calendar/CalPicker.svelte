@@ -29,7 +29,6 @@
 	$: {
 		let offset = (displayMonth.getDay() + 6) % 7;
 		displayStart = new Date(displayMonth.getTime() - days(1) * offset);
-		LOG.debug({ msg: 'DateStart', date, ds: dateformat(displayStart, 'dddd dd.mm.yyyy') });
 	}
 
 	function dateList(start: Date, days: number): Date[] {
