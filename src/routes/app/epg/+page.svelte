@@ -28,6 +28,7 @@
 	import NavigationSpinner from '$lib/components/utilities/NavigationSpinner.svelte';
 
 	import { gotoWithCallbacks } from '$lib/client/navigation';
+	import { debounce } from 'ts-debounce';
 
 	const media = getMediaContext();
 
@@ -160,6 +161,9 @@
 	function handleXYScroll(e: CustomEvent<EventScrollXY>): void {
 		const scrollEndDate = gridToTime(e.detail.bottomGrid);
 		const scrollTopDate = gridToTime(e.detail.topGrid);
+		// Update Selected Date display on page
+		selectedDate = scrollTopDate;
+
 		LOG.debug({
 			msg: 'Scroll ended',
 			scrollEndDate,
@@ -192,6 +196,8 @@
 			gotoTime(scrollTopDate);
 		}
 	}
+
+	$: selectedDate = gridToTime(gridPos.y);
 </script>
 
 <MainLayoutWithBottombar showBottom={selectedEpgEvent !== undefined}>
