@@ -95,7 +95,7 @@
   "volta": {
     "node": "18.12.1",
     "yarn": "3.3.0",
-    "npm": "9.3.1"
+    "npm": "9.4.1"
   },
   "readme": "ERROR: No README data found!",
   "_id": "tvheadend-guide@0.0.1"
