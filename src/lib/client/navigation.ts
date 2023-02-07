@@ -23,6 +23,8 @@ export function registerNavigationCallback(cb: NavigationCallback) {
 	};
 }
 
+// CHECK THIS
+
 export function navigateBack(showLoadSpinner = false) {
 	callEachCallback({ navigateHistoryBack: true, showLoadSpinner }).then(() => {
 		history.back();
