@@ -23,7 +23,7 @@ export function registerNavigationCallback(cb: NavigationCallback) {
 	};
 }
 
-// CHECK THIS
+// CHECK THIS out
 
 export function navigateBack(showLoadSpinner = false) {
 	callEachCallback({ navigateHistoryBack: true, showLoadSpinner }).then(() => {
@@ -33,7 +33,7 @@ export function navigateBack(showLoadSpinner = false) {
 
 export async function gotoWithCallbacks(
 	url: string | URL,
-	showLoadSpinner = false,
+	showLoadSpinner = false, // should this get
 	opts?:
 		| {
 				replaceState?: boolean | undefined;
