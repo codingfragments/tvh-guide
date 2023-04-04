@@ -2,6 +2,9 @@
 	import { setMediaContext, setUIDarkContext } from '$lib/client/state/layoutContext';
 	import { writable } from 'svelte/store';
 
+	export let darkMode: string = '';
+	$: setDark(darkMode === 'dark');
+
 	export let dark = false;
 	export let darkTheme = 'dark';
 	export let lightTheme = 'light';

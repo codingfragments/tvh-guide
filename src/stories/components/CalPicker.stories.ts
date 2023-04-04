@@ -3,7 +3,7 @@ import CalPicker from '$lib/components/calendar/CalPicker.svelte';
 import { wrapThemedContext } from '$stories/lib/SB7StoryDecorators';
 import Center from '$stories/lib/LayoutMX_Auto.svelte';
 const meta = {
-	title: 'Components/app/DatePicker',
+	title: 'Components/App/DatePicker',
 	component: CalPicker,
 	tags: ['autodocs'],
 	argTypes: {

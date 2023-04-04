@@ -57,3 +57,11 @@ export const globalTypes = {
 		}
 	}
 };
+
+const wrapContext = (story, context) => {
+	window.sb7_globals = context.globals;
+	if (window.sb7_chkGlobals_container) window.sb7_chkGlobals_container();
+	return story(context);
+};
+
+export const decorators = [wrapContext];

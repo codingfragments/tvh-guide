@@ -7,7 +7,7 @@ const piconUrl = 'https://codingfragments.github.io/tv-epg-picon.github.io/picon
 // const sizes = ['w-10', 'w-20', 'w-36'];
 
 const meta = {
-	title: 'Components/app/ChannelLogo',
+	title: 'Components/App/ChannelLogo',
 	component: ChannelLogo,
 	tags: ['autodocs'],
 	argTypes: {
