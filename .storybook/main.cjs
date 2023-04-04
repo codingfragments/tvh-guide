@@ -19,15 +19,18 @@ module.exports = {
 		// console.log(finalConfig);
 		return finalConfig;
 	},
-	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx|svelte)'],
 	addons: [
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
 		'@storybook/addon-interactions',
-		'@storybook/addon-docs'
+		'@storybook/addon-docs',
+
+		'@storybook/addon-svelte-csf',
 
 		// BROKEN from SB7 will use workarround in the meantime
 		// 'storybook-dark-mode'
+		'@storybook/addon-mdx-gfm'
 	],
 	framework: {
 		name: '@storybook/sveltekit',

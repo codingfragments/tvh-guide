@@ -3,7 +3,7 @@ import DateTimePicker from '$lib/components/calendar/DateTimePicker.svelte';
 import { wrapThemedContext } from '$stories/lib/SB7StoryDecorators';
 
 const meta = {
-	title: 'Components/app/DateTimePicker',
+	title: 'Components/App/DateTimePicker',
 	component: DateTimePicker,
 	tags: ['autodocs'],
 	argTypes: {
