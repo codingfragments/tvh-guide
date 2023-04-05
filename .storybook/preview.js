@@ -64,4 +64,4 @@ const wrapContext = (story, context) => {
 	return story(context);
 };
 
-export const decorators = [wrapContext];
+// export const decorators = [wrapContext];

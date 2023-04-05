@@ -11,8 +11,6 @@
 		new NavRoute('/app/recordings', 'recordings', 'Rec', 'voicemail'),
 		new NavRoute('/app/settings', 'settings', 'Settings', 'settings')
 	];
-
-	console.log('LL');
 </script>
 
 <Meta
@@ -29,7 +27,7 @@
 />
 
 <Template let:args let:context>
-	<ThemedStorybookContainer>
+	<ThemedStorybookContainer {...context.globals}>
 		{#if args.vertical}
 			<div class="flex flex-row absolute top-0 bottom-0 left-0 right-0">
 				<div class=" bg-base-300 text-base-content elevation-5 z-tools flex-grow-0">
