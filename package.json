@@ -15,7 +15,7 @@
     "runServer": "node -r dotenv/config dist | npx pino-pretty -c -l -S",
     "--prepare": "svelte-kit sync",
     "test": "playwright test",
-    "storybook": "storybook dev -p 6006 --force-build-preview",
+    "storybook": "storybook dev --force-build-preview",
     "build-storybook": "storybook build",
     "chromatic": ". .secrets && NODE_OPTIONS='--openssl-legacy-provider $NODE_OPTIONS' npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
