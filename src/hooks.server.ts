@@ -11,25 +11,6 @@ import { isTrueish } from '$lib/tools';
 const ROOT_LOG = anylogger('SRV:Hook');
 ROOT_LOG.info('Server Startup');
 
-// GC Stats to track memory usage
-// ==============================
-import GCStats from 'gc-stats';
-
-if (isTrueish(env.SERVER_LOG_MEM)) {
-	const gc = GCStats();
-
-	gc.on(
-		'stats',
-		debounce(
-			(stats) => {
-				ROOT_LOG.debug({ msg: 'MEM Stats', stats });
-			},
-			1000,
-			{ isImmediate: true }
-		)
-	);
-}
-
 //
 // Init Datastore
 // ==============
