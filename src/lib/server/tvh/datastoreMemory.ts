@@ -55,7 +55,12 @@ export class MemoryStore implements DataStore {
 		private skipLoad = false
 	) {
 		const adapter = new JSONFile<DataObj>(path);
-		this.datastore = new Low(adapter);
+		this.datastore = new Low(adapter, {
+			epgs: [],
+			channels: [],
+			channelTags: [],
+			contentTypes: []
+		});
 	}
 
 	private async load(retries: number) {
