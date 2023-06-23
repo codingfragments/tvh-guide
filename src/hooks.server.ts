@@ -33,6 +33,7 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			Number(env.SERVER_TVH_MAX_RETRIES ?? '5'),
 			isTrueish(env.SERVER_DB_CACHE_ONLY)
 		);
+
 		break;
 	}
 	case 'pouchdb': {
@@ -59,6 +60,9 @@ switch (env.SERVER_DB_TYPE ?? 'memory') {
 			opts
 		);
 		break;
+	}
+	default: {
+		throw new Error('Unknown DB Type');
 	}
 }
 if (db) {
