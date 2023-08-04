@@ -20,7 +20,7 @@
 {#if ($navigating && showAutomatic) || show}
 	{#await delay(delayMs) then d}
 		<slot>
-			<div class="{clazz} bg-base-200  flex flex-col z-modal " class:bg-opacity-75={translucent} transition:fade>
+			<div class="{clazz} bg-base-200  flex flex-col z-modal " class:bg-opacity-75={translucent} transition:fade|global>
 				<div class="flex flex-col" class:h-full={vCenter}>
 					<div class="flex-1">&nbsp;</div>
 					<div class="mx-auto flex flex-row">
