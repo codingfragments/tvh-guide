@@ -90,9 +90,9 @@
     "uuid": "^9.0.0"
   },
   "volta": {
-    "node": "18.12.1",
+    "node": "18.19.0",
     "yarn": "3.3.0",
-    "npm": "9.8.1"
+    "npm": "10.2.4"
   },
   "readme": "ERROR: No README data found!",
   "_id": "tvheadend-guide@0.0.1"
