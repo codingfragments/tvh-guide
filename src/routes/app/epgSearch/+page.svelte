@@ -109,25 +109,26 @@
 
 <MainLayoutWithSidebar showSidebar={selectedEpgEvent !== undefined}>
 	<svelte:fragment slot="head">
-		<div class="flex flex-col  px-4  xl:px-10 xl:pb-8 ">
+		<div class="flex flex-col px-4 xl:px-10 xl:pb-8">
 			<!--
 		EPG Display and scroll
 	    ----------------------
 	    -->
 			<div class="flex flex-row w-full pt-2 pb-4">
 				<form method="get" class="flex-grow">
-					<div class="form-control   ">
-						<div class="relative input-group  ml-auto rounded-lg  ">
+					<div class="form-control">
+						<div class="relative ml-auto input-group rounded-lg flex flex-row w-full">
 							<input
 								type="text"
 								name="q"
 								placeholder="Search…"
-								class="input  input-bordered w-full  "
+								class="input input-bordered w-full"
 								value={data.searchString}
 							/>
-							<button class="btn btn-square">
+							<button class="btn btn-square ml-2">
 								<Icon icon="search" />
 							</button>
+							<button class="btn my-auto ml-2 flex-grow-0"><Icon icon="filter_alt" class="" /></button>
 						</div>
 					</div>
 					<input type="hidden" value="50" name="range" />
@@ -136,7 +137,7 @@
 				<!-- TODO change/implement Filter behaviour. (Channel Channelgroups Daterange) -->
 				<!-- FUTURE add multiple Layout and allow to switch with small buttongroup -->
 
-				<button class="btn my-auto ml-2 flex-grow-0 "><Icon icon="filter_alt" class="" /></button>
+				<!-- <button class="btn my-auto ml-2 flex-grow-0"><Icon icon="filter_alt" class="" /></button> -->
 			</div>
 			<div class="flex flex-row">
 				<div class="flex-1" />
