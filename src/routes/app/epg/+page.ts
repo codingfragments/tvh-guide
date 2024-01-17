@@ -22,7 +22,7 @@ async function loadEpgGrid(fetch: FetchFun, url: URL, from: Date, to: Date): Pro
 			page: page
 		});
 		if (result.status >= 300) {
-			throw error(result.status, result.statusText);
+			error(result.status, result.statusText);
 		}
 		const data: APIGetEventsResults = await result.json();
 		LOG.debug({ msg: 'Load Page', page, results: data.query.maxPage });
@@ -49,7 +49,7 @@ async function loadEpgGrid(fetch: FetchFun, url: URL, from: Date, to: Date): Pro
 export const load: PageLoad = async ({ fetch, url, parent }) => {
 	const result = await apiGetChannels(fetch, url, { range: 1000 });
 	if (result.status >= 300) {
-		throw error(result.status, result.statusText);
+		error(result.status, result.statusText);
 	}
 
 	// IDEA probably i could combine with epg load, and make sure to extract available Channels only.

@@ -22,7 +22,7 @@ export const load: PageLoad = async ({ fetch, url, depends }) => {
 
 	const result = await apiSearchEvents(fetch, url, searchString);
 	if (result.status >= 300) {
-		throw error(result.status, result.statusText);
+		error(result.status, result.statusText);
 	}
 	const resultDTO = await result.json();
 	const events: ITVHEpgEvent[] = resultDTO.events;
