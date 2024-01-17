@@ -25,7 +25,7 @@ export const load: PageLoad = async ({ fetch, url, depends }) => {
 	}
 	const result = await apiGetEvents(fetch, url, { range: 1000, filterAt: searchDate });
 	if (result.status >= 300) {
-		throw error(result.status, result.statusText);
+		error(result.status, result.statusText);
 	}
 	let events: ITVHEpgEvent[] = (await result.json()).events;
 	events = events.sort((a, b) => {

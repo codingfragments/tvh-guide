@@ -11,10 +11,10 @@
 		"sourceRoot": "/debug/source/",
 		"strict": true,
 		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"],
-			"$stories": ["src/stories"],
-			"$stories/*": ["src/stories/*"]
+			"$lib": ["./src/lib"],
+			"$lib/*": ["./src/lib/*"],
+			"$stories": ["./src/stories"],
+			"$stories/*": ["./src/stories/*"]
 		}
 	}
 }
