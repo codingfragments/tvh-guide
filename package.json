@@ -83,7 +83,7 @@
     "fuse.js": "^7.0.0",
     "lowdb": "^6.1.1",
     "moment": "^2.29.4",
-    "pino": "^8.16.2",
+    "pino": "^8.21.0",
     "pouchdb": "^8.0.1",
     "pouchdb-find": "^8.0.1",
     "swagger-ui": "^5.17.10",
