@@ -16,3 +16,4 @@ build-storybook.log
 storybook-static
 epgcache/DBTest1*
 epgcache/db/epgdb-*
+epgcache
