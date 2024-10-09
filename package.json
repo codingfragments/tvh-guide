@@ -1,6 +1,6 @@
 {
   "name": "tvheadend-guide",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --ignore './src/stories/'",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
