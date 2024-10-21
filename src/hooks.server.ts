@@ -11,6 +11,9 @@ import { isTrueish } from '$lib/tools';
 const ROOT_LOG = anylogger('SRV:Hook');
 ROOT_LOG.info('Server Startup');
 
+import expand from 'brace-expansion';
+let a = expand('a-{1..3}');
+ROOT_LOG.info(a);
 //
 // Init Datastore
 // ==============
